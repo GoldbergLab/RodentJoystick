@@ -1,15 +1,15 @@
-function [jstruct] = xy_makestruct(working_dir)
+function [jstruct, filelist] = xy_makestruct(working_dir)
 
 working_dir_1 = strcat(working_dir,'/','comb');
 filelist = dir(strcat(working_dir_1,'/*.mat'));
-load(strcat(working_dir,'/',filelist(1).name));
+load(strcat(working_dir_1,'\',filelist(1).name));
 
-fileinfo = dir(strcat(working_dir, '/', filelist(1).name(1:end-4),'.dat'));
+fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
 time_stamp = fileinfo.datenum;
 start_frame_first = start_frame;
 
 for i=1:length(filelist)         
-    load(strcat(working_dir,'/',filelist(i).name));
+    load(strcat(working_dir_1,'/',filelist(i).name));
     working_buff=working_buff';
     %%
     
