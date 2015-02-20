@@ -2,54 +2,52 @@ function [jstruct] = xy_makestruct(working_dir)
 
 working_dir_1 = strcat(working_dir,'/','comb');
 filelist = dir(strcat(working_dir_1,'/*.mat'));
-load(strcat(working_dir,'/',filelist(i).name));
+load(strcat(working_dir_1,'\',filelist(1).name));
 
-fileinfo = dir(strcat(working_dir, '/', filelist(1).name(1:end-4),'.dat'));
+fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
 time_stamp = fileinfo.datenum;
 start_frame_first = start_frame;
 
 for i=1:length(filelist)         
-    load(strcat(working_dir,'/',filelist(i).name));
+    load(strcat(working_dir_1,'/',filelist(i).name));
     working_buff=working_buff';
-    %%
     
+    %% nose pokes 
     c=[];
     nose_poke = working_buff(5,:);
     np_logical = (nose_poke>0.5);
     l=1;
-   if sum(np_logical)>1
-       np_transition = diff(np_logical); %this will show the transitions 
-       b=np_transition;
-       flag=1;
-       
-       for j=1:length(b)        
-          if b(j)==1 && flag==1
-              c(l,1) = j+1;
-              c(l,2) = 0;
-              flag=0;
-          elseif b(j)==-1 && flag==0        
-              c(l,2) = j-1;
-              flag=1;
-              l=l+1;
-          end  
-       end
-   end
+    if sum(np_logical)>1
+        np_transition = diff(np_logical); %this will show the transitions 
+        b=np_transition;
+        flag=1;       
+        for j=1:length(b)        
+            if b(j)==1 && flag==1
+                c(l,1) = j+1;
+                c(l,2) = 0;
+                flag=0;
+            elseif b(j)==-1 && flag==0        
+                c(l,2) = j-1;
+                flag=1;
+                l=l+1;
+            end  
+        end
+    end
    
     
     touch_sense = working_buff(3,:);
     touch_logical = (touch_sense>0.5);
     m=1;
-   d=[];
-   if sum(touch_logical)>1
-       tch_transition = diff(touch_logical); %this will show the transitions 
-       b=tch_transition;
-       flag=1;
-       
-       for j=1:length(b)        
-          if b(j)==1 && flag==1
-              d(m,1) = j+1;
-              d(m,2) = 0;
-              flag=0;
+    d=[];
+    if sum(touch_logical)>1
+        tch_transition = diff(touch_logical); %this will show the transitions 
+        b=tch_transition;
+        flag=1;
+        for j=1:length(b)        
+            if b(j)==1 && flag==1
+                d(m,1) = j+1;
+                d(m,2) = 0;
+                flag=0;
           elseif b(j)==-1 && flag==0        
               d(m,2) = j-1;
               flag=1;
@@ -115,7 +113,6 @@ for i=1:length(filelist)
 %       
    jstruct(i).filename = filelist(i).name;
    jstruct(i).path = dir;
-   jstruct(i).date_time = time_stamp + start_frame-;
    jstruct(i).traj_x = working_buff(1,:);
    jstruct(i).traj_y = working_buff(2,:);
    jstruct(i).np_pairs = c;
@@ -123,7 +120,7 @@ for i=1:length(filelist)
    jstruct(i).js_pairs_l = e;
    jstruct(i).reward_onset = reward_on;
    jstruct(i).js_reward = js_reward;
-   jstruct(i).real_time = time_stamp+start_frame-;
+   jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
 
       % Mark nose pokes prior to start of each joystick deflection
    start_p = zeros(size(jstruct(i).js_pairs_r,1),1);

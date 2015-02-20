@@ -12,4 +12,8 @@ time_success = length(dist_distri)/length(traj_struct);
 c = histc(dist_distri,0:1:100);
 success_prob = cumsum(c)/sum(c);
 targ_dist = find(success_prob>(targ_reward/time_success));
+
+figure(1);
+c = histc(dist_distri,0:5:100);
+stairs(0:5:100, c);
 targ_dist(1)
