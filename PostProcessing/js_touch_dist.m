@@ -13,11 +13,11 @@ c = histc(dist_distri,0:1:100);
 success_prob = cumsum(c)/sum(c);
 targ_dist = find(success_prob>(targ_reward/time_success));
 
-figure(1); hist_int = 5; hold on;
-c = histc(dist_distri,0:hist_int:100);
-xlabel('Joystick Distance');
-ylabel('Count');
-stairs(0:hist_int:100, c);
+
+%figure(1); hist_int = 5; hold on;
+%c = histc(dist_distri,0:hist_int:100);
+%xlabel('Joystick Distance');
+%ylabel('Count');
+%stairs(0:hist_int:100, c);
 set_dist = targ_dist(1);
-disp('set_threshold:') ;
-disp(set_dist);
+disp(strcat('set_threshold:   ', num2str(set_dist)));
