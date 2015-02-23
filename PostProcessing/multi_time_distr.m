@@ -10,12 +10,12 @@
 %       'indiv' :: put each plot on its own separate figure
 %       'col' :: put each plot on a single figure in a column
 % OUTPUTS: None
-function multi_time_distr(jslist, interval, flag, sfignum)
+function multi_time_distr(jslist, interval, flag, sfignum, ylim)
 
     if strcmp(flag,'indiv')
         multi_time_distr_indiv(jslist, interval, sfignum)
     elseif strcmp(flag,'col')
-        multi_time_distr_multi(jslist, interval, sfignum)
+        multi_time_distr_multi(jslist, interval, sfignum, ylim)
     else
         s1 ='Error: Flag not in range. \n multi_time_distr(interval, flag) takes';
         s2 = ' an interval argument(integer) (for the histogram) and a';
@@ -38,7 +38,7 @@ function multi_time_distr_indiv(jslist, interval, sfignum)
     end
 end
 
-function [plot] = multi_time_distr_multi(jslist, interval, fignum)
+function [plot] = multi_time_distr_multi(jslist, interval, fignum, ylim)
     plot = figure(fignum);
     hold on; plot_size = length(jslist);
     for i = 1:plot_size
@@ -49,8 +49,9 @@ function [plot] = multi_time_distr_multi(jslist, interval, fignum)
         subplot(plot_size,1,i); hold on;
         stairs(times, np_plot, 'b');
         stairs(times, rew_plot, 'r');
-        axis([0, 24, 0, inf]);
-        
+        axis([0, 24, 0, ylim]);
+        x = [0, 4, 8, 12, 16, 20, 24];
+        set(gca,'XTick',x);
         %minor formatting
         legend('Nosepoke', 'Reward'); legend('boxoff');
         if i == plot_size

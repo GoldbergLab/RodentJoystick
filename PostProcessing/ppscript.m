@@ -28,7 +28,9 @@ for i = 2:(length(filelist))
     fid = fopen(strcat(working_dir,'/',filelist(i).name));
     framenumber_prev = frame_number;
     frame_number = str2num(filelist(i).name(1:10));
-    
+    if(i==690)
+        flag_error=1;
+    end
     for m=1:1000
         [traj] = fscanf(fid,'%f',2);
         if numel(traj)~=0
