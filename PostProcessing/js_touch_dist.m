@@ -1,3 +1,4 @@
+
 function js_touch_dist(stats,targ_time,targ_reward,dist_thresh)
 k=0;
 traj_struct=stats.traj_struct;

@@ -79,7 +79,7 @@ for i=1:1:length(list)
 %      end
      figure(4)
      
-     holddist_hist = holddist_hist; %./(sum(holddist_hist));
+     %holddist_hist = holddist_hist./(sum(holddist_hist));
 %     hold_dist_fit = fit(dist_time_hld',holddist_vect','cubicinterp');       
 %     
    try
