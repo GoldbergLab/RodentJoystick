@@ -4,7 +4,7 @@ rec_len = length(jstruct);
 np_js=0;
 k=0;
 max_cont_len = [];
-hold_len = [];
+%hold_len = [];
 for ii=1:rec_len
        js = jstruct(ii).js_pairs_r;
        fp = jstruct(ii).js_pairs_l;
@@ -16,9 +16,9 @@ for ii=1:rec_len
        for jj=1:size(js,1)
            np_js_prev = np_js;
            np_js = np(jj);
-           if js(jj,2)>0 && (np_js ~= np_js_prev)
-               k=k+1;
-               hold_len(k) = js(jj,2)-js(jj,1);
+           if js(jj,2)>0 %&& (np_js ~= np_js_prev)
+               
+               %hold_len(k) = js(jj,2)-js(jj,1);
                thresh_ind = mag(js(jj,1):js(jj,2))<holdthresh;
                m=1;
                %% Get the max length
@@ -36,12 +36,15 @@ for ii=1:rec_len
                            d(m,2) = j;
                            flag=1;
                            m=m+1;
-                       end                       
-                   
+                       end                                          
                    end
-                   
                    try
-                   max_cont_len(k) = max((d(:,2)-d(:,1)))-1;
+                    if (np_js == np_js_prev)
+                        max_cont_len(k) = max(max((d(:,2)-d(:,1)))-1,max_cont_len(k));
+                    else
+                        k=k+1;
+                        max_cont_len(k) = max((d(:,2)-d(:,1)))-1;
+                    end
                    end
                    d =[];
                end

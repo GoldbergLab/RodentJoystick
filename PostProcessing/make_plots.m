@@ -1,5 +1,5 @@
 
-function [hold_len]=make_plots(list)
+function [hold_len]=make_plots(list,dist_thresh_ip)
 k=1;
 np_js_plot = [];
 holddist_hist =[];
@@ -25,8 +25,10 @@ for i=1:1:length(list)
     ylabel('Probability');
     title('JS np distribution');
     stairs(dist_time,np_js_plot,clrstr(k),'LineWidth',2);
-    s{k} = list(i).name(end-21:end-11);
-    legend(s);
+    [upperPath, deepestFolder, ~] = fileparts(list(i).name);
+    [upperPath, deepestFolder, ~] = fileparts(upperPath);
+    s{k} = deepestFolder;
+    legend(s,'Interpreter','none');
     hold on
     
     %%np_post dist
@@ -41,12 +43,12 @@ for i=1:1:length(list)
     ylabel('Probability');
     title('post NP distribution');
     stairs(dist_time,np_post_plot,clrstr(k),'LineWidth',2);
-    legend(s);
+    legend(s,'Interpreter','none');
     hold on
     
     
     %% Less than 15%
-    [hold_len,hold_dist]=xy_holddist(jstruct,20,0.75);
+    [hold_len,hold_dist]=xy_holddist(jstruct,dist_thresh_ip,0.75);
     
      holddist_mederror(k,1:3) = prctile(hold_dist,[25 50 75]);
      holddist_mederror(k,4) = mean(hold_dist);
@@ -54,15 +56,17 @@ for i=1:1:length(list)
     
     dist_time_hld = 0:10:600;
     holddist_vect = histc(hold_dist,dist_time_hld);
-    holddist_vect = holddist_vect./(sum(holddist_vect));
+    holddist_vect = holddist_vect; %./(sum(holddist_vect));
 %     hold_dist_fit = fit(dist_time_hld',holddist_vect','cubicinterp');
     figure(3)
     xlabel('Time (ms)')
-    ylabel('Probability');
-    title('JS first contact hold time thresh 15%');
+    ylabel('# of trials');
+    title('JS first contact hold time at thresh');
     stairs(dist_time_hld, holddist_vect,clrstr(k),'LineWidth',2);
-    s1{k} = strcat(list(i).name(end-21:end-11),' ',num2str(numel(hold_dist)));
-    legend(s1);
+    [upperPath, deepestFolder, ~] = fileparts(list(i).name);
+    [upperPath, deepestFolder, ~] = fileparts(upperPath);
+    s1{k} = strcat(deepestFolder,' ',num2str(numel(hold_dist)));
+    legend(s1,'Interpreter','none');
     hold on
     
     %% everthing
@@ -80,11 +84,11 @@ for i=1:1:length(list)
 %     
    try
     xlabel('Time (ms)')
-    ylabel('Probability');
+    ylabel('# of trials');
     title('JS first contact hold time');
     %stairs(dist_time_hld,holddist_hist);
     stairs(dist_time_hld,holddist_hist,clrstr(k),'LineWidth',2);
-    legend(s);
+    legend(s,'Interpreter','none');
     hold on
    end 
    for ll=1:100
