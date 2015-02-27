@@ -45,7 +45,7 @@ for i=1:length(filelist)
     np = sensor_on_off_times(working_buff(5,:));   
     % first touch_sense
     js_r = sensor_on_off_times(working_buff(3,:));   
-    % second_touch sense
+    % second touch sense
     js_l = sensor_on_off_times(working_buff(4,:));   
     %mark reward times
     reward_del = working_buff(6,:);
