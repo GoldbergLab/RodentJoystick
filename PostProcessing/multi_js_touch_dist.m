@@ -12,8 +12,6 @@ for i = 1:plot_size
     date = jstruct(2).filename(end-12:end-4);
     disp(strcat('Date: ', date));
     stats = xy_getstats(jstruct, [0 inf]); js_touch_dist(stats,targ_time,targ_reward,dist_thresh);
-%     set_distances(i)=set_dist;
-%     titlestr = strcat(date, ', js_touch_dist: ', set_dist);
     
 end
 
