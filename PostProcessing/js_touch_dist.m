@@ -1,4 +1,4 @@
-% js_touch_dist(stats,targ_time,targ_reward,dist_thresh) takes the stats
+% js_touch_dist(stats,targ_time,targ_reward,dist_thresh, all_traj_flag) takes the stats
 % structure, a target hold time, a target reward percentage, and a distance
 % threshold and computes a recommended distribution threshold.
 % ARGUMENTS: 
@@ -7,6 +7,9 @@
 %   targ_reward :: target reward decimal representing the percentage of
 %       which trials should be rewarded
 %   dist_thresh :: the contingency used for the mice training
+%   all_traj_flag :: if all_traj_flag == 1, function looks at all valid
+%       trajectories within the nosepoke - otherwise, function only
+%       examines the trajectory with the longest hold time.
 % OUTPUT:
 %   None - prints the recommended threshold for the distance
 %   
@@ -19,8 +22,7 @@ holdlength=[];
 for i=1:length(traj_struct)
     if (traj_struct(i).start_p == start_prev) && (all_traj_flag==0)
         holdlentemp = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
-        compare_flag=holdlentemp>holdlength(k);
-        if compare_flag
+        if holdlentemp>holdlength(k)
             holdlength(k) = holdlentemp;
         end
     else 

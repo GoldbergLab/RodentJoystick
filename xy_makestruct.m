@@ -91,14 +91,15 @@ for i=1:length(filelist)
    
    jstruct(i).np_js_start = start_p;
 end
+end
 
 % pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
 % onset/offset pairs for example, pairs(1, 1) and pairs(1,2) will return 
-% the times that a nosepoke came on and went off for a single nosepoke
-% segment
+% the times that a nosepoke came on and went off for the first nosepoke
+% in the file
 function [pairs] = sensor_on_off_times(rawsens)
     pairs = [];
-    sens_logic = (raw_sens>0.5);
+    sens_logic = (rawsens>0.5);
     l=1;
     if sum(sens_logic)>1
         sense_transition = diff(sens_logic); %this will show the transitions 
