@@ -69,9 +69,6 @@ time_success = length(dist_distri)/k;
 c = histc(dist_distri,1:1:100);
 success_prob = cumsum(c)/sum(c);
 targ_dist = find(success_prob>(targ_reward/time_success));
-<<<<<<< HEAD
-
-
 %figure(1); hist_int = 5; hold on;
 %c = histc(dist_distri,0:hist_int:100);
 %xlabel('Joystick Distance');
@@ -82,8 +79,4 @@ if numel(targ_dist)>0
 else
     set_dist = 100;
 end
-
-=======
-set_dist = targ_dist(1);
->>>>>>> 90e4c6f417b1ffed3dc5a3547e1f418e1214eded
 disp(strcat('set_threshold:   ', num2str(set_dist)));
