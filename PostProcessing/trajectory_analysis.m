@@ -1,6 +1,6 @@
-function [ output_args ] = trajectory_analysis( input_args )
+function [ output_args ] = trajectory_analysis(bin_length)
 %UNTITLED2 Summary of this function goes here
-%   Detailed explanation goes here
+%   ARGUMENTS:
 
 %place into bins (groups), mini structures
 %iterate over bin ->
