@@ -190,7 +190,7 @@ samp_rate = 1000;
  plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_l/0.8,'r','LineWidth',2);
  axis(handles.axes7,[xmin xmax ymin 6])
   
- set(handles.date_text,'String',datestr(jstruct(struct_index).date_time));
+% set(handles.date_text,'String',datestr(jstruct(struct_index).date_time));
  
  axes(handles.axes6);
  cla
