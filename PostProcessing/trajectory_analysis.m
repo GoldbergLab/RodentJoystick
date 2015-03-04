@@ -10,7 +10,6 @@ function [sortedtraj ] = trajectory_analysis(stats, bin_length)
 % should be able to plot?
 TIME_RANGE = 2000;
 bins=0:bin_length:TIME_RANGE;
-sortedtraj = struct('geq', 'lt', 'trajectories'); 
 % will be a vector of structs containing fields for the range
 % each struct has a field for a vector of structs containing
 % trajectories
@@ -19,6 +18,8 @@ holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 for i = 2:length(bins)
    sortedtraj(i-1) = struct('geq', bins(i-1),'lt',bins(i));
 end
+
+bin_traj_indices = ones(length(bins)-1), 1);
 
 for i = 1:length(holdtimes)
     bin_ind = bin_index(bins, holdtimes(i));
