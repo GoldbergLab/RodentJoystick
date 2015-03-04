@@ -1,4 +1,4 @@
-% multi_time_distr(jslist, interval, flag, sfignum) generates histogram time distributions
+% multi_time_distr(jslist, interval, flag, sfignum, ylim) generates histogram time distributions
 % of nosepokes and rewards for all jstructs in the list jslist
 % ARGUMENTS:
 %   jslist :: a list of files referring to saved jstructs:
@@ -9,6 +9,8 @@
 %       single figure or on its own separate figure
 %       'indiv' :: put each plot on its own separate figure
 %       'col' :: put each plot on a single figure in a column
+%   sfignum :: starting figure number
+%   ylim  :: limit on y-axis - set to inf to automatically select
 % OUTPUTS: None
 function multi_time_distr(jslist, interval, flag, sfignum, ylim)
 
