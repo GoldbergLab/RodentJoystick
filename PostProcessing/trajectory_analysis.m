@@ -1,5 +1,5 @@
 function [sortedtraj ] = trajectory_analysis(stats, bin_length)
-TIME_RANGE = 2000;
+TIME_RANGE = 600;
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS:
 
@@ -8,18 +8,23 @@ tstruct=stats.traj_struct;
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
-%test plot below
-bin2 = sortedtraj(1);
-[mean, median, stdev, numbers] = bin_stats(bin2);
-time = 1:1:length(mean);
 figure(1);
-hold on;
-plot(time, mean+stdev, 'g', time, mean-stdev, 'g');
-hold on;
-plot(time, mean, 'b', time, median, 'y')
-hold on;
-plot(time, numbers, 'r');
-
+for i = 1:length(bin)
+    bin2 = sortedtraj(1);
+    [mean, median, stdev, numbers] = bin_stats(bin2);
+    time = 1:1:length(mean);
+    subplot(2, length(bin), i);
+    hold on;
+    plot(time, mean+stdev, 'g', time, mean-stdev, 'g');
+    hold on;
+    plot(time, mean, 'b', time, median, 'y');
+    hold on;
+    legend('+stdev', '-stdev', 'mean', 'median');
+    subplot(2, length(bin), i+length(bin));
+    hold on;
+    plot(time, numbers, 'r');
+    legend('number of trajectories');
+end
 
 end
 
@@ -88,7 +93,6 @@ end
 % are distributed as bins = [0 10 20 30 40],
 %       bin_index(bins, 5) = 1, bin_index(bins 0) = 1
 %       bin_index(bins, 9) = 1, bin_index(bins 10) = 2
-
 function bin_ind = bin_index(bins, time)
     for i = 2:length(bins)
         if time < bins(i)
