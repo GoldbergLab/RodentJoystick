@@ -1,5 +1,5 @@
 function [sortedtraj ] = trajectory_analysis(stats, bin_length)
-TIME_RANGE = 600;
+TIME_RANGE = 2000; PLOT_RANGE = 5;
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS:
 
@@ -9,22 +9,24 @@ holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
 figure(1);
-for i = 1:length(bin)
-    bin2 = sortedtraj(1);
-    [mean, median, stdev, numbers] = bin_stats(bin2);
+for i = 1:PLOT_RANGE
+    bin = sortedtraj(i);
+    [mean, median, stdev, numbers] = bin_stats(bin);
     time = 1:1:length(mean);
-    subplot(2, length(bin), i);
+    
+    subplot(2, PLOT_RANGE, i);
+    axis([0, bin.lt, 0, 100]);
     hold on;
-    plot(time, mean+stdev, 'g', time, mean-stdev, 'g');
+    plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
     hold on;
     plot(time, mean, 'b', time, median, 'y');
     hold on;
-    legend('+stdev', '-stdev', 'mean', 'median');
-    subplot(2, length(bin), i+length(bin));
+    
+    subplot(2, PLOT_RANGE, i+PLOT_RANGE);
     hold on;
-    plot(time, numbers, 'r');
-    legend('number of trajectories');
+    plot(time, numbers, 'c');
 end
+legend('+stdev', '-stdev', 'mean', 'median');
 
 end
 
