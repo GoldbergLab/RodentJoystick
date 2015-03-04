@@ -96,15 +96,6 @@ function filelist_box_Callback(hObject, eventdata, handles)
  struct_index=get(hObject,'Value');
  jstruct = handles.jstruct;
  windowSize = 20;
-%  fid = fopen(strcat(handles.working_dir,'\',filename));
-%  date = fread(fid,1,'double');
-%  handles.working_buff = fread(fid,[4 11000],'double');
-%  fclose(fid)
- 
- 
- %data =  load(strcat(handles.working_dir,'\',filename));
- 
-%    handles.working_buff = data.working_buff;
  
  traj_x = jstruct(struct_index).traj_x;
  traj_y = jstruct(struct_index).traj_y;
@@ -116,21 +107,14 @@ function filelist_box_Callback(hObject, eventdata, handles)
  js_reward = jstruct(struct_index).js_reward;
  
  
-%     traj_x = filter(ones(1,windowSize)/windowSize,1,traj_x);
-%     traj_y = filter(ones(1,windowSize)/windowSize,1,traj_y);
-%     traj_x = traj_x(20:end-20);
-%     traj_y = traj_y(20:end-20);
-    
-samp_rate = 1000; 
+   
+ samp_rate = 1000; 
 
  xmin = 1/samp_rate;
  xmax = length(traj_x)/samp_rate;
  ymin = 0;
  ymax = 5;
  
-%  x_cen=jstruct.xcen;%handles.working_buff(1,end);
-%  y_cen=jstruct.ycen;%handles.working_buff(2,end);
-
  np_vect = zeros(1,length(traj_x));
  for i=1:size(np_pairs,1)
     np_vect(np_pairs(i,1):np_pairs(i,2))=4;
@@ -150,8 +134,6 @@ samp_rate = 1000;
     js_vect_l(js_pairs_l(i,1):js_pairs_l(i,2))=4;
  end
  
- 
- %xlen = length(handles.working_buff);
  
  str_ls = 'bgrcmykbgrcmyk';
 
@@ -223,11 +205,11 @@ samp_rate = 1000;
              start_i = max(start_p,js_pairs_r(j,1)-1000);
              np_end = np_pairs((np_pairs(c,1)==start_p),2);
              stop_p = min(js_pairs_r(j,2),np_end);
-             if (numel(start_p)>0) && ~isequaln(start_p_temp,start_p)                
+             if (numel(start_p)>0)% && ~isequaln(start_p_temp,start_p)                
                  traj_x_t = traj_x(start_i:stop_p);
                  traj_y_t = traj_y(start_i:stop_p);
                  js_post = js_vect_l((js_pairs_r(j,1)):(stop_p))>2;             
-                  if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<10
+                  if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                      mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));
                      above_thresh=mag_traj>thresh;
                      a=find(above_thresh);
@@ -272,7 +254,7 @@ samp_rate = 1000;
          end         
      end
  end
- 
+
  
  if get(handles.time_info_checkbox,'Value')
      t_step = 10*str2num(get(handles.timestep_edit,'String'));
@@ -291,35 +273,7 @@ samp_rate = 1000;
  end
  
  handles.traj_struct = traj_struct;
-%  try
-%     traj = xy_traj(handles.working_buff); 
-%  end
- 
-    
- 
-%  if numel(traj)>0
-%    for i=1:size(traj,1)
-%       traj_x = traj{i,1};
-%       traj_y = traj{i,2};
-%       pl_len = min(length(traj_x),5000);
-%       axes(handles.axes6)
-%       hold on
-%       plot(traj_x(1:pl_len),traj_y(1:pl_len),str_ls(i));
-%       plot(traj_x(1)*-1,traj_y(1),'rx');      
-%       axis([-0.5 0.5 -0.5 0.5]);
-%       hold off
-% 
-%       axes(handles.axes1);
-%       hold on
-%       plot(handles.axes1,traj{i,4}*(1/10000):(1/10000):(traj{i,4}+pl_len-1)*(1/10000),traj_x(1:pl_len),str_ls(i),'LineWidth',2);
-%       hold off
-%       axes(handles.axes2);
-%       hold on
-%       plot(handles.axes2,traj{i,4}*(1/10000):(1/10000):(traj{i,4}+pl_len-1)*(1/10000),traj_y(1:pl_len),str_ls(i),'LineWidth',2);
-%       hold off      
-%     end
-%  end
- 
+
  hold off
   
  guidata(hObject, handles);
