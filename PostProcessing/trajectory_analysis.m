@@ -19,16 +19,16 @@ for i = 2:length(bins)
    sortedtraj(i-1) = struct('geq', bins(i-1),'lt',bins(i));
 end
 
-bin_traj_indices = ones(length(bins)-1), 1); 
+bin_traj_indices = ones(length(bins)-1, 1); 
 %each bin has a vector of trajectory structures (simplified)
 % store the indices so we know at what index to add each new trajectory
 for i = 1:length(holdtimes)
     bin_ind = bin_index(bins, holdtimes(i));
     traj_ind = bin_traj_indices(bin_ind);
     bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-    sortedtraj(bin_ind).trajectory = struct('magtraj', tstruct(i).magtraj, 'time', holdtimes(i));
+    sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj, 'time', holdtimes(i));
 end
-bin_traj_indices
+
 end
 % Bin indexing starts with 1 at the first nonzero element. Ie, If the bins
 % are distributed as bins = [0 10 20 30 40],
