@@ -22,13 +22,16 @@ for i = 1:PLOT_RANGE
     axis([0, bin.lt, 0, 100]);
     title(titlestr);
     hold on;
-    plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
+    plot(time, (stdev./mean)*100, 'r');
+    %plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
     hold on;
     plot(time, mean, 'b', time, median, 'y');
     hold on;
     plot(time, normalized, ':c');
+    ylabel('Joystick Mag./Traj Percentage');
+    xlabel('Time(ms)')
 end
-legend('+stdev', '-stdev', 'mean', 'median');
+legend('+stdev', 'mean', 'median');
 
 end
 
