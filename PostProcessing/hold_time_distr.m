@@ -14,7 +14,7 @@ TIME_RANGE = 2000;
 
 holdtimes = zeros(length(tstruct), 1);
 for i = 1:length(tstruct)
-    holdtimes(i) = tstruct(i).posttouch;
+    holdtimes(i) = length(tstruct(i).magtraj);
 end
 timerange = 0:hist_int:TIME_RANGE;
 [ht_distr] = histc(holdtimes, timerange);
