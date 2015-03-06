@@ -11,7 +11,7 @@ for i = 1:plot_size
     load(jslist(i).name);
     date = jstruct(2).filename(end-12:end-4);
     disp(strcat('Date: ', date));
-    stats = xy_getstats(jstruct, [0 inf]); js_touch_dist(stats,targ_time,targ_reward,dist_thresh);
+    stats = xy_getstats(jstruct, [0 inf]); js_touch_dist(stats,targ_time,targ_reward,dist_thresh,0);
     
 end
 

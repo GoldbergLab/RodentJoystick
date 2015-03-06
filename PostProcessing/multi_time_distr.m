@@ -1,4 +1,4 @@
-% multi_time_distr(jslist, interval, ylim, sfignum, flag) generates 
+% multi_time_distr(jslist, interval,) ylim, sfignum, flag) generates 
 % histogram time distributions of nosepokes and rewards for all jstructs 
 % in the list jslist - only jslist & interval are required arguments, rest
 % are optional
@@ -18,17 +18,17 @@ function multi_time_distr(jslist, interval, varargin)
     %Default argument handling:
     default = {inf 1 'col'};
     numvarargs = length(varargin);
-    if nargin > 3
+    if numvarargs > 3
         error('multi_time_distr: too many arguments (> 5), only two required and three optional.');
     end
-    default{1: numvarargs} = varargin;
+    [default{1:numvarargs}] = varargin{:};
     %normal code from here on
     [ylim, sfignum, flag] = default{:};
    
     if strcmp(flag,'indiv')
-        multi_time_distr_indiv(jslist, interval, sfignum)
+        multi_time_distr_indiv(jslist, interval, sfignum);
     elseif strcmp(flag,'col')
-        multi_time_distr_multi(jslist, interval, sfignum, ylim)
+        multi_time_distr_multi(jslist, interval, sfignum, ylim);
     else
         s1 ='Error: Invalid flag. \n multi_time_distr(interval, flag) takes';
         s2 = ' an interval argument(integer) (for the histogram) and a';
