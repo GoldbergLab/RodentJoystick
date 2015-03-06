@@ -1,5 +1,9 @@
 function [sortedtraj ] = trajectory_analysis(stats, bin_length)
-TIME_RANGE = 20000; PLOT_RANGE = 10;
+TIME_RANGE = 100000; 
+% This constant is high only for the purpose of sorting - we want to sort
+% everything in bins - possible alternative includes taking a time range
+% and revising the bin_index function?
+PLOT_RANGE = 10; 
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS:
 
@@ -22,8 +26,7 @@ for i = 1:PLOT_RANGE
     axis([0, bin.lt, 0, 100]);
     title(titlestr);
     hold on;
-    plot(time, (stdev./mean)*100, 'r');
-    %plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
+    plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
     hold on;
     plot(time, mean, 'b', time, median, 'y');
     hold on;
@@ -31,7 +34,7 @@ for i = 1:PLOT_RANGE
     ylabel('Joystick Mag./Traj Percentage');
     xlabel('Time(ms)')
 end
-legend('+stdev', 'mean', 'median');
+legend('mean+stdev','mean-stdev', 'mean', 'median');
 
 end
 
