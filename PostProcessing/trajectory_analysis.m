@@ -1,5 +1,9 @@
 function [sortedtraj ] = trajectory_analysis(stats, bin_length)
-TIME_RANGE = 600;
+TIME_RANGE = 100000; 
+% This constant is high only for the purpose of sorting - we want to sort
+% everything in bins - possible alternative includes taking a time range
+% and revising the bin_index function?
+PLOT_RANGE = 10; 
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS:
 
@@ -9,22 +13,28 @@ holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
 figure(1);
-for i = 1:length(bin)
-    bin2 = sortedtraj(1);
-    [mean, median, stdev, numbers] = bin_stats(bin2);
+for i = 1:PLOT_RANGE
+    bin = sortedtraj(i);
+    [mean, median, stdev, numbers] = bin_stats(bin);
     time = 1:1:length(mean);
-    subplot(2, length(bin), i);
+    inittraj = numbers(1);
+    normalized = 100*numbers./inittraj;
+    titlestr = strcat(num2str(bin.geq), '-', num2str(bin.lt), 'ms:');
+    titlestr = strcat(titlestr, num2str(inittraj), ' trajectories');
+    
+    subplot(2, PLOT_RANGE/2, i);
+    axis([0, bin.lt, 0, 100]);
+    title(titlestr);
     hold on;
-    plot(time, mean+stdev, 'g', time, mean-stdev, 'g');
+    plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
     hold on;
     plot(time, mean, 'b', time, median, 'y');
     hold on;
-    legend('+stdev', '-stdev', 'mean', 'median');
-    subplot(2, length(bin), i+length(bin));
-    hold on;
-    plot(time, numbers, 'r');
-    legend('number of trajectories');
+    plot(time, normalized, ':c');
+    ylabel('Joystick Mag./Traj Percentage');
+    xlabel('Time(ms)')
 end
+legend('mean+stdev','mean-stdev', 'mean', 'median');
 
 end
 

@@ -7,7 +7,7 @@ function jstruct_stats = xy_getstats(jstruct,index)
  js_r_count = 0;
  js_l_count = 0;
  pellet_count = 0;
- 
+ trialnum=0;
  
 
 %Count the Number of nosepokes
@@ -56,7 +56,7 @@ jstruct_stats.np_js_post = list(find((list>-10000)&(list<10000)));
 % Get PDF of trajectories
 
  start_p=[];
-  traj_struct = [];
+ traj_struct = [];
  x_cen = 0;
  y_cen = 0;
  thresh = 33;
@@ -137,6 +137,7 @@ for struct_index=1:length(jstruct)
 %  end
  
  %% Process
+ start_temp =0;
  
    if numel(js_pairs_r)>0 && numel(np_pairs)>0 && numel(js_pairs_l)>0
        for j=1:size(js_pairs_r,1)
@@ -148,6 +149,11 @@ for struct_index=1:length(jstruct)
                     np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<0; %set of nose poke onsets preceding the js onset
                     start_p = max(np_pairs(np_js_temp,1)); %Nose poke before the Joystick touch
                     np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2); %corresponding nose poke offset
+                    
+                    if (start_p ~= start_temp)                   
+                     trialnum = trialnum+1;
+                    end
+                    start_temp = start_p;
                     
                     jt_js_temp = (js_pairs_l(:,1)-js_pairs_r(j,1))<0; %set of post touch onsets preceding the js onset
                     post_start =  max(js_pairs_l(jt_js_temp,1)); % Post-touch onset
@@ -189,8 +195,12 @@ for struct_index=1:length(jstruct)
 
 end
 
+
+
 jstruct_stats.traj_pdf_jsoffset = traj_pdf_jsoffset./sum(sum(traj_pdf_jsoffset));
 jstruct_stats.traj_pdf_thindex = traj_pdf_thindex./sum(sum(traj_pdf_thindex));
 jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
+jstruct_stats.trialnum = trialnum;
+jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
 % Get Theta Distributions
