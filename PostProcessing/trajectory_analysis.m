@@ -1,8 +1,9 @@
-function [sortedtraj ] = trajectory_analysis(stats, bin_length)
+function [sortedtraj, fh] = trajectory_analysis(stats, bin_length)
 TIME_RANGE = 100000; 
 % This constant is high only for the purpose of sorting - we want to sort
 % everything in bins - possible alternative includes taking a time range
 % and revising the bin_index function?
+%how many plots to do
 PLOT_RANGE = 10; 
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS:
@@ -12,7 +13,7 @@ tstruct=stats.traj_struct;
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
-figure(1);
+fh = figure('Position', [100, 100, 1440, 900]);
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
     [mean, median, stdev, numbers] = bin_stats(bin);
