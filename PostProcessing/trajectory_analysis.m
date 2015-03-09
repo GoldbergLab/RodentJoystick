@@ -1,4 +1,4 @@
-function [sortedtraj, fh] = trajectory_analysis(stats, bin_length)
+function [sortedtraj, fh] = trajectory_analysis(stats, bin_length, pflag)
 TIME_RANGE = 100000; 
 % This constant is high only for the purpose of sorting - we want to sort
 % everything in bins - possible alternative includes taking a time range
@@ -6,13 +6,16 @@ TIME_RANGE = 100000;
 %how many plots to do
 PLOT_RANGE = 10; 
 %trajectory_analysis(stats, bin_length)
-%   ARGUMENTS:
+%   ARGUMENTS: pflag - 'plot' if plot is desired, otherwise just returns
+%       binned trajectories in sortedtraj
+%   
 
 bins=0:bin_length:TIME_RANGE;
 tstruct=stats.traj_struct; 
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
+if strcmp('plot', pflag)
 fh = figure('Position', [100, 100, 1440, 900]);
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
@@ -36,7 +39,7 @@ for i = 1:PLOT_RANGE
     xlabel('Time(ms)')
 end
 legend('mean+stdev','mean-stdev', 'mean', 'median');
-
+end
 end
 
 %bin_summary is a struct with length bin.lt 
