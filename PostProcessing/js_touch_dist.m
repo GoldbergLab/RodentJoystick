@@ -68,6 +68,8 @@ stairs(dist_time_hld, holddist_vect,'k','LineWidth',2);
 time_success = length(dist_distri)/k;
 c = histc(dist_distri,1:1:100);
 success_prob = cumsum(c)/sum(c);
+median_dist = median(dist_distri);
+median_time = median(holdlength);
 targ_dist = find(success_prob>(targ_reward/time_success));
 %figure(1); hist_int = 5; hold on;
 %c = histc(dist_distri,0:hist_int:100);
@@ -79,4 +81,4 @@ if numel(targ_dist)>0
 else
     set_dist = 100;
 end
-disp(strcat('set_threshold:   ', num2str(set_dist)));
+disp(strcat('set_threshold:', num2str(set_dist),{' '},'median_time:',num2str(median_time)));

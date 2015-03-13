@@ -1,6 +1,9 @@
 function ppscript(working_dir)
 
 filelist = dir(strcat(working_dir,'/*.dat'));
+
+filelist = filelist([filelist.bytes]>0); %Remove all empty files from the list
+
 working_buff=[];
 mkdir(strcat(working_dir,'/comb'));
 open_flag=0;
