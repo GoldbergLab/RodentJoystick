@@ -142,26 +142,33 @@ for struct_index=1:length(jstruct)
    if numel(js_pairs_r)>0 && numel(np_pairs)>0 && numel(js_pairs_l)>0
        for j=1:size(js_pairs_r,1)
            
-           if(sum(((np_pairs(:,1)-js_pairs_r(j,1))<0)&((np_pairs(:,2)-js_pairs_r(j,1))>0))>0) % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
-                if(sum(((js_pairs_l(:,1)-js_pairs_r(j,1))<0)&((js_pairs_l(:,2)-js_pairs_r(j,1))>0))>0) % And if the Joystick is in between an post-touch onset and offset pair
+           if(sum(((np_pairs(:,1)-js_pairs_r(j,1))<0)&((np_pairs(:,2)-js_pairs_r(j,1))>0))>0) 
+               % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
+                if(sum(((js_pairs_l(:,1)-js_pairs_r(j,1))<0)&((js_pairs_l(:,2)-js_pairs_r(j,1))>0))>0) 
+                    % And if the Joystick is in between an post-touch onset and offset pair
                     % This is now a valid trial
                     
-                    np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<0; %set of nose poke onsets preceding the js onset
-                    start_p = max(np_pairs(np_js_temp,1)); %Nose poke before the Joystick touch
-                    np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2); %corresponding nose poke offset
+                    np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<0; 
+                    %set of nose poke onsets preceding the js onset
+                    start_p = max(np_pairs(np_js_temp,1));
+                    %Nose poke before the Joystick touch
+                    np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2); 
+                    %corresponding nose poke offset
                     
                     if (start_p ~= start_temp)                   
                      trialnum = trialnum+1;
                     end
                     start_temp = start_p;
                     
-                    jt_js_temp = (js_pairs_l(:,1)-js_pairs_r(j,1))<0; %set of post touch onsets preceding the js onset
-                    post_start =  max(js_pairs_l(jt_js_temp,1)); % Post-touch onset
-                    post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2); % Post-touch offset
-                    
-                    stop_p = min([js_pairs_r(j,2),np_end,post_end]); %End of trajectory is min of nosepoke ending,joystick touch offset, or post offset.
+                    jt_js_temp = (js_pairs_l(:,1)-js_pairs_r(j,1))<0; 
+                    %set of post touch onsets preceding the js onset
+                    post_start =  max(js_pairs_l(jt_js_temp,1)); 
+                    % Post-touch onset
+                    post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2); 
+                    % Post-touch offset
+                    stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
+                    %End of trajectory is min of nosepoke ending,joystick touch offset, or post offset.
                     start_i = max((js_pairs_r(j,1)-1000),start_p); 
-                    
                     traj_x_t1 = traj_x(start_p:stop_p);
                     traj_y_t1 = traj_y(start_p:stop_p);
                     
