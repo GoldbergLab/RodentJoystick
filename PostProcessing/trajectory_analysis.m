@@ -1,44 +1,58 @@
-function [sortedtraj, fh] = trajectory_analysis(stats, bin_length, pflag)
-TIME_RANGE = 100000; 
-% This constant is high only for the purpose of sorting - we want to sort
-% everything in bins - possible alternative includes taking a time range
-% and revising the bin_index function?
-%how many plots to do
-PLOT_RANGE = 10; 
+function [sortedtraj, fh] = trajectory_analysis(stats, varargin)
+CONT_HT = 300; CONT_THRESH = 30;
 %trajectory_analysis(stats, bin_length)
 %   ARGUMENTS: pflag - 'plot' if plot is desired, otherwise just returns
 %       binned trajectories in sortedtraj
-%   
 
-bins=0:bin_length:TIME_RANGE;
+default = {[400 1400], 'plot', 'contlines'};
+numvarargs = length(varargin);
+if numvarargs > 2
+    error('trajectory_analysis: too many arguments (> 3), only one required and two optional.');
+end
+[default{1:numvarargs}] = varargin{:};
+[TIME_RANGE, pflag, cflag] = default{:};
+   
+% This constant is high only for the purpose of sorting - we want to sort
+% everything in bins - possible alternative includes taking a time range
+% and revising the bin_index function?
+
+%how many plots to do - careful, this depends on other stuff, look through
+%below as well
+PLOT_RANGE = 10; 
+bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
+bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
 tstruct=stats.traj_struct; 
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
 if strcmp('plot', pflag)
-fh = figure('Position', [100, 100, 1440, 900]);
-for i = 1:PLOT_RANGE
-    bin = sortedtraj(i);
-    [mean, median, stdev, numbers] = bin_stats(bin);
-    time = 1:1:length(mean);
-    inittraj = numbers(1);
-    normalized = 100*numbers./inittraj;
-    titlestr = strcat(num2str(bin.geq), '-', num2str(bin.lt), 'ms:');
-    titlestr = strcat(titlestr, num2str(inittraj), ' trajectories');
-    
-    subplot(2, PLOT_RANGE/2, i);
-    axis([0, bin.lt, 0, 100]);
-    title(titlestr);
-    hold on;
-    plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
-    hold on;
-    plot(time, mean, 'b', time, median, 'y');
-    hold on;
-    plot(time, normalized, ':c');
-    ylabel('Joystick Mag./Traj Percentage');
-    xlabel('Time(ms)')
-end
-legend('mean+stdev','mean-stdev', 'mean', 'median');
+    fh = figure('Position', [100, 100, 1440, 900]);
+    for i = 1:PLOT_RANGE
+        bin = sortedtraj(i);
+        [mean, median, stdev, numbers] = bin_stats(bin);
+        time = 1:1:length(mean);
+        inittraj = numbers(1);
+        normalized = 100*numbers./inittraj;
+        titlestr = strcat(num2str(bin.geq), '-', num2str(bin.lt), 'ms:');
+        titlestr = strcat(titlestr, num2str(inittraj), ' trajectories');
+        subplot(2, PLOT_RANGE/2, i);
+        axis([0, bin.lt, 0, 100]);
+        title(titlestr);
+        hold on;
+        plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
+        hold on;
+        plot(time, mean, 'b', time, median, 'g');
+        hold on;
+        plot(time, normalized, ':c');
+        thresh = zeros(length(time), 1)+CONT_THRESH;
+        if strcmp(cflag, 'contlines')
+            line([0 2000], [CONT_THRESH CONT_THRESH], 'Color', [0.8, 0.8, 0.8]);
+            line([CONT_HT CONT_HT], [0 100], 'Color', [0.8, 0.8, 0.8]);
+        end
+        ylabel('Joystick Mag./Traj Percentage');
+        xlabel('Time(ms)')
+    end
+    legend('mean+stdev','mean-stdev', 'mean', 'median');
 end
 end
 
@@ -77,9 +91,10 @@ function [avg, med, stdev, numbers, bin_summary] = bin_stats(bin)
         
             numbers(time)= bin_summary(time).numtraj;
             avg(time) = bin_summary(time).avg;
-            med(time) =bin_summary(time).med;
+            med(time) = bin_summary(time).med;
             stdev(time) = bin_summary(time).stdev;
         catch
+            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0;
         end
     end
 end
@@ -97,9 +112,11 @@ bin_traj_indices = ones(length(bins)-1, 1);
 % store the indices so we know at what index to add each new trajectory
 for i = 1:length(holdtimes)
     bin_ind = bin_index(bins, holdtimes(i));
-    traj_ind = bin_traj_indices(bin_ind);
-    bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-    sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj, 'time', holdtimes(i));
+    if bin_ind ~= -1
+        traj_ind = bin_traj_indices(bin_ind);
+        bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
+        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj, 'time', holdtimes(i));
+    end
 end
 end
 
@@ -108,8 +125,9 @@ end
 %       bin_index(bins, 5) = 1, bin_index(bins 0) = 1
 %       bin_index(bins, 9) = 1, bin_index(bins 10) = 2
 function bin_ind = bin_index(bins, time)
+    bin_ind = -1;
     for i = 2:length(bins)
-        if time < bins(i)
+        if time < bins(i) && time >= bins(i-1)
             bin_ind = i-1; break;
         end
     end
