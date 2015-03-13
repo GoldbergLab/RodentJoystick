@@ -19,21 +19,19 @@ end
 [plotflag, statflag, TIME_RANGE] = default{:};
 
 holdtimes = zeros(length(tstruct), 1);
+rewtimes = []; j =1;
 for i = 1:length(tstruct)
     holdtimes(i) = length(tstruct(i).magtraj);
+    if tstruct(i).rw == 1
+        rewtimes(j) = length(tstruct(i).magtraj);
+        j=j+1;
+    end
 end
 timerange = 0:hist_int:TIME_RANGE;
 [ht_distr] = histc(holdtimes, timerange);
-
-rewtimes = [];
-j=1;
-for i = 1:length(tstruct)
-   if tstruct(i).rw == 1
-       rewtimes(j) = length(tstruct(i).magtraj);
-       j=j+1;
-   end
-end
 rewht_distr = histc(rewtimes, timerange);
+
+%boring stuff below, just plotting/displaying information
 if strcmp(plotflag, 'plot')
     phandle = figure(1);
     hold on;
