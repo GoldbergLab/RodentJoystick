@@ -1,4 +1,5 @@
-%[sortedtraj, fh] = trajectory_analysis(stats [,hold_time_range, pflag, plot_contingencies, datestr])
+%[sortedtraj, fh] = 
+%       trajectory_analysis(stats [plot_range ,hold_time_range, pflag, plot_contingencies, datestr])
 %   plots the trajectory distributions from stats using the (optional)
 %   arguments for a hold time range, whether or not to plot, whether to
 %   plot the lines indicating the contigencies (constants just below the
@@ -32,7 +33,7 @@ function [sortedtraj, fh] = trajectory_analysis(stats, varargin)
 
 default = {10,[400 1400], [300 30 60], 'plot', 'N/A'};
 numvarargs = length(varargin);
-if numvarargs > 4
+if numvarargs > 5
     error('trajectory_analysis: too many arguments (> 3), only one required and two optional.');
 end
 [default{1:numvarargs}] = varargin{:};
@@ -55,7 +56,6 @@ sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 %plot
 if strcmp('plot', pflag)
     fh = figure('Position', [100, 100, 1440, 900]);
-    title(datestr);
     for i = 1:PLOT_RANGE
         bin = sortedtraj(i);
         [mean, median, stdev, numbers] = bin_stats(bin);
@@ -82,6 +82,7 @@ if strcmp('plot', pflag)
         xlabel('Time(ms)')
     end
     legend('mean+stdev','mean-stdev', 'mean', 'median');
+    P = subplottitle(fh, datestr, 'yoff', -0.6); % 'yoff', -0.1);
 end
 end
 

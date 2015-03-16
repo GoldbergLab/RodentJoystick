@@ -1,4 +1,4 @@
-% multi_time_distr(jslist, interval,) ylim, sfignum, flag) generates 
+% multi_time_distr(jslist, interval[, ylim, sfignum, flag]) generates 
 % histogram time distributions of nosepokes and rewards for all jstructs 
 % in the list jslist - only jslist & interval are required arguments, rest
 % are optional

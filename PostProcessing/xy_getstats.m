@@ -1,11 +1,4 @@
 function jstruct_stats = xy_getstats(jstruct,index)
- 
- k1 = index(1);
- k2 = index(2);
-
-
- 
-
 %Count the Number of nosepokes
 %Count the Number of JS (onsets and offsets)
 %Count the Number of JS_post (onsets and offsets)
@@ -51,11 +44,7 @@ end
 jstruct_stats.np_js_post = list(find((list>-10000)&(list<10000)));
 
 % Get PDF of trajectories
-start_p=[];
 traj_struct = [];
-x_cen = 0;
-y_cen = 0;
-thresh = 33;
 traj_pdf_jsoffset = zeros(100,100);
 traj_pdf_thindex = zeros(100,100);
 k=0;
@@ -123,7 +112,7 @@ for struct_index=1:length(jstruct)
                      traj_struct(k).rw = js_reward(j);
                      traj_struct(k).rw_onset = 0;
                      if traj_struct(k).rw == 1
-                        traj_struct(k).rw_onset = rw_onset(onset_ind);
+                        traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
                         onset_ind = onset_ind + 1;
                      end
                      traj_struct(k).magtraj = mag_traj;
