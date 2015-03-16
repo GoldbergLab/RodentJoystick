@@ -10,7 +10,9 @@ function [holdtimes,ht_distr, phandle, rewht_distr] = hold_time_distr(tstruct, h
 %   plotflag :: flag that tells hold_time_distr whether to generate data or
 %       plot - 'plot' - plots the figure, 'data' - just returns data
 %       without plotting
-default = {'none', 'none', 2000};
+
+%ARGUMENT MANIPULATION
+default = {'plot', 'stats', 2000};
 numvarargs = length(varargin);
 if numvarargs > 3
     error('multi_time_distr: too many arguments (> 4), only two required and two optional.');
@@ -20,29 +22,28 @@ end
 
 holdtimes = zeros(length(tstruct), 1);
 rewtimes = []; j =1;
+js2rew = []; k = 1;
 for i = 1:length(tstruct)
     holdtimes(i) = length(tstruct(i).magtraj);
     if tstruct(i).rw == 1
-        rewtimes(j) = length(tstruct(i).magtraj);
-        j=j+1;
+        rewtimes(j) = length(tstruct(i).magtraj); j=j+1;
+        js2rew(k) = tstruct(i).rw_onset; k = k + 1;
     end
 end
 timerange = 0:hist_int:TIME_RANGE;
-[ht_distr] = histc(holdtimes, timerange);
+ht_distr = histc(holdtimes, timerange);
 rewht_distr = histc(rewtimes, timerange);
+js_to_rew_distr = histc(js2rew, timerange);
 
 %boring stuff below, just plotting/displaying information
 if strcmp(plotflag, 'plot')
-    phandle = figure(1);
-    hold on;
-    xlabel('Hold Time (ms)');
-    ylabel('Number of Trajectories'); 
+    phandle = figure(1); hold on;
+    xlabel('Hold Time (ms)'); ylabel('Number of Trajectories'); 
     title('Hold Time Distributions'); hold on;
-    stairs(timerange, ht_distr, 'b');
-    hold on;
-    stairs(timerange, rewht_distr, 'r');
-    hold on;
-    legend('all', 'rewarded only');
+    stairs(timerange, ht_distr, 'b'); hold on;
+    stairs(timerange, rewht_distr, 'r'); hold on;
+    stairs(timerange, js_to_rew_distr, 'g'); hold on;
+    legend('all', 'rewarded hold times', 'js to reward');
 end
 if strcmp(statflag, 'stats')
     disp('mean reward hold time:')
