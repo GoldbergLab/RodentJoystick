@@ -7,12 +7,13 @@
 %       Ex: jslist(1).name = 'K:\expt4\expt_4_0004_16\Box_2\2_18_2015\jstruct.mat'
 %   interval :: interval of time in minutes for histogram bin size 
 %       positive nonzero integer
+%   OPTIONAL:
 %   ylim  :: limit on y-axis - set to inf to automatically select
+%   sfignum :: starting figure number
 %   flag :: flag tells multi_time_distr whether to put all plots on a
 %       single figure or on its own separate figure
 %       'indiv' :: put each plot on its own separate figure
 %       'col' :: put each plot on a single figure in a column
-%   sfignum :: starting figure number
 % OUTPUTS: None
 function multi_time_distr(jslist, interval, varargin)
     %Default argument handling:

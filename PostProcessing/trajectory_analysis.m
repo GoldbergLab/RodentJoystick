@@ -1,32 +1,63 @@
+%[sortedtraj, fh] = trajectory_analysis(stats [,hold_time_range, pflag, plot_contingencies, datestr])
+%   plots the trajectory distributions from stats using the (optional)
+%   arguments for a hold time range, whether or not to plot, whether to
+%   plot the lines indicating the contigencies (constants just below the
+%   function header), and the string representation of the date
+%   It also returns fh, the figure handle, if plotted - otherwise fh is not
+%   assigned
+%   OUTPUTS:
+%       sortedtraj :: a struct with the following fields:
+%
+%       fh :: the figure handle corresponding to the plot generate when
+%           'plot' flag is used, otherwise unassigned
+%   ARGUMENTS: 
+%       stats :: the result from xy_getstats(jstruct) for some jstruct
+%       OPTIONAL ARGS:
+%       hold_time_range :: the time range [A B] (ms) for which plots are
+%           generated. Plots start at time A and end at B
+%           DEFAULT: [400 1400]
+%       plot_contingencies :: [HT T1 T2] this vector tells which lines to
+%           plot - HT is the hold time, T1 and T2 are the respective
+%           deviations (i.e. 30 60)
+%           DEFAULT: [0 0 0] - no plotting 
+%       pflag :: 'plot' if plot is desired, otherwise just returns
+%           binned trajectories in sortedtraj
+%           DEFAULT: 'plot'
+%       datestr :: string representation of the date, used for title
+%           DEFAULT: 'N/A'
 function [sortedtraj, fh] = trajectory_analysis(stats, varargin)
-CONT_HT = 300; CONT_THRESH = 30;
-%trajectory_analysis(stats, bin_length)
-%   ARGUMENTS: pflag - 'plot' if plot is desired, otherwise just returns
-%       binned trajectories in sortedtraj
+%how many plots to do - this depends on other stuff, look through
+%below as well. Look through subplotting routine to make sure nothing
+%critical is changed
+PLOT_RANGE = 10; 
 
-default = {[400 1400], 'plot', 'contlines'};
+
+default = {[400 1400], [0 0 0], 'plot', 'N/A'};
 numvarargs = length(varargin);
-if numvarargs > 2
+if numvarargs > 4
     error('trajectory_analysis: too many arguments (> 3), only one required and two optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[TIME_RANGE, pflag, cflag] = default{:};
+[TIME_RANGE, CONTL, pflag, datestr] = default{:};
    
 % This constant is high only for the purpose of sorting - we want to sort
 % everything in bins - possible alternative includes taking a time range
 % and revising the bin_index function?
 
-%how many plots to do - careful, this depends on other stuff, look through
-%below as well
-PLOT_RANGE = 10; 
+
+%divide the desired time range into number of bins based on number of plots
+%desired
 bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
 bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
 tstruct=stats.traj_struct; 
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
+%sometimes we only want the data from sorted traj, hence the option not to
+%plot
 if strcmp('plot', pflag)
     fh = figure('Position', [100, 100, 1440, 900]);
+    title(datestr);
     for i = 1:PLOT_RANGE
         bin = sortedtraj(i);
         [mean, median, stdev, numbers] = bin_stats(bin);
@@ -44,10 +75,10 @@ if strcmp('plot', pflag)
         plot(time, mean, 'b', time, median, 'g');
         hold on;
         plot(time, normalized, ':c');
-        thresh = zeros(length(time), 1)+CONT_THRESH;
-        if strcmp(cflag, 'contlines')
-            line([0 2000], [CONT_THRESH CONT_THRESH], 'Color', [0.8, 0.8, 0.8]);
-            line([CONT_HT CONT_HT], [0 100], 'Color', [0.8, 0.8, 0.8]);
+        if sum(CONTL)>0
+            line([0 2000], [CONTL(2) CONTL(2)], 'Color', [0.8, 0.8, 0.8]);
+            line([0 2000], [CONTL(3) CONTL(3)], 'Color', [0.8, 0.8, 0.8]);
+            line([CONTL(1) CONTL(1)], [0 100], 'Color', [0.8, 0.8, 0.8]);
         end
         ylabel('Joystick Mag./Traj Percentage');
         xlabel('Time(ms)')
