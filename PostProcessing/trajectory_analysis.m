@@ -29,16 +29,14 @@ function [sortedtraj, fh] = trajectory_analysis(stats, varargin)
 %how many plots to do - this depends on other stuff, look through
 %below as well. Look through subplotting routine to make sure nothing
 %critical is changed
-PLOT_RANGE = 10; 
 
-
-default = {[400 1400], [0 0 0], 'plot', 'N/A'};
+default = {10,[400 1400], [300 30 60], 'plot', 'N/A'};
 numvarargs = length(varargin);
 if numvarargs > 4
     error('trajectory_analysis: too many arguments (> 3), only one required and two optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[TIME_RANGE, CONTL, pflag, datestr] = default{:};
+[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr] = default{:};
    
 % This constant is high only for the purpose of sorting - we want to sort
 % everything in bins - possible alternative includes taking a time range
