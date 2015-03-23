@@ -60,10 +60,10 @@ for i=1:length(traj_struct)
 end
 
 dist_distri=dist_distri(dist_distri>0);
-dist_time_hld = 0:10:600;
+dist_time_hld = 0:20:600;
 holddist_vect = histc(holdlength,dist_time_hld);
-figure
-stairs(dist_time_hld, holddist_vect,'k','LineWidth',2);
+%figure
+stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),'k','LineWidth',2);
 
 time_success = length(dist_distri)/k;
 c = histc(dist_distri,1:1:100);

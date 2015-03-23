@@ -95,6 +95,8 @@ function filelist_box_Callback(hObject, eventdata, handles)
  contents = cellstr(get(hObject,'String'));
  struct_index=get(hObject,'Value');
  jstruct = handles.jstruct;
+ stats = xy_getstats(jstruct(struct_index),[0 inf]);
+ 
  windowSize = 20;
  
  traj_x = jstruct(struct_index).traj_x;
@@ -103,7 +105,6 @@ function filelist_box_Callback(hObject, eventdata, handles)
  rw_onset = jstruct(struct_index).reward_onset;
  js_pairs_r = jstruct(struct_index).js_pairs_r;
  js_pairs_l = jstruct(struct_index).js_pairs_l;
- 
  js_reward = jstruct(struct_index).js_reward;
  
  
@@ -190,71 +191,8 @@ function filelist_box_Callback(hObject, eventdata, handles)
  plot(x(rw_fr:rw_to),y(rw_fr:rw_to),'c','LineWidth',2);
 %  axis([-0.8 0.8 -0.8 0.8])
  
- traj_struct=[];
- 
- start_p=[];
- k=0;
- 
- if numel(js_pairs_r)>0 && numel(np_pairs)>0
-     for j=1:size(js_pairs_r,1)
-         %check if js movement happens in between nosepokes
-         if(sum(((np_pairs(:,1)-js_pairs_r(j,1))<0)&((np_pairs(:,2)-js_pairs_r(j,1))>0))>0)
-             c = (np_pairs(:,1)-js_pairs_r(j,1))<0;
-             start_p_temp = start_p;
-             start_p = max(np_pairs(c,1));
-             start_i = max(start_p,js_pairs_r(j,1)-1000);
-             np_end = np_pairs((np_pairs(c,1)==start_p),2);
-             stop_p = min(js_pairs_r(j,2),np_end);
-             if (numel(start_p)>0)% && ~isequaln(start_p_temp,start_p)                
-                 traj_x_t = traj_x(start_i:stop_p);
-                 traj_y_t = traj_y(start_i:stop_p);
-                 js_post = js_vect_l((js_pairs_r(j,1)):(stop_p))>2;             
-                  if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
-                     mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));
-                     above_thresh=mag_traj>thresh;
-                     a=find(above_thresh);
-                     if numel(a)<1
-                         a = find(mag_traj==max(mag_traj));
-                     end
-                     k=k+1;
-%                      if (js_reward(j))
-%                          if numel(a)>0
-%                              plot(traj_x_t(1:a(1)),-1*traj_y_t(1:a(1)),'r');                             
-%                              plot(traj_x_t(1:200:a(1)),-1*traj_y_t(1:200:a(1)),'ro');
-%                              axes(handles.axes1)
-%                              hold on
-%                              plot((start_p:(start_p+a(1)-1))/10000,traj_x_t(1:a(1)),'r','LineWidth',2);
-%                              axes(handles.axes2)
-%                              hold on
-%                              plot((start_p:(start_p+a(1)-1))/10000,traj_y_t(1:a(1)),'r','LineWidth',2);
-%                              axes(handles.axes6);
-%                          end
-%                      else
-%                          if numel(a)>0
-%                              
-%                              plot(traj_x_t(1:a(1)),-1*traj_y_t(1:a(1)),'b');
-%                              plot(traj_x_t(1:200:a(1)),-1*traj_y_t(1:200:a(1)),'bo');
-%                              
-%                          end
-%                      end
-%                      plot(traj_x_t(1),traj_y_t(1),'rx');
-%                      axis([-0.8 0.8 -0.8 0.8])
-                     
-                       traj_struct(k).traj_x = traj_x_t;
-                       traj_struct(k).traj_y = traj_y_t;
-                       traj_struct(k).js_post = js_post;
-                       traj_struct(k).start_p = start_p;
-                       traj_struct(k).stop_p = stop_p;
-                       traj_struct(k).rw = js_reward(j);
-                       traj_struct(k).th_index = a(1);
-                       traj_struct(k).mag = ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5));
-                       traj_struct(k).max_value = find(mag_traj==max(mag_traj));
-                 end
-             end
-         end         
-     end
- end
-
+ traj_struct=stats.traj_struct;
+ handles.traj_struct = traj_struct;
  
  if get(handles.time_info_checkbox,'Value')
      t_step = 10*str2num(get(handles.timestep_edit,'String'));
@@ -268,11 +206,11 @@ function filelist_box_Callback(hObject, eventdata, handles)
  handles.pl_index = pl_index;
  if(numel(traj_struct))>0 
  plot_traj_xy(traj_struct,t_step,onset_index,offset_index,thresh,handles.pl_index,handles);
- set(handles.text_startt,'String',num2str(traj_struct(pl_index).start_p));
- set(handles.text_magnp,'String',num2str(traj_struct(pl_index).mag));
+ set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
+ set(handles.text_magnp,'String',num2str(length(traj_struct(pl_index).traj_x)));
  end
  
- handles.traj_struct = traj_struct;
+
 
  hold off
   
@@ -442,8 +380,8 @@ pl_index=max(pl_index-1,1);
 if(numel(handles.traj_struct))>0
     plot_traj_xy(handles.traj_struct,t_step,onset_index,offset_index,thresh,pl_index,handles);
 end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).start_p));
-set(handles.text_magnp,'String',num2str(handles.traj_struct(pl_index).mag));
+set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
+set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
 
 handles.pl_index = pl_index;
 guidata(hObject, handles);
@@ -468,8 +406,8 @@ pl_index=min(pl_index+1,numel(handles.traj_struct));
 if(numel(handles.traj_struct))>0
     plot_traj_xy(handles.traj_struct,t_step,onset_index,offset_index,thresh,pl_index,handles);
 end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).start_p));
-set(handles.text_magnp,'String',num2str(handles.traj_struct(pl_index).mag));
+set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
+set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
 handles.pl_index = pl_index;
 guidata(hObject, handles);
 

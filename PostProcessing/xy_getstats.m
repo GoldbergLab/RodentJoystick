@@ -43,10 +43,9 @@ end
 
 jstruct_stats.np_js_post = list(find((list>-10000)&(list<10000)));
 
-% Get PDF of trajectories
+%5 Get PDF of trajectories
 traj_struct = [];
-traj_pdf_jsoffset = zeros(100,100);
-traj_pdf_thindex = zeros(100,100);
+traj_pdf_jstrial= zeros(100,100);
 k=0;
  
 for struct_index=1:length(jstruct)
@@ -120,7 +119,8 @@ for struct_index=1:length(jstruct)
                      traj_struct(k).max_value_ind = find(mag_traj==max(mag_traj));
                      traj_struct(k).max_value = max(mag_traj);
                      traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
-                        
+                     
+                     traj_pdf_jstrial = traj_pdf_jstrial + hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
                     end
                 end    
            end
@@ -132,8 +132,7 @@ end
 
 
 
-jstruct_stats.traj_pdf_jsoffset = traj_pdf_jsoffset./sum(sum(traj_pdf_jsoffset));
-jstruct_stats.traj_pdf_thindex = traj_pdf_thindex./sum(sum(traj_pdf_thindex));
+jstruct_stats.traj_pdf_jstrial = traj_pdf_jstrial./sum(sum(traj_pdf_jstrial));
 jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;

@@ -21,7 +21,7 @@ traj_y=traj_struct(k).traj_y;
 if numel(traj_x) > 0
     start_p=traj_struct(k).start_p ;
     js_reward=traj_struct(k).rw;
-    th_index=traj_struct(k).th_index;
+%     th_index=traj_struct(k).th_index;
     max_value = traj_struct(k).max_value;
     try
         js_post = traj_struct(k).js_post;
@@ -80,13 +80,13 @@ if numel(traj_x) > 0
             
             t_x = traj_x(1:offset);
             t_y = traj_y(1:offset);
-            t_x = filter(ones(1,windowSize)/windowSize,1,t_x);
-            t_y = filter(ones(1,windowSize)/windowSize,1,t_y);
-            t_x = t_x(20:end-20);
-            t_y = t_y(20:end-20);
+%             t_x = filter(ones(1,windowSize)/windowSize,1,t_x);
+%             t_y = filter(ones(1,windowSize)/windowSize,1,t_y);
+%             t_x = t_x(20:end-20);
+%             t_y = t_y(20:end-20);
 
             plot(t_x,t_y,'k');
-            plot(t_x(js_post(20:(end-20))),t_y(js_post(20:(end-20))),'bx');
+%             plot(t_x(js_post(20:(end-20))),t_y(js_post(20:(end-20))),'bx');
             plot(t_x(end),t_y(end),'rx','MarkerSize',5,'LineWidth',2);
             
             if t_step>1

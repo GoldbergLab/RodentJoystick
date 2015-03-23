@@ -11,7 +11,7 @@ for i=1:1:length(list)
     clrstr = 'rgbcmykrgbcmykrgbcmykrgbcmyk';
     
     %%np_js dist
-    dist_time = [-1000:20:1000];
+    dist_time = [-1000:40:1000];
     dist_time_p = [-1000:1:1000];
 %     if numel(np_js_plot)>0
 %         np_js_plot = np_js_plot + histc(jstruct_stats.np_js,dist_time);

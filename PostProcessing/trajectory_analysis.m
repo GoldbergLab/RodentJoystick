@@ -49,6 +49,7 @@ end
 bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
 bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
 tstruct=stats.traj_struct; 
+totaltraj = length(tstruct);
 holdtimes = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
 
@@ -58,25 +59,28 @@ if strcmp('plot', pflag)
     fh = figure('Position', [100, 100, 1440, 900]);
     for i = 1:PLOT_RANGE
         bin = sortedtraj(i);
-        [mean, median, stdev, numbers] = bin_stats(bin);
+        [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
         time = 1:1:length(mean);
         inittraj = numbers(1);
         normalized = 100*numbers./inittraj;
         titlestr = strcat(num2str(bin.geq), '-', num2str(bin.lt), 'ms:');
-        titlestr = strcat(titlestr, num2str(inittraj), ' trajectories');
+        titlestr = [titlestr, num2str(inittraj), ' trajectories, ',num2str(100*inittraj/totaltraj),' %'];
         subplot(2, PLOT_RANGE/2, i);
         axis([0, bin.lt, 0, 100]);
         title(titlestr);
         hold on;
-        plot(time, mean+stdev, 'r', time, mean-stdev, 'r');
+        plot(time, upperbnd, 'r', time, lowerbnd, 'r');
         hold on;
         plot(time, mean, 'b', time, median, 'g');
         hold on;
         plot(time, normalized, ':c');
         if sum(CONTL)>0
-            line([0 2000], [CONTL(2) CONTL(2)], 'Color', [0.8, 0.8, 0.8]);
-            line([0 2000], [CONTL(3) CONTL(3)], 'Color', [0.8, 0.8, 0.8]);
-            line([CONTL(1) CONTL(1)], [0 100], 'Color', [0.8, 0.8, 0.8]);
+            CONTLINE_COLORS = [0.4, 0.4, 0.4];
+            line([0 2000], [CONTL(2) CONTL(2)], 'Color', CONTLINE_COLORS);
+            if length(CONTL)>2
+                line([0 2000], [CONTL(3) CONTL(3)], 'Color', CONTLINE_COLORS);
+            end
+            line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
         end
         ylabel('Joystick Mag./Traj Percentage');
         xlabel('Time(ms)')
@@ -97,7 +101,7 @@ end
 %       numtraj := number of trajectories that lasted at least as long as
 %       time i.
 % mean, median, std are all number 
-function [avg, med, stdev, numbers, bin_summary] = bin_stats(bin)
+function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats(bin)
     for time = 1:(bin.lt-1) 
         time_pos_ind = 0;
         for i = 1:(length(bin.trajectory))
@@ -118,13 +122,17 @@ function [avg, med, stdev, numbers, bin_summary] = bin_stats(bin)
             bin_summary(time).avg = mean(positionvec);
             bin_summary(time).med = median(positionvec);
             bin_summary(time).stdev = std(positionvec);
-        
+            bin_summary(time).upperbnd = prctile(positionvec,75);
+            bin_summary(time).lowerbnd = prctile(positionvec,25);
+            
             numbers(time)= bin_summary(time).numtraj;
             avg(time) = bin_summary(time).avg;
             med(time) = bin_summary(time).med;
             stdev(time) = bin_summary(time).stdev;
+            upperbnd(time) = bin_summary(time).upperbnd;
+            lowerbnd(time) = bin_summary(time).lowerbnd;
         catch
-            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0;
+            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0; upperbnd(time)=0;lowerbnd(time)=0; 
         end
     end
 end
