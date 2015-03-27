@@ -53,19 +53,19 @@ if numel(traj_x) > 0
     if (js_reward)
         if numel(offset)>0
             
-            t_x = traj_x(1:offset);
-            t_y = traj_y(1:offset);
-            t_x = filter(ones(1,windowSize)/windowSize,1,t_x);
-            t_y = filter(ones(1,windowSize)/windowSize,1,t_y);
-            t_x = t_x(20:end-20);
-            t_y = t_y(20:end-20);
+            t_x = traj_x(1:offset)*(6.35/100);
+            t_y = traj_y(1:offset)*(6.35/100);
+%             t_x = filter(ones(1,windowSize)/windowSize,1,t_x);
+%             t_y = filter(ones(1,windowSize)/windowSize,1,t_y);
+%             t_x = t_x(20:end-20);
+%             t_y = t_y(20:end-20);
             
             
             plot(t_x,t_y,'k');
-            plot(t_x(js_post(20:(end-20))),t_y(js_post(20:(end-20))),'rx');
-            plot(t_x(end),t_y(end),'rx','MarkerSize',5,'LineWidth',2);
+%             plot(t_x(js_post(20:(end-20))),t_y(js_post(20:(end-20))),'rx');
+             plot(t_x(end),t_y(end),'rx','MarkerSize',5,'LineWidth',2);
             if t_step>1
-                plot(traj_x(1:t_step:offset),traj_y(1:t_step:offset),'k.');
+                plot(t_x(1:t_step:offset),t_y(1:t_step:offset),'k.');
             end
             %         axes(handles.axes1)
             %         hold on
@@ -78,8 +78,8 @@ if numel(traj_x) > 0
     else
         if numel(offset)>0
             
-            t_x = traj_x(1:offset);
-            t_y = traj_y(1:offset);
+            t_x = traj_x(1:offset)*(6.35/100);
+            t_y = traj_y(1:offset)*(6.35/100);
 %             t_x = filter(ones(1,windowSize)/windowSize,1,t_x);
 %             t_y = filter(ones(1,windowSize)/windowSize,1,t_y);
 %             t_x = t_x(20:end-20);
@@ -90,7 +90,7 @@ if numel(traj_x) > 0
             plot(t_x(end),t_y(end),'rx','MarkerSize',5,'LineWidth',2);
             
             if t_step>1
-                plot(traj_x(1:t_step:offset),traj_y(1:t_step:offset),'k.');
+                plot(t_x(1:t_step:offset),t_y(1:t_step:offset),'k.');
             end
             %         axes(handles.axes1)
             %         hold on
@@ -107,6 +107,6 @@ if numel(traj_x) > 0
     
     % plot(traj_x(1),-1*traj_y(1),'rx');
     
-    axis([-100 100 -100 100])
+    axis([-6.5 6.5 -6.5 6.5])
     hold off
 end
