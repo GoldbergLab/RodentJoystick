@@ -1,5 +1,13 @@
-function jstruct_stats = xy_getstats(jstruct,index)
-VARIANCE_TIME_INT = 10; %(in ms)
+%xy_getstats(jstruct, index) returns a struct containing several fields
+%describing an entire day's (folder's) trajectories.
+function jstruct_stats = xy_getstats(jstruct,varargin)
+default = {[0 inf]};
+numvarargs = length(varargin);
+if numvarargs > 1
+    error('too many arguments (> 2), only one required and one optional.');
+end
+[default{1:numvarargs}] = varargin{:};
+[index] = default{:};
 
 %Count the Number of nosepokes
 %Count the Number of JS (onsets and offsets)
