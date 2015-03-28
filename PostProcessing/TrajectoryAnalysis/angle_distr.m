@@ -20,7 +20,7 @@ rose(angles, floor(360/angle_int));
 
 end
 
-function [angles] = get_angles(x, y, thresh)
+function [angles] = get_sector(x, y, thresh)
     k=1; x = (x./100); y= (y./100);
     mag = (x.^2 + y.^2).^0.5;
     angles = [];
