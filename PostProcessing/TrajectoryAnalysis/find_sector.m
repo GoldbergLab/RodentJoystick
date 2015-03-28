@@ -1,54 +1,67 @@
-function [angles] = find_sector(stats, thresh, angle_int)
+function [angle_distr] = find_sector(stats, thresh, colorperc)
 
 tstruct = stats.traj_struct;
-angles = []; x = []; y = [];
-for i = 4:length(tstruct)
-    temp = get_angles(tstruct(i).traj_x, tstruct(i).traj_y, thresh);
-    x = [x; (tstruct(i).traj_x)'];
-    y = [y; (tstruct(i).traj_y)'];
-    angles = [angles;temp'];
+%360th slot corresponds to 0
+angle_distr = zeros(360,1);
+for i = 1:length(tstruct)
+    [first, second] = get_sector(tstruct(i).traj_x,tstruct(i).traj_y,thresh);
+    if first ~= -1 && second ~= -1
+        if (first == 0); first = 360; end
+        if (second == 0); second = 360; end
+        indices = first:second;
+        if (first>second); indices = [first:360, 1:second]; end
+        angle_distr(indices)=1+angle_distr(indices);
+    end
 end
-figure(1);
-plot(x, y);
-axis([-100 100 -100 100]); hold on
-for i = 10:10:100;
-    t = 0:0.1:2*pi; hold on;
-    plot(i*cos(t), i*sin(t)); hold on;
-end
-figure(2);
-rose(angles, floor(360/angle_int));
+
+%Plot results from traj_pdf
+subplot(3,2,1:4);
+traj_pdf = reshape(log(stats.traj_pdf_jstrial), 100*100, 1);
+traj_pdf = sort(traj_pdf(traj_pdf ~= -Inf ));
+pcolorval2 = traj_pdf(floor(colorperc(2)/100*length(traj_pdf)));
+pcolorval1 = traj_pdf(floor(colorperc(1)/100*length(traj_pdf))+1);
+toplot = log(stats.traj_pdf_jstrial);
+pcolor(toplot); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold on;
+plot(sin(0:0.1:2*pi), cos(0:0.1:2*pi), 'y');
+hold off;
+%Plot angle histogram
+subplot(3,2,5); %plot actual angle distribution (normalized)?
+plot(1:1:360, angle_distr./(sum(angle_distr)));
+axis([1 359 0 inf]); hold on
+subplot(3,2,5); %plot 
+disp(colorperc)
 
 end
 
 %get_sector(x,y, thresh) obtains the sector found by looking at all x,y
 %values of the trajectory with magnitude above the threshold.
-%The sector is given as a vector of angles indicating the sector, rather
-%than two points. I.e. the sector from the angle 2 to 25 is given by the
-%vector 2:1:25. This is to avoid any confusion, for example with the angles
-%340, and 5. 
-%This will be represented by the vector [340, 341, ... 359, 0, 1, ... 5]'
-function [sector] = get_sector(x, y, thresh)
+%The sector is given as two positive angles in [0, 359] with first = the
+%start of the sector, and second the end, always moving counterclockwise
+function [first, second] = get_sector(x, y, thresh)
     [angles, rad] = cart2pol(x, y);
-    angles=angles(rad>thresh);
+    angles=angles(rad>thresh).*180./pi;
     if length(angles)<2
-        sector = -1;
+        first = -1; second = -1;
     else
-        minim = min(angles);
-        maxim = max(angles);
+        minim = floor(min(angles));
+        maxim = floor(max(angles));
         %weird trajectory - give error signal
-        if (minim == maxim) || (length(angles) == 2) || minim > maxim
-            sector = -1;
+        if (minim == maxim) || (length(angles) == 2) || minim > maxim || length(angles)<2
+            first = -1; second = -1;            
         else
-            angles = angles(angles~=minim && angles~=maxim);
+            angles = angles(angles~=minim & angles~=maxim);
             test= angles(floor(length(angles)/2)+1);
-            first = 0; second = 0;
             if test<minim || test > maxim
                 first = maxim; second = minim;
-            elseif test>minim && test<maxim
+            else
+                first = minim; second = maxim;
             end
-                
-
-            sector = minim:1:maxim;
+            if first<0
+                first = first+360;
+            end
+            if second<0
+                second = second+360;
+            end
         end
     end
 end
