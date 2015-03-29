@@ -1,4 +1,4 @@
-function [angle_distr] = find_sector(stats, thresh, colorperc)
+function [angle_distr] = find_sector(stats, thresh, colorperc, pflag)
 
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
@@ -16,27 +16,33 @@ end
 
 %Plot results from traj_pdf
 subplot(1,3,1);
-traj_pdf = reshape(log(stats.traj_pdf_jstrial), 100*100, 1);
-traj_pdf = sort(traj_pdf(traj_pdf ~= -Inf ));
+data = stats.traj_pdf_jstrial;
+if strcmp(pflag, 'log')
+    data = log(data);
+    traj_pdf = reshape(data, 100*100, 1);
+    traj_pdf = sort(traj_pdf(traj_pdf ~= -Inf ));
+else
+    traj_pdf = reshape(data, 100*100, 1);
+    traj_pdf = sort(traj_pdf(traj_pdf ~= 0));
+end
 pcolorval2 = traj_pdf(floor(colorperc(2)/100*length(traj_pdf)));
 pcolorval1 = traj_pdf(floor(colorperc(1)/100*length(traj_pdf))+1);
-toplot = log(stats.traj_pdf_jstrial);
-pcolor(toplot); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold on;
-plot(sin(0:0.1:2*pi), cos(0:0.1:2*pi), 'y');
-hold off;
+pcolor(data); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold on;
 %Plot angle histogram
 
-subplot(1,3,2); %plot actual angle distribution (normalized)?
+subplot(1,3,2); %plot actual angle distribution 
 axis([1 359 0 inf]); hold on
 colorv = [0.75 0.7 0.6 0.5];
 for i = 25:25:100
     angle_dist = get_angle_distr_for_thresh(stats, i);
     c = colorv(i/25);
-    plot(1:1:360, angle_dist./(sum(angle_dist)), 'Color', [c c c]);
+    plot(1:1:360, angle_distr, 'Color', [c c c]);
 end
-plot(1:1:360, angle_distr./(sum(angle_distr)), 'r');
+plot(1:1:360, angle_distr, 'r');
 
-subplot(1,3,3); %plot 
+subplot(1,3,3);
+theta = (1:1:360)*pi./180;
+polar(theta', angle_distr);
 
 end
 
