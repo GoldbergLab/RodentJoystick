@@ -7,7 +7,7 @@ if numvarargs > 3
 end
 [default{1:numvarargs}] = varargin{:};
 [thresh, pflag, colorperc] = default{:};
-%if strcmp(pflag, 'log'); colorperc = [0 95]; end;
+if strcmp(pflag, 'log'); colorperc = [0 95]; end;
 
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
@@ -44,19 +44,41 @@ for i = 1:length(tstruct)
     end
 end
 for i = 1:360; trajindices(i).traj_ind = sort(trajindices(i).traj_ind); end
-fh = draw_plots(stats, angle_distr, pflag, colorperc);
+fh = draw_plots(stats, angle_distr, pflag, colorperc, sample_size);
 if sample_size < 10
     vec = ['Threshhold is too large, or not enough data. Not enough samples.'];
     error(vec);
 end
 
+
 end
 
-function [first, second] = calc_target_sector(start_angle, traj_indices)
-    
+function [first, second] = calc_target_sector(start_angle, traj_indices, ss, target_rate)
+second = -1;
+first = start_angle; union_indices = traj_indices(start_angle).traj_ind;
+distribution = zeros(360, 1);
+for i = start_angle:360;
+    union_indices = union(union_indices, traj_indices(i).traj_ind);
+    distribution(i) = length(union_indices)/ss;
+    if distribution(i)>=target_rate
+        second = i; break;
+    end
+end
+if distribution(360)<target_rate
+    for i = 1:start_angle
+        union_indices = union(union_indices, traj_indices(i).traj_ind);
+        distribution(i) = length(union_indices)/ss;
+        if distribution(i)>= target_rate
+            second = i; break;
+        end
+    end
+end
+if second == -1
+    error('Unable to compute target sector');
+end
 end
 
-function fh = draw_plots(stats, angle_distr, pflag, colorperc)
+function fh = draw_plots(stats, angle_distr, pflag, colorperc, ss)
 %just gathering data, with some processing;
 data = stats.traj_pdf_jstrial;
 if strcmp(pflag, 'log')
@@ -78,30 +100,32 @@ pcolorval1 = traj_pdf(floor(colorperc(1)/100*length(traj_pdf))+1);
 pcolor(data); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold off;
 
 %grey color values for linear angle distribution
-colorv = [0.75 0.7 0.6 0.5];
+colorv = [0.8 0.6 0.4 0.2];
 
 %plot normalized angle distribution
 subplot(1,3,2); 
-axis([1 359 0 inf]); axis square; hold on;
+axis([1 359 0 inf]); hold on;
 for i = 25:25:100
     angle_dist = get_angle_distr_for_thresh(stats, i);
     c = colorv(i/25);
     plot(1:1:360, angle_dist./(sum(angle_dist)), 'Color', [c c c]);
 end
 plot(1:1:360, angle_distr./sum(angle_distr), 'r');
+title(['Angle Distribution: (',num2str(ss),' trajectories)']); 
+xlabel('Angle (Degrees)'); ylabel('Probability Distribution');
 
 %plot polar angle distribution
 subplot(1,3,3);
 theta = (1:1:360)*pi./180;
 axmax = max(angle_distr./sum(angle_distr));
+polar(theta', angle_distr./sum(angle_distr), 'b'); hold on;
 for i = 25:25:100
     angle_dist = get_angle_distr_for_thresh(stats, i); c = colorv(i/25); hold on;
     l=polar(theta', angle_dist./sum(angle_dist)); hold on;
     axmax = max([axmax, max(angle_dist./sum(angle_dist))]);
     set(l,'Color', [c c c]);
 end
-polar(theta', angle_distr./sum(angle_distr), 'b'); hold on;
-axis([(-axmax) axmax (-axmax) axmax]); axis square;
+title(['Angle Distribution: (',num2str(ss),' trajectories)']);
 hold off;
 end
 
