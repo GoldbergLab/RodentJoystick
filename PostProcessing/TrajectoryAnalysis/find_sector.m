@@ -31,11 +31,13 @@
 %           logarithmic scale, 'norm' leaves probabilities as is.
 %           DEFAULT: 'log'
 %       colorperc :: [c1 c2] tells color plotter for trajectory
-%           distributions the percentiles caxis should use. This is
-%           automatically set to [0 95]
+%           distributions the percentiles caxis should use. This is always
+%           automatically set to [0 99] if logarithmic color mapping is
+%           used
+%           DEFAULT: [20 80]
 function [targsec, angle_distr, fh, trajindices] = find_sector(stats, varargin)
 %% argument handling
-default = {25, 95, 'log', [20 80]};
+default = {25, 95, 'log', [25 75]};
 numvarargs = length(varargin);
 if numvarargs > 3
     error('trajectory_analysis: too many arguments (> 5), only one required and four optional.');
@@ -85,7 +87,7 @@ start_angle = mod(180+max_index, 360)+1;
 [targsec] = calc_target_sector(start_angle, trajindices, sample_size, targ_rate/100);
 fh = draw_plots(stats, angle_distr, pflag, colorperc, sample_size, targsec, thresh);
 titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2)));
-subplottitle(fh, titlestr, 'yoff', -0.6);
+subplottitle(fh, titlestr,'fontsize', 16, 'yoff', -0.4);
 end
 
 function [sector, dist] = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
@@ -133,7 +135,7 @@ fh = figure('Position', [100, 100, 1200, 500]);
 subplot(1,3,1); hold on;
 title(['Trajectory Distribution: (',pflag,' scale)']); 
 xlabel('X Position+50'); ylabel('Y Position + 50');
-pcv2_ind = max(floor(colorperc(1)/100*length(traj_pdf)), length(traj_pdf));
+pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
 pcolorval2 = traj_pdf(pcv2_ind);
 pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
 pcolorval1 = traj_pdf(pcv1_ind);
