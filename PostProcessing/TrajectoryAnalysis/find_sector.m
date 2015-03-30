@@ -1,73 +1,75 @@
-function [angle_distr, fh, trajindices] = find_sector(stats, varargin)
-%argument handling
-default = {95, 'log', [20 80]};
+function [targsec, angle_distr, fh, trajindices] = find_sector(stats, varargin)
+%% argument handling
+default = {25, 95, 'log', [20 80]};
 numvarargs = length(varargin);
 if numvarargs > 3
     error('trajectory_analysis: too many arguments (> 3), only one required and three optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[thresh, pflag, colorperc] = default{:};
-if strcmp(pflag, 'log'); colorperc = [0 95]; end;
+[targ_rate, thresh, pflag, colorperc] = default{:};
+if strcmp(pflag, 'log'); colorperc = [0 99]; end;
 
+%% basic structure initialization
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
 %trajectory_indices:
 trajindices(1) = struct('traj_ind', []);
 for i= 2:360; trajindices(i) = struct('traj_ind', []); end;
 angle_distr = zeros(360,1); sample_size = 0;
+%% loop over all trajectories, assigning sectors to each one, then adding 
 for i = 1:length(tstruct)
     [first, second] = get_sector(tstruct(i).traj_x,tstruct(i).traj_y,thresh);
     if first ~= -1 && second ~= -1
-        if (first == 0); first = 360; end
-        if (second == 0); second = 360; end
+        if (first == 0); first = 360; end; if (second == 0); second = 360; end
         if (first>second)
             indices = [first:360, 1:second];
-            %add information to struct containing trajectory in
-            for j = first:360
-                trajindices(j).traj_ind = [trajindices(j).traj_ind; i];
-            end
-            for j = 1:second
-                trajindices(j).traj_ind = [trajindices(j).traj_ind; i];
-            end 
+            %add information to struct containing trajectory into struct
+            for j = first:360; trajindices(j).traj_ind = [trajindices(j).traj_ind; i]; end
+            for j = 1:second; trajindices(j).traj_ind = [trajindices(j).traj_ind; i]; end 
         else
             indices = first:second;
-            for j = indices
-                trajindices(j).traj_ind = [trajindices(j).traj_ind; i];
-            end
+            for j = indices; trajindices(j).traj_ind = [trajindices(j).traj_ind; i]; end
         end
         %add information about sector covered by trajectory to 
         %angle_distribution 
         angle_distr(indices)=1+angle_distr(indices);
         %note that not all trajectories are actually used, in computing a
-        %quarter, we only end up taking the subset above the trajectory
+        %quarter, we only end up taking the subset of the total
+        %trajectories in tstruct
         sample_size = sample_size + 1;
     end
 end
+%% now use processed data from tstruct to (1) draw plots and (2) find target
 for i = 1:360; trajindices(i).traj_ind = sort(trajindices(i).traj_ind); end
 fh = draw_plots(stats, angle_distr, pflag, colorperc, sample_size);
 if sample_size < 10
     vec = ['Threshhold is too large, or not enough data. Not enough samples.'];
     error(vec);
 end
-
+[~, max_index] = max(angle_distr);
+start_angle = mod(180+max_index, 360)+1;
+[targsec, distr] = calc_target_sector(start_angle, trajindices, sample_size, targ_rate/100);
+disp(distr);
 
 end
 
-function [first, second] = calc_target_sector(start_angle, traj_indices, ss, target_rate)
+function [sector, dist] = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
 second = -1;
 first = start_angle; union_indices = traj_indices(start_angle).traj_ind;
 distribution = zeros(360, 1);
+%% loop until 360'
 for i = start_angle:360;
     union_indices = union(union_indices, traj_indices(i).traj_ind);
-    distribution(i) = length(union_indices)/ss;
+    distribution(i) = length(union_indices)/sample_size;
     if distribution(i)>=target_rate
         second = i; break;
     end
 end
-if distribution(360)<target_rate
+%% if we still haven't reached the target, then we continue all the way around
+if second == -1
     for i = 1:start_angle
         union_indices = union(union_indices, traj_indices(i).traj_ind);
-        distribution(i) = length(union_indices)/ss;
+        distribution(i) = length(union_indices)/sample_size;
         if distribution(i)>= target_rate
             second = i; break;
         end
@@ -76,10 +78,11 @@ end
 if second == -1
     error('Unable to compute target sector');
 end
+sector = [first second]; dist = distribution;
 end
 
 function fh = draw_plots(stats, angle_distr, pflag, colorperc, ss)
-%just gathering data, with some processing;
+%% just gathering data, with some basic processing;
 data = stats.traj_pdf_jstrial;
 if strcmp(pflag, 'log')
     data = log(data);
@@ -91,7 +94,7 @@ else
 end
 
 fh = figure('Position', [100, 100, 1200, 500]);
-%Plot results from traj_pdf
+%% Plot results from traj_pdf
 subplot(1,3,1); hold on;
 title(['Trajectory Distribution: (',pflag,' scale)']); 
 xlabel('X Position+50'); ylabel('Y Position + 50');
@@ -102,7 +105,7 @@ pcolor(data); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold of
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
 
-%plot normalized angle distribution
+%% plot normalized angle distribution
 subplot(1,3,2); 
 axis([1 359 0 inf]); hold on;
 for i = 25:25:100
@@ -114,7 +117,7 @@ plot(1:1:360, angle_distr./sum(angle_distr), 'r');
 title(['Angle Distribution: (',num2str(ss),' trajectories)']); 
 xlabel('Angle (Degrees)'); ylabel('Probability Distribution');
 
-%plot polar angle distribution
+%% plot polar angle distribution
 subplot(1,3,3);
 theta = (1:1:360)*pi./180;
 axmax = max(angle_distr./sum(angle_distr));
