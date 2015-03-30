@@ -26,7 +26,7 @@
 %           DEFAULT: 25
 %       thresh :: only trajectory points with a magnitude above thresh will
 %           be used in computing angle distributions and then target sector
-%           DEFAULT: 95
+%           DEFAULT: 75
 %       pflag :: changes color mapping: 'log' places the color mapping on a
 %           logarithmic scale, 'norm' leaves probabilities as is.
 %           DEFAULT: 'log'
@@ -37,7 +37,7 @@
 %           DEFAULT: [20 80]
 function [targsec, angle_distr, fh, trajindices] = find_sector(stats, varargin)
 %% argument handling
-default = {25, 95, 'log', [25 75]};
+default = {25, 75, 'log', [25 75]};
 numvarargs = length(varargin);
 if numvarargs > 3
     error('trajectory_analysis: too many arguments (> 5), only one required and four optional.');
