@@ -90,11 +90,12 @@ titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2))
 subplottitle(fh, titlestr,'fontsize', 16, 'yoff', -0.4);
 end
 
+%target_rate is a number less than 1 (ex. 25)
 function [sector, dist] = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
 second = -1;
 first = start_angle; union_indices = traj_indices(start_angle).traj_ind;
 distribution = zeros(360, 1);
-%% loop until 360'
+%% loop until 360': accumulate probability distribution
 for i = start_angle:360;
     union_indices = union(union_indices, traj_indices(i).traj_ind);
     distribution(i) = length(union_indices)/sample_size;
