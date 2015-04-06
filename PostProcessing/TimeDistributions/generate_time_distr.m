@@ -21,7 +21,8 @@
 %   times:: array of time of data collection, in hours
 %       can be relative (0 is start time of data collection) or absolute
 %       (0 is 12am) depending on use of 'delay' argument
-%   day :: day of data collection/jstruct
+%   day :: day of data collection/jstruct - using Matlab reference time (an
+%       integer on the order of 10^5)
 % if 'plot' flag is used:
 %       np_plot:: handle to the figure generated of nose poke distribution
 %       rew_plot:: handle to the figure generated of reward distribution

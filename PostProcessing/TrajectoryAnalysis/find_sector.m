@@ -81,7 +81,12 @@ if sample_size < 10
     error(vec);
 end
 [~, max_index] = max(angle_distr);
-start_angle = mod(180+max_index, 360)+1;
+pos_starts = find(angle_distr == min(angle_distr));
+angle_dists = pos_starts - max_index;
+angle_dists(angle_dists < 1) = angle_dists(angle_dists < 1)+360;
+angle_dists(angle_dists > 180)= 360 - angle_dists(angle_dists>180);
+[~, max_dist] = max(angle_dists);
+start_angle = pos_starts(max_dist);
 [targsec, distr] = calc_target_sector(start_angle, trajindices, sample_size, targ_rate/100);
 fh = draw_plots(stats, angle_distr, pflag, colorperc, sample_size, targsec, thresh);
 titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2)));
@@ -142,19 +147,20 @@ colorv = [0.8 0.6 0.4 0.2];
 %% plot normalized angle distribution
 subplot(1,3,2); 
 axis([1 359 0 inf]); hold on;
-for i = 25:25:100
-    angle_dist = get_angle_distr_for_thresh(stats, i);
-    c = colorv(i/25);
-    plot(1:1:360, angle_dist./(sum(angle_dist)), 'Color', [c c c]);
+for i = 1:4
+    t = i*25; if i == 4; t = 95; end
+    [angle_dist, ssize] = get_angle_distr_for_thresh(stats, t);
+    c = colorv(i);
+    plot(1:1:360, angle_dist./ssize, 'Color', [c c c]);
 end
-plot(1:1:360, angle_distr./sum(angle_distr), 'r'); hold on;
+plot(1:1:360, angle_distr./ss, 'r'); hold on;
 %plot target range in green
 t1 = target(1); t2 = target(2);
 if t1<t2
-plot(t1:1:t2, angle_distr(t1:t2)./sum(angle_distr), 'g');
+plot(t1:1:t2, angle_distr(t1:t2)./ss, 'g');
 else
-plot(t1:1:360, angle_distr(t1:360)./sum(angle_distr), 'g');
-plot(1:1:t2, angle_distr(1:t2)./sum(angle_distr), 'g');
+plot(t1:1:360, angle_distr(t1:360)./ss, 'g');
+plot(1:1:t2, angle_distr(1:t2)./ss, 'g');
 end
 title(['Angle Distribution @ ', num2str(thresh), '%: ',num2str(ss),' trajectories']); 
 xlabel('Angle (Degrees)'); ylabel('Probability');
@@ -162,14 +168,14 @@ hold off;
 %% plot polar angle distribution
 subplot(1,3,3);
 theta = (1:1:360)*pi./180;
-axmax = max(angle_distr./sum(angle_distr));
-polar(theta', angle_distr./sum(angle_distr), 'r'); hold on;
+axmax = max(angle_distr./ss);
+polar(theta', angle_distr./ss, 'r'); hold on;
 if t1<t2
 
-polar((t1:1:t2)*pi./180, angle_distr(t1:t2)'./sum(angle_distr), 'g'); hold on;
+polar((t1:1:t2)*pi./180, angle_distr(t1:t2)'./ss, 'g'); hold on;
 else
-plot((t1:1:360)*pi./180, angle_distr(t1:360)'./sum(angle_distr), 'g'); hold on;
-plot((1:1:t2)*pi./180, angle_distr(1:t2)'./sum(angle_distr), 'g'); hold on;
+plot((t1:1:360)*pi./180, angle_distr(t1:360)'./ss, 'g'); hold on;
+plot((1:1:t2)*pi./180, angle_distr(1:t2)'./ss, 'g'); hold on;
 end
 %for i = 25:25:100
  %   angle_dist = get_angle_distr_for_thresh(stats, i); c = colorv(i/25); hold on;
@@ -182,10 +188,10 @@ hold off;
 end
 
 
-function [angle_distr] = get_angle_distr_for_thresh(stats, thresh)
+function [angle_distr, samplesize] = get_angle_distr_for_thresh(stats, thresh)
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
-angle_distr = zeros(360,1);
+angle_distr = zeros(360,1); samplesize = 0;
 for i = 1:length(tstruct)
     [first, second] = get_sector(tstruct(i).traj_x,tstruct(i).traj_y,thresh);
     if first ~= -1 && second ~= -1
@@ -194,6 +200,7 @@ for i = 1:length(tstruct)
         indices = first:second;
         if (first>second); indices = [first:360, 1:second]; end
         angle_distr(indices)=1+angle_distr(indices);
+        samplesize = samplesize + 1;
     end
 end
 end
