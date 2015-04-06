@@ -134,12 +134,15 @@ fh = figure('Position', [100, 100, 1200, 500]);
 %% Plot results from traj_pdf
 subplot(1,3,1); hold on;
 title(['Trajectory Distribution: (',pflag,' scale)']); 
-xlabel('X Position+50'); ylabel('Y Position + 50');
+xlabel('0.5*X+50'); ylabel('0.5*Y+ 50');
 pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
 pcolorval2 = traj_pdf(pcv2_ind);
 pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
 pcolorval1 = traj_pdf(pcv1_ind);
-pcolor(data); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold off;
+pcolor(data); shading flat; axis square; 
+x = [-100, -50, 0, 50, 100];
+set(gca,'XTick',x);
+caxis([pcolorval1 pcolorval2]); hold off;
 
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
@@ -174,8 +177,8 @@ if t1<t2
 
 polar((t1:1:t2)*pi./180, angle_distr(t1:t2)'./ss, 'g'); hold on;
 else
-plot((t1:1:360)*pi./180, angle_distr(t1:360)'./ss, 'g'); hold on;
-plot((1:1:t2)*pi./180, angle_distr(1:t2)'./ss, 'g'); hold on;
+polar((t1:1:360)*pi./180, angle_distr(t1:360)'./ss, 'g'); hold on;
+polar((1:1:t2)*pi./180, angle_distr(1:t2)'./ss, 'g'); hold on;
 end
 %for i = 25:25:100
  %   angle_dist = get_angle_distr_for_thresh(stats, i); c = colorv(i/25); hold on;
