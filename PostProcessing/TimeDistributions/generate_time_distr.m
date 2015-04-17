@@ -35,17 +35,24 @@
 %   generate_time_distr(jstruct, 10, 1, 'plot')
 
       
-function [np_plot, rew_plot, day, times] = generate_time_distr(jstruct, interval, fignum, flag)
-    interval = interval*60;
-    if strcmp(flag, 'plot')
-        [times, np_on, rew_on, day] = gen_final_data(jstruct, interval);
-        [plot] = plot_data(times, np_on, rew_on, fignum, day);
-        np_plot = plot; rew_plot = plot;
-    elseif  strcmp(flag, 'data')
-        [times, np_plot, rew_plot, day] = gen_final_data(jstruct, interval);
-    else
-       error('invalid flag argument')
-    end
+function [np_plot, rew_plot, day, times, cache] = generate_time_distr(jstruct, interval, fignum, flag)
+interval = interval*60;
+[times, np_plot, rew_plot, day] = gen_final_data(jstruct, interval);
+cache.times = times;
+cache.np_data = np_plot;
+cache.rw_data = rew_plot;
+cache.day = day;
+cache.title = datestr(floor(day));
+cache.xlabel = 'Time (hours)';
+cache.legend = {'Nosepoke'; 'Reward'};
+cache.axis = [0, 24, 0, inf];
+if strcmp(flag, 'plot')
+    [plot] = plot_data(fignum, cache);
+    np_plot = plot; rew_plot = plot;
+elseif  strcmp(flag, 'data')
+else
+    error('invalid flag argument')
+end
 end
 
 % gen_final_data (jstruct, int) gives the following vectors
@@ -137,16 +144,16 @@ end
 %   label :: string labeling the y-axis
 %   day :: an integer representing the MATLAB day
 % and ontimes, the time when the sensor comes on
-function [plot] = plot_data(times, np_data, rew_data, fig, day)
+function [plot] = plot_data(fig, cache)
     plot = figure(fig);
     hold on;
-    xlabel('Time (hours)');
-    title(datestr(floor(day)));
-    stairs(times, np_data, 'b');
-    stairs(times, rew_data, 'r');
-    legend('Nosepoke', 'Reward');
+    xlabel(cache.xlabel);
+    title(cache.title);
+    stairs(cache.times, cache.np_data, 'b');
+    stairs(cache.times, cache.rw_data, 'r');
+    legend(cache.legend{1}, cache.legend{2});
     legend('boxoff');
-    axis([0, 24, 0, inf]);
-    hold on;
+    axis(cache.axis);
+    hold off;
 end
 

@@ -1,21 +1,41 @@
 function doAllpp(working_dir) 
-working_dir
+disp(working_dir);
 if (numel(working_dir)==0)
 working_dir = uigetdir(pwd);
 end
-%%Combine files
- ppscript(working_dir);
- 
-%%filter nose poke data
-%  xy_np_combine(working_dir_1);
-
-%Get the onsets and joystick movements
-%[np js] =xy_js_onset(working_dir_1);
-
-%plot the onset aligned joystick onsets
-  %list = np_js_dist(np,js);
-
-% t_stats = traj_stat(np,js,working_dir);
+fileformatspec = '%f %f %s %s %s %s';
+numfield = 6;
+ppscript(working_dir,fileformatspec,numfield);
 jstruct=xy_makestruct(working_dir);
-
+stats=xy_getstats(jstruct);
 save(strcat(working_dir,'/jstruct.mat'),'jstruct');
+save(strcat(working_dir,'/stats.mat'),'stats');
+
+%run all post processing scripts, cache data in folder for GUI use
+ppdata_dir = strcat(working_dir,'/cached_ppdata');
+mkdir(ppdata_dir);
+failed = {};
+try
+[~, ~, ~, ~, generate_time_distr_cache] = generate_time_distr(jstruct, 20, 1, 'data');
+save(strcat(ppdata_dir,'/generate_time_distr_cache.mat'),'generate_time_distr_cache');
+catch
+    failed{end+1} = 'generate_time_distr';
+end
+try
+[~, ~, ~, ~, ~, hold_time_distr_cache] = hold_time_distr(stats.traj_struct, 50, 'plot', 'none', 2500);
+save(strcat(ppdata_dir,'/hold_time_distr_cache.mat'),'hold_time_distr_cache');
+catch
+    failed{end+1} = 'hold_time_distr';
+end
+try
+[~, ~, trajectory_analysis_cache] = trajectory_analysis(stats, 4,[400 1400], [0 0 0], 'plot', 'N/A', 'median', 'yes');
+save(strcat(ppdata_dir,'/trajectory_analysis_cache.mat'),'trajectory_analysis_cache');
+trajectory_analysis;
+catch
+    failed{end+1} = 'trajectory_analysis';
+end
+disp('The following Post Processing Scripts failed: ');
+close all;
+for i=1:length(failed)
+    display(failed{i});
+end

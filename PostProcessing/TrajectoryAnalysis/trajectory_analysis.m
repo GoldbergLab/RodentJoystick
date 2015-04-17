@@ -38,27 +38,28 @@
 %           'mean'- plots mean and mean+/- stdev, 'both' - plots both
 %           groups
 %           DEFAULT: 'N/A'
-function [sortedtraj, fh] = trajectory_analysis(stats, varargin)
+function [sortedtraj, fh, cache] = trajectory_analysis(stats, varargin)
 %how many plots to do - this depends on other stuff, look through
 %below as well. Look through subplotting routine to make sure nothing
 %critical is changed
 
-default = {10,[400 1400], [300 30 60], 'plot', 'N/A', 'median'};
+default = {10,[400 1400], [300 30 60], 'plot', 'N/A', 'median', 'no'};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('trajectory_analysis: too many arguments (> 7), only one required and six optional.');
+if numvarargs > 7
+    error('trajectory_analysis: too many arguments (> 8), only one required and seven optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag] = default{:};
-
+[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, cacheflag] = default{:};
 %divide the desired time range into number of bins based on number of plots
 %desired
 bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
 bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
 tstruct=stats.traj_struct; 
 totaltraj = length(tstruct);
-holdtimes = hold_time_distr(tstruct, bin_length, 'data');
-sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes);
+%[~,~,~, rw_or_stop] = hold_time_distr(tstruct, bin_length, 'data');
+%sortedtraj = sort_traj_into_bins(tstruct, bins, rw_or_stop);
+hts = hold_time_distr(tstruct, bin_length, 'data');
+sortedtraj = sort_traj_into_bins(tstruct, bins, hts);
 
 %sometimes we only want the data from sorted traj, hence the option not to
 %plot
@@ -75,7 +76,7 @@ if strcmp('plot', pflag)
         
         subplot(2, PLOT_RANGE/2, i);
         axis([0, bin.lt, 0, 100]);
-        title(titlestr); hold on;
+        title(titlestr, 'FontSize', 8); hold on;
         
         if strcmp(sflag, 'median')
         plot(time, upperbnd, 'r', time, median, 'g', time, lowerbnd, 'r'); hold on;
@@ -97,6 +98,17 @@ if strcmp('plot', pflag)
         end
         ylabel('Joystick Mag/Traj Percentage');
         xlabel('Time(ms)')
+        if strcmp(cacheflag, 'yes')
+            cache(i).upperbnd = upperbnd; cache(i).lowerbnd = lowerbnd;
+            cache(i).median = median; cache(i).mean = mean; cache(i).stdev=stdev;
+            cache(i).time = time;
+            cache(i).numbers = normalized;
+            cache(i).title = titlestr;
+            cache(i).xlabel = 'Time(ms)';
+            cache(i).ylabel = 'Joystick Mag/Traj Percentage';
+            cache(i).axis = [0, bin.lt, 0, 100];
+            cache(i).contigency = CONTL;
+        end
     end
     if strcmp(sflag, 'median')
     legend('3rd quartile','median', '1st quartile');
