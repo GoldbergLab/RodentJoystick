@@ -88,7 +88,7 @@ angle_dists(angle_dists > 180)= 360 - angle_dists(angle_dists>180);
 [~, max_dist] = max(angle_dists);
 start_angle = pos_starts(max_dist);
 [targsec, distr] = calc_target_sector(start_angle, trajindices, sample_size, targ_rate/100);
-[fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, sample_size, targsec, thresh);
+[fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, sample_size, targsec, thresh, cacheflag);
 titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2)));
 subplottitle(fh, titlestr,'fontsize', 14, 'yoff', 0.05, 'xoff', -0.1);
 end
@@ -142,12 +142,13 @@ else
     traj_pdf = reshape(data, 100*100, 1);
     traj_pdf = sort(traj_pdf(traj_pdf ~= 0));
 end
-
 fh = figure('Position', [0, 0, 600,1000]);
 %% Plot results from traj_pdf
+tstr = ['Trajectory Distribution: (',pflag,' scale)'];
+xlab = '0.5*X+50'; ylab = '0.5*Y+ 50';
 subplot(3,1,1); hold on;
-title(['Trajectory Distribution: (',pflag,' scale)']); 
-xlabel('0.5*X+50'); ylabel('0.5*Y+ 50');
+title(tstr); xlabel(xlab); ylabel(ylab);
+
 pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
 pcolorval2 = traj_pdf(pcv2_ind);
 pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
