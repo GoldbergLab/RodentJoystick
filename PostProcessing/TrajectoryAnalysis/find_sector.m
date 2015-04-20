@@ -36,7 +36,7 @@
 %           used
 %           DEFAULT: [20 80]
 function [targsec, angle_distr, fh, trajindices] = find_sector(stats, varargin)
-%% argument handling
+% argument handling
 default = {25, 75, 'log', [25 75]};
 numvarargs = length(varargin);
 if numvarargs > 3
@@ -46,14 +46,14 @@ end
 [targ_rate, thresh, pflag, colorperc] = default{:};
 if strcmp(pflag, 'log'); colorperc = [0 99]; end;
 
-%% basic structure initialization
+% basic structure initialization
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
 %trajectory_indices:
 trajindices(1) = struct('traj_ind', []);
 for i= 2:360; trajindices(i) = struct('traj_ind', []); end;
 angle_distr = zeros(360,1); sample_size = 0;
-%% loop over all trajectories, assigning sectors to each one, then adding 
+% loop over all trajectories, assigning sectors to each one, then adding 
 for i = 1:length(tstruct)
     [first, second] = get_sector(tstruct(i).traj_x,tstruct(i).traj_y,thresh);
     if first ~= -1 && second ~= -1
@@ -76,7 +76,7 @@ for i = 1:length(tstruct)
         sample_size = sample_size + 1;
     end
 end
-%% now use processed data from tstruct to (1) draw plots and (2) find target
+%now use processed data from tstruct to (1) draw plots and (2) find target
 for i = 1:360; trajindices(i).traj_ind = sort(trajindices(i).traj_ind); end
 if sample_size < 10
     vec = ['Threshhold is too large, or not enough data. Not enough samples.'];
@@ -90,12 +90,24 @@ titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2))
 subplottitle(fh, titlestr,'fontsize', 16, 'yoff', -0.4);
 end
 
-%target_rate is a number less than 1 (ex. 25)
-function [sector, dist] = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
+%calc_target_sector computes the target sector with the following arguments
+%ARGUMENTS: 
+%   start_angle: initial angle for target sector computation
+%   traj_indices: struct with field trajindices, satisfying the property
+%       that traj_indices(i).trajindices is a vector of indices
+%       corresponding to the trajectories that have a point at angle i
+%   sample_size: number of trajectories in the struct traj_indices
+%   target_rate: the desired reward rate (i.e. 25%) as a number less than
+%       1. i.e. 0.25
+%OUTPUT:
+%   sector: a two entry vector [a1 a2] where a1 defines the start angle, and
+%           a2 definies the end angle, moving counterclockwise.
+%           I.e., sector = [350 10] defines a 20 degree arc (not 340)
+function sector = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
 second = -1;
 first = start_angle; union_indices = traj_indices(start_angle).traj_ind;
 distribution = zeros(360, 1);
-%% loop until 360': accumulate probability distribution
+% loop until 360': accumulate probability distribution
 for i = start_angle:360;
     union_indices = union(union_indices, traj_indices(i).traj_ind);
     distribution(i) = length(union_indices)/sample_size;
@@ -103,7 +115,7 @@ for i = start_angle:360;
         second = i; break;
     end
 end
-%% if we still haven't reached the target, then we continue all the way around
+% if we still haven't reached the target, then we continue all the way around
 if second == -1
     for i = 1:start_angle
         union_indices = union(union_indices, traj_indices(i).traj_ind);
@@ -116,11 +128,11 @@ end
 if second == -1
     error('Unable to compute target sector');
 end
-sector = [first second]; dist = distribution;
+sector = [first second];
 end
 
 function fh = draw_plots(stats, angle_distr, pflag, colorperc, ss, target, thresh)
-%% just gathering data, with some basic processing;
+% just gathering data, with some basic processing;
 data = stats.traj_pdf_jstrial;
 if strcmp(pflag, 'log')
     data = log(data);
@@ -132,7 +144,7 @@ else
 end
 
 fh = figure('Position', [100, 100, 1200, 500]);
-%% Plot results from traj_pdf
+% Plot results from traj_pdf
 subplot(1,3,1); hold on;
 title(['Trajectory Distribution: (',pflag,' scale)']); 
 xlabel('X Position+50'); ylabel('Y Position + 50');
@@ -145,7 +157,7 @@ pcolor(data); shading flat; axis square; caxis([pcolorval1 pcolorval2]); hold of
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
 
-%% plot normalized angle distribution
+% plot normalized angle distribution
 subplot(1,3,2); 
 axis([1 359 0 inf]); hold on;
 for i = 25:25:100
@@ -154,7 +166,7 @@ for i = 25:25:100
     plot(1:1:360, angle_dist./(sum(angle_dist)), 'Color', [c c c]);
 end
 plot(1:1:360, angle_distr./sum(angle_distr), 'r'); hold on;
-%plot target range in green
+    %plot target range in green
 t1 = target(1); t2 = target(2);
 if t1<t2
 plot(t1:1:t2, angle_distr(t1:t2)./sum(angle_distr), 'g');
@@ -166,7 +178,7 @@ end
 title(['Angle Distribution @ ', num2str(thresh), '%: ',num2str(ss),' trajectories']); 
 xlabel('Angle (Degrees)'); ylabel('Probability');
 
-%% plot polar angle distribution
+% plot polar angle distribution
 subplot(1,3,3);
 theta = (1:1:360)*pi./180;
 axmax = max(angle_distr./sum(angle_distr));
@@ -181,7 +193,7 @@ title(['Angle Distribution: (',num2str(ss),' trajectories)']);
 hold off;
 end
 
-
+% 
 function [angle_distr] = get_angle_distr_for_thresh(stats, thresh)
 tstruct = stats.traj_struct;
 %360th slot corresponds to 0
