@@ -31,7 +31,7 @@ function [jstruct] = xy_makestruct(working_dir)
 
 working_dir_1 = strcat(working_dir,'/','comb');
 filelist = dir(strcat(working_dir_1,'/*.mat'));
-load(strcat(working_dir_1,'\',filelist(1).name));
+load(strcat(working_dir_1,'/',filelist(1).name));
 
 fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
 time_stamp = fileinfo.datenum;
