@@ -47,7 +47,12 @@ for i=1:length(filelist)
     % first touch_sense
     js_r = sensor_on_off_times(working_buff(3,:));   
     % second touch sense
-    js_l = sensor_on_off_times(working_buff(4,:));   
+    js_l = sensor_on_off_times(working_buff(4,:));
+    %Laser on and off
+    if size(working_buff,1)>6
+    laser_on = sensor_on_off_times(working_buff(7,:));
+    jstruct(i).laser_on = laser_on;
+    end
     %mark reward times
     reward_del = working_buff(6,:);
     reward_logical = (reward_del>0.5);
@@ -100,7 +105,7 @@ end
 % in the file
 function [pairs] = sensor_on_off_times(rawsens)
     pairs = [];
-    sens_logic = (rawsens>0.5);
+    sens_logic = ([0,rawsens]>0.5);
     l=1;
     if sum(sens_logic)>1
         sense_transition = diff(sens_logic); %this will show the transitions 

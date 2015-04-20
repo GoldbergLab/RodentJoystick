@@ -3,8 +3,8 @@ disp(working_dir);
 if (numel(working_dir)==0)
 working_dir = uigetdir(pwd);
 end
-fileformatspec = '%f %f %s %s %s %s';
-numfield = 6;
+fileformatspec = '%f %f %s %s %s %s %s';
+numfield = 7;
 ppscript(working_dir,fileformatspec,numfield);
 jstruct=xy_makestruct(working_dir);
 stats=xy_getstats(jstruct);
