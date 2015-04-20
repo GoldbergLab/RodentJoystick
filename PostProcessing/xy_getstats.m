@@ -100,18 +100,26 @@ for struct_index=1:length(jstruct)
                 % Post-touch onset
                 post_start =  max(js_pairs_l(jt_js_temp,1)); 
                 % Post-touch offset
-                post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2); 
+                post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2);
                 %End of trajectory is min of nosepoke ending,joystick
-                %touch offset, whichever comes first
+                %touch offset,or reward offset if a rewarded trial whichever comes first
                 stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
+
+                if js_reward(j)
+                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]); 
+                else
+                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]); 
+                end
+                
                 traj_x_t = traj_x(js_pairs_r(j,1):stop_p);
                 traj_y_t = traj_y(js_pairs_r(j,1):stop_p);
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));
-
+                %make sure nose poke occurs at point where joystick mag <50
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
+                    traj_struct(k).magtraj = mag_traj;
                     traj_struct(k).js_onset = js_pairs_r(j,1);
                     traj_struct(k).start_p = start_p;
                     traj_struct(k).stop_p = stop_p;
@@ -119,13 +127,13 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).rw_onset = 0;
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
-                        onset_ind = onset_ind + 1;
+                        onset_ind = onset_ind + 1;                        
                     end
-                    traj_struct(k).magtraj = mag_traj;
                     traj_struct(k).magatnp = ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5));
                     traj_struct(k).max_value_ind = find(mag_traj==max(mag_traj));
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
+                    traj_struct(k).rw_or_stop = rw_or_stop;
                     traj_pdf_jstrial = traj_pdf_jstrial + hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
                 end
             end    

@@ -106,8 +106,9 @@ function filelist_box_Callback(hObject, eventdata, handles)
  js_pairs_r = jstruct(struct_index).js_pairs_r;
  js_pairs_l = jstruct(struct_index).js_pairs_l;
  js_reward = jstruct(struct_index).js_reward;
- 
- 
+ try
+ laser_on = jstruct(struct_index).laser_on;
+ end
    
  samp_rate = 1000; 
 
@@ -135,6 +136,12 @@ function filelist_box_Callback(hObject, eventdata, handles)
     js_vect_l(js_pairs_l(i,1):js_pairs_l(i,2))=4;
  end
  
+ laser_vect = zeros(1,length(traj_x));
+ try
+     for i=1:size(laser_on,1)
+     laser_vect(laser_on(i,1):laser_on(i,2)) = 5;
+     end
+ end
  
  str_ls = 'bgrcmykbgrcmyk';
 
@@ -165,6 +172,9 @@ function filelist_box_Callback(hObject, eventdata, handles)
  hold on
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_r*1.5,'k','LineWidth',2);
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_l*1,'r','LineWidth',2);
+ try
+ plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,laser_vect*1,'g','LineWidth',2);
+ end
  
  axes(handles.axes7)
  cla

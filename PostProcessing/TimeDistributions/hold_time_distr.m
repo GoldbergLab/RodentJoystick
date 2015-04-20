@@ -1,4 +1,4 @@
-function [holdtimes,rewtimes,js2rew, phandle] = hold_time_distr(tstruct, hist_int, varargin)
+function [holdtimes,rewtimes,js2rew, rw_or_stop, phandle, cache] = hold_time_distr(tstruct, hist_int, varargin)
 %hold_time_distr plots the distribution of hold times with a histogram
 %   interval specified by hist_int on a time range of 0 to TIME_RANGE
 %   milliseconds
@@ -32,13 +32,16 @@ if numvarargs > 3
 end
 [default{1:numvarargs}] = varargin{:};
 [plotflag, statflag, TIME_RANGE] = default{:};
+phandle = [];
 
 %Actually get data now, just looping over tstruct
 holdtimes = zeros(length(tstruct), 1);
+rw_or_stop = zeros(length(tstruct), 1);
 rewtimes = []; j =1;
 js2rew = [];
 for i = 1:length(tstruct)
     holdtimes(i) = length(tstruct(i).magtraj);
+    rw_or_stop(i) = tstruct(i).rw_or_stop - tstruct(i).js_onset;
     if tstruct(i).rw == 1
         rewtimes(j) = length(tstruct(i).magtraj);
         js2rew(j) = tstruct(i).rw_onset;
@@ -60,8 +63,15 @@ if strcmp(plotflag, 'plot')
     xlabel('Hold Time (ms)'); ylabel('Trajectory Distributions');
     titlestr=['Hold Time Distributions: ', num2str(length(holdtimes)), ' trajectories'];
     title(titlestr); hold on;
-    stairs(timerange, ht_distr./(sum(ht_distr)), 'b'); hold on;
-    stairs(timerange, rewht_distr./(sum(rewht_distr)), 'r'); hold on;
+    cache.holdtimedistr.title=titlestr;
+    cache.holdtimedistr.xlabel = 'Hold Time (ms)';
+    cache.holdtimedistr.ylabel = 'Trajectory Distributions';
+    cache.holdtimedistr.holdtimedistr = ht_distr./(sum(ht_distr));
+    cache.holdtimedistr.rewarddistr = rewht_distr./(sum(rewht_distr));
+    stairs(timerange, cache.holdtimedistr.holdtimedistr, 'b'); hold on;
+    stairs(timerange, cache.holdtimedistr.rewarddistr, 'r'); hold on;
+    cache.holdtimedistr.times = timerange;
+    cache.holdtimedistr.legend={'all'; 'reward distribution'};
     legend('all', 'reward distribution');
     
     subplot(NUM_PLOTS,1,2); hold on;
@@ -69,21 +79,37 @@ if strcmp(plotflag, 'plot')
     titlestr=['Rewarded Trajectory Rate: ', num2str(length(rewtimes)), ' trajectories'];
     title(titlestr); 
     hold on;
-    stairs(timerange, rewht_distr./ht_distr, 'r'); hold on;
+    cache.rewardrate.times =  timerange;
+    cache.rewardrate.reward_rates =  rewht_distr./ht_distr;
+    stairs(timerange, cache.rewardrate.reward_rates, 'r'); hold on;
     axis([0 inf 0 1]);
+    cache.rewardrate.axis = [0 inf 0 1];
+    cache.rewardrate.title=titlestr;
+    cache.rewardrate.xlabel = 'Hold Time (ms)';
+    cache.rewardrate.ylabel = 'Reward Rate Percentage for Hold Time';
     
     subplot(NUM_PLOTS,1,3); hold on;
-    title('Joystick Onset Time to Reward Time Distributions');
-    xlabel('JS Onset to Reward (ms)'); ylabel('Number of Trajectories'); 
+    titlestr = 'Joystick Onset Time to Reward Time Distributions';
+    title(titlestr);
+    cache.onsettoreward.title = titlestr;
+    xlabel('JS Onset to Reward (ms)'); ylabel('Number of Trajectories');
+    cache.onsettoreward.xlabel = 'JS Onset to Reward (ms)';
+    cache.onsettoreward.ylabel = 'Number of Trajectories';
+    cache.onsettoreward.ylabel = 'Number of Trajectories';
+    cache.onsettoreward.distribution =  js_to_rew_distr;
+    cache.onsettoreward.times = timerange;
     stairs(timerange, js_to_rew_distr, 'g'); hold on;
 end
+cache.meanrewardtime = mean(rewtimes);
+cache.medianrewardtime = median(rewtimes);
+cache.stdevrewardtime = std(rewtimes);
 if strcmp(statflag, 'stats')
     disp('mean reward hold time:')
-    disp(mean(rewtimes));
+    disp(cache.meanrewardtime);
     disp('median reward hold time:')
-    disp(median(rewtimes));
+    disp(cache.medianrewardtime);
     disp('stdev reward hold time:')
-    disp(std(rewtimes));
+    disp(cache.stdevrewardtime);
 end
 
 
