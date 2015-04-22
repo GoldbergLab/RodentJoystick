@@ -77,7 +77,7 @@ end
 %now use processed data from tstruct to (1) draw plots and (2) find target
 for i = 1:360; trajindices(i).traj_ind = sort(trajindices(i).traj_ind); end
 if sample_size < 10
-    vec = ['Threshhold is too large, or not enough data. Not enough samples.'];
+    vec = 'Threshhold is too large, or not enough data. Not enough samples.';
     error(vec);
 end
 [~, max_index] = max(angle_distr);
@@ -196,6 +196,7 @@ else
     cache.polardistr.target2=(1:1:t2)*pi./180;
 end
 
+fh = [];
 if strcmp(cacheflag, 'no')
     %plot traj_pdf
     fh = figure('Position', [0, 0, 600,1000]);

@@ -57,22 +57,22 @@ js_to_rew_distr = histc(js2rew, timerange);
 
 %boring stuff below, just plotting/displaying information
 if strcmp(plotflag, 'plot')
-    NUM_PLOTS=3; phandle = figure; hold on;
-    
-    subplot(NUM_PLOTS,1,1);hold on;
-    xlabel('Hold Time (ms)'); ylabel('Trajectory Distributions');
     titlestr=['Hold Time Distributions: ', num2str(length(holdtimes)), ' trajectories'];
-    title(titlestr); hold on;
     cache.holdtimedistr.title=titlestr;
     cache.holdtimedistr.xlabel = 'Hold Time (ms)';
     cache.holdtimedistr.ylabel = 'Trajectory Distributions';
     cache.holdtimedistr.holdtimedistr = ht_distr./(sum(ht_distr));
     cache.holdtimedistr.rewarddistr = rewht_distr./(sum(rewht_distr));
-    stairs(timerange, cache.holdtimedistr.holdtimedistr, 'b'); hold on;
-    stairs(timerange, cache.holdtimedistr.rewarddistr, 'r'); hold on;
     cache.holdtimedistr.times = timerange;
     cache.holdtimedistr.legend={'all'; 'reward distribution'};
-    legend('all', 'reward distribution');
+    
+    NUM_PLOTS=3; phandle = figure; hold on;
+    subplot(NUM_PLOTS,1,1);hold on;
+    xlabel(cache.holdtimedistr.xlabel); ylabel(cache.holdtimedistr.ylabel);
+    stairs(timerange, cache.holdtimedistr.holdtimedistr, 'b'); hold on;
+    stairs(timerange, cache.holdtimedistr.rewarddistr, 'r'); hold on;
+    title(cache.holdtimedistr.title); hold on;
+    legend(cache.holdtimedistr.legend{1}, cache.holdtimedistr.legend{2});
     
     subplot(NUM_PLOTS,1,2); hold on;
     xlabel('Hold Time (ms)'); ylabel('Reward Rate Percentage for Hold Time'); 
@@ -82,11 +82,12 @@ if strcmp(plotflag, 'plot')
     cache.rewardrate.times =  timerange;
     cache.rewardrate.reward_rates =  rewht_distr./ht_distr;
     stairs(timerange, cache.rewardrate.reward_rates, 'r'); hold on;
-    axis([0 inf 0 1]);
     cache.rewardrate.axis = [0 inf 0 1];
     cache.rewardrate.title=titlestr;
     cache.rewardrate.xlabel = 'Hold Time (ms)';
     cache.rewardrate.ylabel = 'Reward Rate Percentage for Hold Time';
+    axis(cache.rewardrate.axis);
+
     
     subplot(NUM_PLOTS,1,3); hold on;
     titlestr = 'Joystick Onset Time to Reward Time Distributions';
