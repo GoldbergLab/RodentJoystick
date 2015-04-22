@@ -105,7 +105,7 @@ end
 % in the file
 function [pairs] = sensor_on_off_times(rawsens)
     pairs = [];
-    sens_logic = ([0,rawsens]>0.5);
+    sens_logic = ([0,rawsens,0]>0.5);
     l=1;
     if sum(sens_logic)>1
         sense_transition = diff(sens_logic); %this will show the transitions 

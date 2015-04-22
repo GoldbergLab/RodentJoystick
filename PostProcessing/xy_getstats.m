@@ -65,7 +65,12 @@ for struct_index=1:length(jstruct)
     rw_onset = jstruct(struct_index).reward_onset;
     js_pairs_r = jstruct(struct_index).js_pairs_r;
     js_pairs_l = jstruct(struct_index).js_pairs_l;
-    js_reward = jstruct(struct_index).js_reward;  
+    js_reward = jstruct(struct_index).js_reward;
+    
+    try
+        laser_on = jstruct(struct_index).laser_on;        
+    end
+    
     %% Process, and develop traj_struct
     start_temp =0;
     onset_ind = 1;
@@ -106,9 +111,22 @@ for struct_index=1:length(jstruct)
                 stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
 
                 if js_reward(j)
-                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]); 
+                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)])-js_pairs_r(j,1); 
                 else
-                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]); 
+                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]) - js_pairs_r(j,1); 
+                end              
+                
+                %If optogenetic expt was on, determine if "Hit" trial or
+                %"Catch" trial
+                
+                try
+                if sum(((laser_on(:,1))>js_pairs_r(j,1))&((laser_on(:,1))<js_pairs_r(j,2)))>0
+                    laser = 1;
+                else
+                    laser = 0;
+                end
+                catch
+                    laser = 0;
                 end
                 
                 traj_x_t = traj_x(js_pairs_r(j,1):stop_p);
@@ -117,6 +135,8 @@ for struct_index=1:length(jstruct)
                 %make sure nose poke occurs at point where joystick mag <50
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
+                    
+                    
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
                     traj_struct(k).magtraj = mag_traj;
@@ -125,6 +145,7 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).stop_p = stop_p;
                     traj_struct(k).rw = js_reward(j);
                     traj_struct(k).rw_onset = 0;
+                    traj_struct(k).laser = laser;
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
                         onset_ind = onset_ind + 1;                        
