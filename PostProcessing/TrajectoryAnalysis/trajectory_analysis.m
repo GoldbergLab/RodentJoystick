@@ -38,7 +38,7 @@
 %           plot. 'median' - plots median and first/third quartiles,
 %           'mean'- plots mean and mean+/- stdev, 'both' - plots both
 %           groups
-%           DEFAULT: 'N/A'
+%           DEFAULT: 'median'
 function [sortedtraj, fh, cache] = trajectory_analysis(stats, varargin)
 %how many plots to do - this depends on other stuff, look through
 %below as well. Look through subplotting routine to make sure nothing
@@ -77,8 +77,7 @@ if strcmp('plot', pflag)
         percent = num2str(100*inittraj/totaltraj, 4); format bank;
         cache(i).title = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
         cache(i).axis = [0, bin.lt, 0, 100];
-        cache(i).xlabel = 'Time(ms)'; 
-        cache(i).ylabel = 'Joystick Mag/Traj Percentage';
+        cache(i).xlabel = 'Time(ms)'; cache(i).ylabel = 'Joystick Mag/Traj Percentage';
         cache(i).contigency = CONTL;
         cache(i).legend_flag = sflag;
         %entire block below can be copied to plot from cache in gui

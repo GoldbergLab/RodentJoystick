@@ -38,7 +38,7 @@ function [targsec, distr, fh, angle_distr, cache] = find_sector(stats, varargin)
 default = {25, 75, 'log', [25 75], 'no'};
 numvarargs = length(varargin);
 if numvarargs > 5
-    error('trajectory_analysis: too many arguments (> 6), only one required and five optional.');
+    error('find_sector: too many arguments (> 6), only one required and five optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [targ_rate, thresh, pflag, colorperc, cacheflag] = default{:};

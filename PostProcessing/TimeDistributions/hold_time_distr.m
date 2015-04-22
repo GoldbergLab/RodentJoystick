@@ -28,7 +28,7 @@ function [holdtimes,rewtimes,js2rew, rw_or_stop, phandle, cache] = hold_time_dis
 default = {'plot', 'none', 2000, 'no'};
 numvarargs = length(varargin);
 if numvarargs > 4
-    error('multi_time_distr: too many arguments (> 5), only two required and four optional.');
+    error('hold_time_distr: too many arguments (> 5), only two required and four optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [plotflag, statflag, TIME_RANGE, cache_flag] = default{:};
