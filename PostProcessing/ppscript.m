@@ -4,7 +4,7 @@ filelist = dir(strcat(working_dir,'/*.dat'));
 filelist = filelist([filelist.bytes]>0); %Remove all empty files from the list
 
 working_buff=[];
-mkdir(strcat(working_dir,'/comb'));
+mkdir(strcat(working_dir,'/comb/'));
 open_flag=0;
 
 fid = fopen(strcat(working_dir,'/',filelist(1).name));

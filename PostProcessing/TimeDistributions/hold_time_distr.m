@@ -40,7 +40,7 @@ rw_or_stop = zeros(length(tstruct), 1);
 rewtimes = []; j =1;
 js2rew = [];
 for i = 1:length(tstruct)
-    holdtimes(i) = length(tstruct(i).magtraj);
+    holdtimes(i) = length(tstruct(i).magtraj(1:tstruct(i).rw_or_stop)); %Teja 
     rw_or_stop(i) = tstruct(i).rw_or_stop - tstruct(i).js_onset;
     if tstruct(i).rw == 1
         rewtimes(j) = length(tstruct(i).magtraj);

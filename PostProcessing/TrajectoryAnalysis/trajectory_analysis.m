@@ -185,7 +185,7 @@ for i = 1:length(holdtimes)
     if bin_ind ~= -1
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj, 'time', holdtimes(i));
+        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', holdtimes(i));
     end
 end
 end
