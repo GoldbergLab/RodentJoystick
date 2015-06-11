@@ -294,7 +294,15 @@ function dateselection_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-handles.working_dir = genpath('K:\DataSync\expt_opto_thal_var_2');
+handles.working_dir = 'K:\DataSync\expt_opto_thal_var_2';
+filelisting = dir(handles.working_dir);
+for i=1:length(filelisting)
+    if filelisting(i).isdir
+        str_list{i} = filelisting(i).name;
+    end
+end
+set(handles.dateselection,'String', str_list);
+guidata(hObject, handles);
 end
 
 
@@ -306,9 +314,14 @@ function selectdir_Callback(hObject, eventdata, handles)
 working_dir = uigetdir(handles.working_dir);
 handles.working_dir = working_dir;
 set(handles.dateselection,'Value',1);
+set(handles.workingdirlabel, 'String', working_dir);
 filelisting = dir(working_dir);
-for i=1:size(filelisting,2)
-     str_list{i} = filelisting(i).filename;
- end
+for i=1:length(filelisting)
+    if filelisting(i).isdir
+        str_list{i} = filelisting(i).name;
+    end
+end
+set(handles.dateselection,'String', str_list);
+guidata(hObject, handles);
 
 end
