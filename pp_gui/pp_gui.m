@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 11-Jun-2015 16:38:38
+% Last Modified by GUIDE v2.5 11-Jun-2015 17:39:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -84,6 +84,7 @@ function daytypeselect_SelectionChangeFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 posfunctionarray = {'Nosepoke Joystick Distribution';
         'Nosepoke Post Distribution';
+        'NP Joystick and NP Post Distr';
         'Activity Distribution';
         'Hold Time Distributions';
         'Find Sector';
@@ -93,9 +94,9 @@ handles.assignedplots = {};
 if eventdata.NewValue == handles.singledayselect
     handles.possiblefunctionarray =posfunctionarray;
 elseif eventdata.NewValue == handles.twodayselect 
-    handles.possiblefunctionarray = posfunctionarray(1:5);
+    handles.possiblefunctionarray = posfunctionarray(1:6);
 else
-    handles.possiblefunctionarray =posfunctionarray(1:3);   
+    handles.possiblefunctionarray =posfunctionarray(1:4);   
 end
 set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
 %MATLAB doesn't reset listbox index to 1, so you have to manually change the
@@ -267,8 +268,6 @@ function addfunction_Callback(hObject, eventdata, handles)
 end
 
 
-
-
 % --- Executes on selection change in dateselectionbox.
 function dateselectionbox_Callback(hObject, eventdata, handles)
 % hObject    handle to dateselectionbox (see GCBO)
@@ -312,4 +311,12 @@ for i = 1:length(filelisting)
 end
 set(handles.dateselectionbox, 'String', str_list);
 guidata(hObject, handles);
+end
+
+
+% --- Executes on button press in addday.
+function addday_Callback(hObject, eventdata, handles)
+% hObject    handle to addday (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 end
