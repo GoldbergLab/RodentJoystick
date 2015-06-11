@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 11-Jun-2015 12:01:22
+% Last Modified by GUIDE v2.5 11-Jun-2015 12:22:59
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -92,7 +92,7 @@ if eventdata.NewValue == handles.singledayselect
         'Find Sector (3)';
         'Trajectory Analysis (4)';
         'Trajectory Analysis (6)'};
-elseif evendata.NewValue == handles.twodayselect 
+elseif eventdata.NewValue == handles.twodayselect 
     handles.possiblefunctionarray ={'Nosepoke Joystick Distribution (2)';
         'Nosepoke Post Distribution (2)';
         'Hold Time Distributions (6)';
@@ -103,7 +103,7 @@ else
         'Nosepoke Post Distribution';
         'Activity Distribution'};    
 end
-set(handles.plottingfunctions, 'String', handles.functionarray);
+set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
 guidata(hObject, handles);
 end
 
@@ -122,16 +122,10 @@ end
 end
 
 
-
+%Argument Handling - nothing happens here, exist solely to not crash gui
 function arg1_Callback(hObject, eventdata, handles)
-% hObject    handle to arg1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of arg1 as text
-%        str2double(get(hObject,'String')) returns contents of arg1 as a double
+% do nothing
 end
-
 % --- Executes during object creation, after setting all properties.
 function arg1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to arg1 (see GCBO)
@@ -143,18 +137,10 @@ function arg1_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-
-function arg2_Callback(hObject, eventdata, handles)
-% hObject    handle to arg2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of arg2 as text
-%        str2double(get(hObject,'String')) returns contents of arg2 as a double
 end
-
+function arg2_Callback(hObject, eventdata, handles)
+% do nothing
+end
 % --- Executes during object creation, after setting all properties.
 function arg2_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to arg2 (see GCBO)
@@ -167,18 +153,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 end
-
-
-
 function arg3_Callback(hObject, eventdata, handles)
-% hObject    handle to arg3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of arg3 as text
-%        str2double(get(hObject,'String')) returns contents of arg3 as a double
+% do nothing
 end
-
 % --- Executes during object creation, after setting all properties.
 function arg3_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to arg3 (see GCBO)
@@ -190,4 +167,17 @@ function arg3_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+end
+
+
+% --- Executes on selection change in plottingfunctions, updates argument text
+function plottingfunctions_Callback(hObject, eventdata, handles)
+% hObject    handle to plottingfunctions (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns plottingfunctions contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from plottingfunctions
+%contents = cellstr(get(hObject, 'String'));
+%disp(contents{get(hObject, 'Value')});
 end
