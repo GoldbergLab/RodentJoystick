@@ -87,16 +87,16 @@ handles.assignedplots = {};
 if eventdata.NewValue == handles.singledayselect
     handles.possiblefunctionarray ={'Nosepoke Joystick Distribution (1) ';
         'Nosepoke Post Distribution (1)';
-        'Hold Time Distributions (3)';
         'Activity Distribution (1) ';
+        'Hold Time Distributions (3)';
         'Find Sector (3)';
         'Trajectory Analysis (4)';
         'Trajectory Analysis (6)'};
 elseif eventdata.NewValue == handles.twodayselect 
     handles.possiblefunctionarray ={'Nosepoke Joystick Distribution (2)';
         'Nosepoke Post Distribution (2)';
-        'Hold Time Distributions (6)';
         'Activity Distribution (2)';
+        'Hold Time Distributions (6)';
         'Find Sector(6)'};
 else
     handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
@@ -104,6 +104,10 @@ else
         'Activity Distribution'};    
 end
 set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
+%MATLAB doesn't reset listbox index to 1, so you have to manually change the
+%selected value of the listbox, or there's an indexing error if value is
+%out of range
+set(handles.plottingfunctions, 'Value', 1);
 guidata(hObject, handles);
 end
 
@@ -178,6 +182,6 @@ function plottingfunctions_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns plottingfunctions contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from plottingfunctions
-%contents = cellstr(get(hObject, 'String'));
-%disp(contents{get(hObject, 'Value')});
+contents = cellstr(get(hObject, 'String'));
+disp(contents{get(hObject, 'Value')});
 end
