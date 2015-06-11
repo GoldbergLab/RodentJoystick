@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 11-Jun-2015 12:22:59
+% Last Modified by GUIDE v2.5 11-Jun-2015 14:56:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,19 +85,19 @@ function daytypeselect_SelectionChangeFcn(hObject, eventdata, handles)
 handles.possiblefunctionarray = {};
 handles.assignedplots = {};
 if eventdata.NewValue == handles.singledayselect
-    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution (1) ';
-        'Nosepoke Post Distribution (1)';
-        'Activity Distribution (1) ';
-        'Hold Time Distributions (3)';
-        'Find Sector (3)';
+    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
+        'Nosepoke Post Distribution';
+        'Activity Distribution';
+        'Hold Time Distributions';
+        'Find Sector';
         'Trajectory Analysis (4)';
         'Trajectory Analysis (6)'};
 elseif eventdata.NewValue == handles.twodayselect 
-    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution (2)';
-        'Nosepoke Post Distribution (2)';
-        'Activity Distribution (2)';
-        'Hold Time Distributions (6)';
-        'Find Sector(6)'};
+    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
+        'Nosepoke Post Distribution';
+        'Activity Distribution';
+        'Hold Time Distributions';
+        'Find Sector'};
 else
     handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
         'Nosepoke Post Distribution';
@@ -183,5 +183,132 @@ function plottingfunctions_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns plottingfunctions contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from plottingfunctions
 contents = cellstr(get(hObject, 'String'));
-disp(contents{get(hObject, 'Value')});
+plotname = contents{get(hObject, 'Value')};
+
+%0, 1, 2 for single, two, multi day respectively
+daytype = 0;
+if get(handles.singledayselect, 'Value') == 1
+    daytype = 0;
+elseif get(handles.twodayselect, 'Value') == 1
+    daytype = 1;
+elseif get(handles.twodayselect, 'Value') == 1
+    daytype = 2;
+end
+
+
+if strcmp(plotname,'Nosepoke Joystick Distribution') || strcmp(plotname,'Nosepoke Post Distribution')
+    set(handles.argname1, 'String', '-');
+    set(handles.argname2, 'String', '-');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '1');
+    elseif(daytype == 1)
+        set(handles.axesused, 'String', '2');
+    else
+        set(handles.axesused, 'String', '6');
+    end    
+elseif strcmp(plotname,'Activity Distribution')
+    set(handles.argname1, 'String', 'Interval');
+    set(handles.argname2, 'String', '-');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '1');
+    elseif(daytype == 1)
+        set(handles.axesused, 'String', '2');
+    else
+        set(handles.axesused, 'String', '6');
+    end
+elseif strcmp(plotname, 'Hold Time Distributions')
+    set(handles.argname1, 'String', 'Interval');
+    set(handles.argname2, 'String', 'End Time');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '3');
+    elseif(daytype == 1)
+        set(handles.axesused, 'String', '6');
+    end
+elseif strcmp(plotname, 'Find Sector')
+    set(handles.argname1, 'String', 'Reward Rate');
+    set(handles.argname2, 'String', 'Thresh.');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '3');
+    elseif(daytype == 1)
+        set(handles.axesused, 'String', '6');
+    end
+elseif strcmp(plotname, 'Trajectory Analysis (4)')
+    set(handles.argname1, 'String', 'Start');
+    set(handles.argname2, 'String', 'End');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '4');
+    end
+elseif strcmp (plotname, 'Trajectory Analysis (6)');
+    set(handles.argname1, 'String', 'Start');
+    set(handles.argname2, 'String', 'End');
+    set(handles.argname3, 'String', '-');
+    if (daytype == 0)
+        set(handles.axesused, 'String', '6');
+    end
+else
+    set(handles.argname1, 'String', '-');
+    set(handles.argname2, 'String', '-');
+    set(handles.argname3, 'String', '-');
+end
+end
+
+
+% --- Executes on button press in argumentshelp.
+function argumentshelp_Callback(hObject, eventdata, handles)
+% hObject    handle to argumentshelp (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+end
+
+% --- Executes on button press in addfunction.
+function addfunction_Callback(hObject, eventdata, handles)
+% hObject    handle to addfunction (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+end
+
+
+% --- Executes on selection change in dateselection.
+function dateselection_Callback(hObject, eventdata, handles)
+% hObject    handle to dateselection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns dateselection contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from dateselection
+end
+
+% --- Executes during object creation, after setting all properties.
+function dateselection_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to dateselection (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+handles.working_dir = genpath('K:\DataSync\expt_opto_thal_var_2');
+end
+
+
+% --- Executes on button press in selectdir.
+function selectdir_Callback(hObject, eventdata, handles)
+% hObject    handle to selectdir (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA) working_dir = uigetdir;
+working_dir = uigetdir(handles.working_dir);
+handles.working_dir = working_dir;
+set(handles.dateselection,'Value',1);
+filelisting = dir(working_dir);
+for i=1:size(filelisting,2)
+     str_list{i} = filelisting(i).filename;
+ end
+
 end
