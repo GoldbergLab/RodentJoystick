@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 11-Jun-2015 14:56:35
+% Last Modified by GUIDE v2.5 11-Jun-2015 16:38:38
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,26 +82,20 @@ function daytypeselect_SelectionChangeFcn(hObject, eventdata, handles)
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
-handles.possiblefunctionarray = {};
-handles.assignedplots = {};
-if eventdata.NewValue == handles.singledayselect
-    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
+posfunctionarray = {'Nosepoke Joystick Distribution';
         'Nosepoke Post Distribution';
         'Activity Distribution';
         'Hold Time Distributions';
         'Find Sector';
         'Trajectory Analysis (4)';
         'Trajectory Analysis (6)'};
+handles.assignedplots = {};
+if eventdata.NewValue == handles.singledayselect
+    handles.possiblefunctionarray =posfunctionarray;
 elseif eventdata.NewValue == handles.twodayselect 
-    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
-        'Nosepoke Post Distribution';
-        'Activity Distribution';
-        'Hold Time Distributions';
-        'Find Sector'};
+    handles.possiblefunctionarray = posfunctionarray(1:5);
 else
-    handles.possiblefunctionarray ={'Nosepoke Joystick Distribution';
-        'Nosepoke Post Distribution';
-        'Activity Distribution'};    
+    handles.possiblefunctionarray =posfunctionarray(1:3);   
 end
 set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
 %MATLAB doesn't reset listbox index to 1, so you have to manually change the
@@ -188,11 +182,11 @@ plotname = contents{get(hObject, 'Value')};
 %0, 1, 2 for single, two, multi day respectively
 daytype = 0;
 if get(handles.singledayselect, 'Value') == 1
-    daytype = 0;
-elseif get(handles.twodayselect, 'Value') == 1
     daytype = 1;
 elseif get(handles.twodayselect, 'Value') == 1
     daytype = 2;
+elseif get(handles.twodayselect, 'Value') == 1
+    daytype = 3;
 end
 
 
@@ -200,9 +194,9 @@ if strcmp(plotname,'Nosepoke Joystick Distribution') || strcmp(plotname,'Nosepok
     set(handles.argname1, 'String', '-');
     set(handles.argname2, 'String', '-');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '1');
-    elseif(daytype == 1)
+    elseif(daytype == 2)
         set(handles.axesused, 'String', '2');
     else
         set(handles.axesused, 'String', '6');
@@ -211,9 +205,9 @@ elseif strcmp(plotname,'Activity Distribution')
     set(handles.argname1, 'String', 'Interval');
     set(handles.argname2, 'String', '-');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '1');
-    elseif(daytype == 1)
+    elseif(daytype == 2)
         set(handles.axesused, 'String', '2');
     else
         set(handles.axesused, 'String', '6');
@@ -222,32 +216,32 @@ elseif strcmp(plotname, 'Hold Time Distributions')
     set(handles.argname1, 'String', 'Interval');
     set(handles.argname2, 'String', 'End Time');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '3');
-    elseif(daytype == 1)
+    elseif(daytype == 2)
         set(handles.axesused, 'String', '6');
     end
 elseif strcmp(plotname, 'Find Sector')
     set(handles.argname1, 'String', 'Reward Rate');
     set(handles.argname2, 'String', 'Thresh.');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '3');
-    elseif(daytype == 1)
+    elseif(daytype == 2)
         set(handles.axesused, 'String', '6');
     end
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
     set(handles.argname1, 'String', 'Start');
     set(handles.argname2, 'String', 'End');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '4');
     end
 elseif strcmp (plotname, 'Trajectory Analysis (6)');
     set(handles.argname1, 'String', 'Start');
     set(handles.argname2, 'String', 'End');
     set(handles.argname3, 'String', '-');
-    if (daytype == 0)
+    if (daytype == 1)
         set(handles.axesused, 'String', '6');
     end
 else
@@ -273,19 +267,21 @@ function addfunction_Callback(hObject, eventdata, handles)
 end
 
 
-% --- Executes on selection change in dateselection.
-function dateselection_Callback(hObject, eventdata, handles)
-% hObject    handle to dateselection (see GCBO)
+
+
+% --- Executes on selection change in dateselectionbox.
+function dateselectionbox_Callback(hObject, eventdata, handles)
+% hObject    handle to dateselectionbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: contents = cellstr(get(hObject,'String')) returns dateselection contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from dateselection
+% Hints: contents = cellstr(get(hObject,'String')) returns dateselectionbox contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from dateselectionbox
 end
 
 % --- Executes during object creation, after setting all properties.
-function dateselection_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to dateselection (see GCBO)
+function dateselectionbox_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to dateselectionbox (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -294,34 +290,26 @@ function dateselection_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-handles.working_dir = 'K:\DataSync\expt_opto_thal_var_2';
-filelisting = dir(handles.working_dir);
-for i=1:length(filelisting)
-    if filelisting(i).isdir
-        str_list{i} = filelisting(i).name;
-    end
-end
-set(handles.dateselection,'String', str_list);
+handles.workingdirstring = 'K:\DataSync\expt_opto_thal_var_2';
 guidata(hObject, handles);
 end
 
 
-% --- Executes on button press in selectdir.
-function selectdir_Callback(hObject, eventdata, handles)
-% hObject    handle to selectdir (see GCBO)
+% --- Executes on button press in selectdirbutton.
+function selectdirbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to selectdirbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA) working_dir = uigetdir;
-working_dir = uigetdir(handles.working_dir);
-handles.working_dir = working_dir;
-set(handles.dateselection,'Value',1);
-set(handles.workingdirlabel, 'String', working_dir);
-filelisting = dir(working_dir);
-for i=1:length(filelisting)
-    if filelisting(i).isdir
-        str_list{i} = filelisting(i).name;
+% handles    structure with handles and user data (see GUIDATA)
+workingdirtemp = uigetdir(handles.workingdirstring);
+set(handles.workingdirlabel, 'String', workingdirtemp);
+filelisting = dir(workingdirtemp);
+j = 1;
+for i = 1:length(filelisting)
+    matcheshidden = length(regexp(filelisting(i).name, '[.].*'));
+    if filelisting(i).isdir && ~matcheshidden
+        str_list{j} = filelisting(i).name; j=j+1;
     end
 end
-set(handles.dateselection,'String', str_list);
+set(handles.dateselectionbox, 'String', str_list);
 guidata(hObject, handles);
-
 end
