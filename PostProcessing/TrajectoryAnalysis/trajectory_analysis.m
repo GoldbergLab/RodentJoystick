@@ -1,4 +1,4 @@
-%[sortedtraj, fh] = 
+%[sortedtraj, fh, cache] = 
 %   trajectory_analysis(stats) OR trajectory_analysis(stats, plot_range, ... )
 %   OPTIONAL ARG ORDER:
 %       plot_range,hold_time_range,pflag, plot_contingencies, datestr,sflag
@@ -16,6 +16,7 @@
 %
 %       fh :: the figure handle corresponding to the plot generate when
 %           'plot' flag is used, otherwise unassigned
+%       cache :: used for post processing gui
 %   ARGUMENTS: 
 %       stats :: the result from xy_getstats(jstruct) for some jstruct
 %       OPTIONAL ARGS:
@@ -37,7 +38,7 @@
 %           plot. 'median' - plots median and first/third quartiles,
 %           'mean'- plots mean and mean+/- stdev, 'both' - plots both
 %           groups
-%           DEFAULT: 'N/A'
+%           DEFAULT: 'median'
 function [sortedtraj, fh, cache] = trajectory_analysis(stats, varargin)
 %how many plots to do - this depends on other stuff, look through
 %below as well. Look through subplotting routine to make sure nothing
@@ -68,26 +69,23 @@ if strcmp('plot', pflag)
     for i = 1:PLOT_RANGE
         bin = sortedtraj(i);
         [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
-        time = 1:1:length(numbers);
-        inittraj = numbers(1); normalized = 100*numbers./inittraj;
+        cache(i).upperbnd = upperbnd; cache(i).lowerbnd = lowerbnd;
+        cache(i).median = median; cache(i).mean = mean; cache(i).stdev=stdev;
+        cache(i).time = 1:1:length(numbers);
+        inittraj = numbers(1); cache(i).numbers = 100*numbers./inittraj;
         tstr = strcat(num2str(bin.geq), '-', num2str(bin.lt), ' ms:');
         percent = num2str(100*inittraj/totaltraj, 4); format bank;
-        titlestr = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
-        
+        cache(i).title = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
+        cache(i).axis = [0, bin.lt, 0, 100];
+        cache(i).xlabel = 'Time(ms)'; cache(i).ylabel = 'Joystick Mag/Traj Percentage';
+        cache(i).contigency = CONTL;
+        cache(i).legend_flag = sflag;
+        %entire block below can be copied to plot from cache in gui
+        if strcmp(cacheflag, 'no')
         subplot(2, PLOT_RANGE/2, i);
-        axis([0, bin.lt, 0, 100]);
-        title(titlestr, 'FontSize', 8); hold on;
-        
-        if strcmp(sflag, 'median')
-        plot(time, upperbnd, 'r', time, median, 'g', time, lowerbnd, 'r'); hold on;
-        elseif strcmp(sflag, 'mean')
-        plot(time, mean+stdev, 'y', time, mean, 'b', time, mean-stdev, 'y'); hold on;
-        else
-        plot(time, upperbnd, 'r', time, median, 'g', time, lowerbnd, 'r'); hold on;
-        plot(time, mean+stdev, 'y', time, mean, 'b', time, mean-stdev, 'y'); hold on;
-        end
-        
-        plot(time, normalized, ':c');
+        title(cache(i).title, 'FontSize', 8); hold on;
+        axis(cache(i).axis); ylabel(cache(i).ylabel); xlabel(cache(i).xlabel);
+        CONTL = cache(i).contingency;
         if sum(CONTL)>0
             CONTLINE_COLORS = [0.4, 0.4, 0.4];
             line([0 2000], [CONTL(2) CONTL(2)], 'Color', CONTLINE_COLORS);
@@ -96,28 +94,30 @@ if strcmp('plot', pflag)
             end
             line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
         end
-        ylabel('Joystick Mag/Traj Percentage');
-        xlabel('Time(ms)')
-        if strcmp(cacheflag, 'yes')
-            cache(i).upperbnd = upperbnd; cache(i).lowerbnd = lowerbnd;
-            cache(i).median = median; cache(i).mean = mean; cache(i).stdev=stdev;
-            cache(i).time = time;
-            cache(i).numbers = normalized;
-            cache(i).title = titlestr;
-            cache(i).xlabel = 'Time(ms)';
-            cache(i).ylabel = 'Joystick Mag/Traj Percentage';
-            cache(i).axis = [0, bin.lt, 0, 100];
-            cache(i).contigency = CONTL;
+        time = cache(i).time; ubd = cache(i).upperbnd; lbd = cache(i).lowerbnd;
+        md = cache(i).median; me = cache(i).mean; stdv = cache(i).stdev;
+        if strcmp(sflag, 'median')
+            plot(time, ubd, 'r', time, md, 'g', time, lbd, 'r'); hold on;
+        elseif strcmp(sflag, 'mean')
+            plot(time, me+stdv, 'y', time, me, 'b', time, me-stdv, 'y'); hold on;
+        else
+            plot(time, ubd, 'r', time, md, 'g', time, lbd, 'r'); hold on;
+            plot(time, me+stdv, 'y', time, me, 'b', time, me-stdv, 'y'); hold on;
+        end
+        plot(time, cache(i).numbers, ':c');
+        end
         end
     end
-    if strcmp(sflag, 'median')
-    legend('3rd quartile','median', '1st quartile');
-    elseif strcmp(sflag, 'mean')
-    legend('mean+stdev','mean', 'mean-stdev');
-    else
-    legend('3rd quartile','median', '1st quartile', 'mean+stdev','mean', 'mean-stdev');
+    if strcmp(cacheflag, 'no')
+        if strcmp(sflag, 'median')
+            legend('3rd quartile','median', '1st quartile');
+        elseif strcmp(sflag, 'mean')
+            legend('mean+stdev','mean', 'mean-stdev');
+        else
+            legend('3rd quartile','median', '1st quartile', 'mean+stdev','mean', 'mean-stdev');
+        end
+        P = subplottitle(fh, datestr, 'yoff', -0.6);
     end
-    P = subplottitle(fh, datestr, 'yoff', -0.6);
 end
 end
 

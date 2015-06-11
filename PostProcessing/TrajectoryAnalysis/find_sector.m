@@ -38,7 +38,7 @@ function [targsec, distr, fh, angle_distr, cache] = find_sector(stats, varargin)
 default = {25, 75, 'log', [25 75], 'no'};
 numvarargs = length(varargin);
 if numvarargs > 5
-    error('trajectory_analysis: too many arguments (> 6), only one required and five optional.');
+    error('find_sector: too many arguments (> 6), only one required and five optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [targ_rate, thresh, pflag, colorperc, cacheflag] = default{:};
@@ -77,7 +77,7 @@ end
 %now use processed data from tstruct to (1) draw plots and (2) find target
 for i = 1:360; trajindices(i).traj_ind = sort(trajindices(i).traj_ind); end
 if sample_size < 10
-    vec = ['Threshhold is too large, or not enough data. Not enough samples.'];
+    vec = 'Threshhold is too large, or not enough data. Not enough samples.';
     error(vec);
 end
 [~, max_index] = max(angle_distr);
@@ -131,7 +131,7 @@ if second == -1; error('Unable to compute target sector'); end
 sector = [first second]; dist = distribution;
 end
 
-function [fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, ss, target, thresh)
+function [fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, ss, target, thresh, cacheflag)
 %% just gathering data, with some basic processing;
 data = stats.traj_pdf_jstrial;
 if strcmp(pflag, 'log')
@@ -142,96 +142,95 @@ else
     traj_pdf = reshape(data, 100*100, 1);
     traj_pdf = sort(traj_pdf(traj_pdf ~= 0));
 end
-fh = figure('Position', [0, 0, 600,1000]);
-%% Plot results from traj_pdf
+%% Calculate information for plotting traj_pdf
 tstr = ['Trajectory Distribution: (',pflag,' scale)'];
 xlab = '0.5*X+50'; ylab = '0.5*Y+ 50';
-subplot(3,1,1); hold on;
-title(tstr); xlabel(xlab); ylabel(ylab);
-
 pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
 pcolorval2 = traj_pdf(pcv2_ind);
 pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
 pcolorval1 = traj_pdf(pcv1_ind);
-pcolor(data); shading flat; axis square; 
-
-caxis([pcolorval1 pcolorval2]); hold off;
 
 cache.colormap.data = data;
-cache.colormap.title = ['Trajectory Distribution: (',pflag,' scale)'];
+cache.colormap.title = tstr;
 cache.colormap.caxis = [pcolorval1 pcolorval2];
-cache.colormap.xlabel = '0.5*X+50';
-cache.colormap.ylabel = '0.5*Y+ 50';
-
-
+cache.colormap.xlabel = xlab;
+cache.colormap.ylabel = ylab;
 
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
-
-
-%% plot normalized angle distribution
-subplot(3,1,2); 
-axis([1 359 0 inf]); hold on;
+%% get normalized angle distribution information
 cache.angledistr.actual.axis = [1 359 0 inf];
 for i = 1:4
     t = i*25; if i == 4; t = 95; end
-    [angle_dist, ssize] = get_angle_distr_for_thresh(stats, t);
-    c = colorv(i);
-    plot(1:1:360, angle_dist./ssize, 'Color', [c c c]);
+    [angle_dist, ssize] = get_angle_distr_for_thresh(stats, t); c = colorv(i);
     cache.angledistr.reference(i).angles = 1:1:360;
     cache.angledistr.reference(i).distribution = angle_dist./ssize;
     cache.angledistr.reference(i).color = [c c c];
 end
-
-plot(1:1:360, angle_distr./ss, 'r'); hold on;
 cache.angledistr.actual.angles = 1:1:360;
 cache.angledistr.actual.distribution = angle_distr./ss;
 
-%plot target range in green
+%target range
 t1 = target(1); t2 = target(2);
 if t1<t2
-plot(t1:1:t2, angle_distr(t1:t2)./ss, 'g');
-cache.angledistr.actual.target1=t1:1:t2;
-cache.angledistr.actual.target2=t1:1:t2;
+    cache.angledistr.actual.target1=t1:1:t2;
+    cache.angledistr.actual.target2=t1:1:t2;
 else
-plot(t1:1:360, angle_distr(t1:360)./ss, 'g');
-plot(1:1:t2, angle_distr(1:t2)./ss, 'g');
-cache.angledistr.actual.target1=t1:1:360;
-cache.angledistr.actual.target2=1:1:t2;
+    cache.angledistr.actual.target1=t1:1:360;
+    cache.angledistr.actual.target2=1:1:t2;
 end
 tstr=['Angle Distribution @ ', num2str(thresh), '%: ',num2str(ss),' trajectories'];
-title(tstr);
 cache.angledistr.title = tstr;
-xlabel('Angle (Degrees)'); ylabel('Probability');
 cache.angledistr.xlabel = 'Angle (Degrees)';
 cache.angledistr.ylabel = 'Probability';
-hold off;
-%% plot polar angle distribution
-subplot(3,1,3);
-theta = (1:1:360)*pi./180;
-axmax = max(angle_distr./ss);
-polar(theta', angle_distr./ss, 'r'); hold on;
-cache.polardistr.angles = theta;
-cache.polardistr.distribution = angle_distr./ss;
-if t1<t2
-polar((t1:1:t2)*pi./180, angle_distr(t1:t2)'./ss, 'g'); hold on;
-cache.polardistr.target1=(t1:1:t2)*pi./180;
-cache.polardistr.target2=(t1:1:t2)*pi./180;
-else
-polar((t1:1:360)*pi./180, angle_distr(t1:360)'./ss, 'g'); hold on;
-polar((1:1:t2)*pi./180, angle_distr(1:t2)'./ss, 'g'); hold on;
-cache.polardistr.target1=(t1:1:360)*pi./180;
-cache.polardistr.target2=(1:1:t2)*pi./180;
-end
-%for i = 25:25:100
- %   angle_dist = get_angle_distr_for_thresh(stats, i); c = colorv(i/25); hold on;
-  %  l=polar(theta', angle_dist./sum(angle_dist)); hold on;
-   % axmax = max([axmax, max(angle_dist./sum(angle_dist))]);
-    %set(l,'Color', [c c c]);
-%end
-title(['Angle Distribution @ ', num2str(thresh), '%: ',num2str(ss),' trajectories']);
+
+%% get polar angle distribution distribution information
+cache.polardistr.angles = (1:1:360)*pi./180;
+cache.polardistr.distribution = (angle_distr./ss)';
 cache.polardistr.title = ['Angle Distribution @ ', num2str(thresh), '%: ',num2str(ss),' trajectories'];
-hold off;
+if t1<t2
+    cache.polardistr.target1=(t1:1:t2)*pi./180;
+    cache.polardistr.target2=(t1:1:t2)*pi./180;
+else
+    cache.polardistr.target1=(t1:1:360)*pi./180;
+    cache.polardistr.target2=(1:1:t2)*pi./180;
+end
+
+fh = [];
+if strcmp(cacheflag, 'no')
+    %plot traj_pdf
+    fh = figure('Position', [0, 0, 600,1000]);
+    
+    subplot(3,1,1); 
+    hold on; title(cache.colormap.title); 
+    xlabel(cache.colormap.xlabel); ylabel(cache.colormap.ylabel);
+    pcolor(cache.colormap.data); shading flat; axis square;
+    caxis(cache.colormap.caxis); hold off;
+
+    subplot(3,1,2); 
+    title(cache.angledistr.title);
+    xlabel(cache.angledistr.xlabel); ylabel(cache.angledistr.ylabel);
+    axis(cache.angledistr.actual.axis); hold on;
+    plot(cache.angledistr.actual.angles, cache.angledistr.actual.distribution, 'r'); hold on; 
+    t1 = cache.angledistr.actual.target1; t2 = cache.angledistr.actual.target2;
+    plot(t1, cache.angledistr.actual.distribution(t1), 'g');
+    plot(t2, cache.angledistr.actual.distribution(t2), 'g');
+    for i = 1:4
+        x = cache.angledistr.reference(i).angles; 
+        y = cache.angledistr.reference(i).distribution;
+        c = cache.angledistr.reference(i).color;
+        plot(x, y, 'Color', c);
+    end
+    hold off;
+    
+    subplot(3,1,3);
+    title(cache.polardistr.title);
+    polar(cache.polardistr.angles, cache.polardistr.distribution, 'r'); hold on;
+    targ1 = cache.polardistr.target1; targ2 = cache.polardistr.target2;
+    polar(targ1, cache.polardistr.distribution(targ1), 'g'); hold on;
+    polar(targ2, cache.polardistr.distribution(targ2), 'g'); hold on;
+    hold off;
+end
 end
 
 function [angle_distr, samplesize] = get_angle_distr_for_thresh(stats, thresh)
