@@ -26,11 +26,16 @@ So have two GUI options - single day/multi day
 single day plots:
 np_js_distribution
 np_post_distribution
-js_hold time onset distributions (both)
+(both)
 generate_time_distr
 trajectory_analysis
 find_sector - angle sector information
-hold_time_distr - mean, median, stdev
+hold_time_distr (3) - 
+    js_hold time onset distributions
+    rewarded trajectory rate 
+    hold_time_distr
+    mean, median, stdev 
+onset to reward time (hold_time_distr)
 make_pdfplots - same size as trajectory analysis
 
 multi_day_plots:
