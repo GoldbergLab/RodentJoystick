@@ -13,15 +13,13 @@ hold_time_distr.m - hist interval
 js_touch_dist.m
 	Magnitude Distribution (1)
 find_sector.m
-	Activity Color Map (1) - won't work with multiple days
-	Angle Distribution (Linear) (1) - Reward Rate, Threshold - won't work well with multiple days (too much data)
-	Polar Angle Distribution
+	Activity Color Map (1) - won't work with multiple days (requires separate plot per day)
+	Angle Distribution (Linear) (1) - Reward Rate, Threshold - won't work well with multiple days (too much data) - separate plot per day
 trajectory_analysis.m - windows, start, end
 	Trajectory Magnitude Analysis (1) - any plot
 	Trajectory Magnitude Analysis (2) - link column
 	Trajectory Magnitude Analysis (3) - link row
 	Trajectory Magnitude Analysis (4) - link block
-	Trajectory Magnitude Analysis (6) - link block
 
 
 TrajectoryAnalysis\trajectory_analysis
