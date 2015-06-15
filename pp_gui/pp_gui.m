@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 11-Jun-2015 17:39:27
+% Last Modified by GUIDE v2.5 12-Jun-2015 16:07:45
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -93,10 +93,13 @@ posfunctionarray = {'Nosepoke Joystick Distribution';
 handles.assignedplots = {};
 if eventdata.NewValue == handles.singledayselect
     handles.possiblefunctionarray =posfunctionarray;
+    set(handles.addday, 'Visible', 'off');
 elseif eventdata.NewValue == handles.twodayselect 
     handles.possiblefunctionarray = posfunctionarray(1:6);
+    set(handles.addday, 'Visible', 'on');
 else
-    handles.possiblefunctionarray =posfunctionarray(1:4);   
+    handles.possiblefunctionarray = posfunctionarray(1:4);
+    set(handles.addday, 'Visible', 'on');
 end
 set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
 %MATLAB doesn't reset listbox index to 1, so you have to manually change the
@@ -276,6 +279,12 @@ function dateselectionbox_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns dateselectionbox contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from dateselectionbox
+%Only replot if adding a single day - then you can plot immediately;
+if get(handles.singledayselect, 'Value') == 1
+    contents = cellstr(get(hObject, 'String'));
+    datedir = contents{get(hObject, 'Value')};
+    set(handles.daystoplotlabel, 'String', datedir);
+end
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -290,6 +299,7 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 handles.workingdirstring = 'K:\DataSync\expt_opto_thal_var_2';
+handles.daystoplot = {};
 guidata(hObject, handles);
 end
 
@@ -300,7 +310,11 @@ function selectdirbutton_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 workingdirtemp = uigetdir(handles.workingdirstring);
+if workingdirtemp == 0
+    workingdirtemp = handles.workingdirstring;
+end
 set(handles.workingdirlabel, 'String', workingdirtemp);
+handles.workingdirstring = workingdirtemp;
 filelisting = dir(workingdirtemp);
 j = 1;
 for i = 1:length(filelisting)
@@ -309,7 +323,9 @@ for i = 1:length(filelisting)
         str_list{j} = filelisting(i).name; j=j+1;
     end
 end
+
 set(handles.dateselectionbox, 'String', str_list);
+set(handles.dateselectionbox, 'Value', 1);
 guidata(hObject, handles);
 end
 
@@ -318,5 +334,24 @@ end
 function addday_Callback(hObject, eventdata, handles)
 % hObject    handle to addday (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+% handles structure with handles and user data (see GUIDATA)
+contents = cellstr(get(handles.dateselectionbox, 'String'));
+datedir = contents{get(handles.dateselectionbox, 'Value')};
+set(handles.daystoplotlabel, 'String', datedir);
+
+maxlen = 2;
+numdaysadded = length(handles.daystoplot);
+daysadded = handles.daystoplot;
+if numdaysadded<maxlen
+    handles.daystoplot{numdaysadded+1}=datedir;
+else
+    daysadded = daysadded(2:end);
+    
+end
+end
+
+%This function handles the entire plotting routine
+function plot_all_days(handles)
+
+
 end
