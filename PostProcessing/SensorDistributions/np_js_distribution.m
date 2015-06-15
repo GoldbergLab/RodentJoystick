@@ -1,10 +1,10 @@
-function [fh, cache] = np_js_distribution(jstruct, varargin)
+function [data, labels] = np_js_distribution(jslist, varargin)
 %np_js_distribution(jslist [interv, ax, combineflag, plotflag]) 
 % plots the nose poke vs joystick touch time distribution
 % for the data from a given jstruct. If multiple jstructs are given, it
 % plots all data on the same axes
 % ARGUMENTS:
-%   jslist :: list of jstructs - may contain a single jstruct
+%   filenames :: list of jstructs - may contain a single jstruct
 %   interv :: histogram interval (optional, default 20ms)
 %   ax :: list of axes handles - plots all data (if multiple jstructs) on
 %       the first element in ax. If no axes are given and plotflag is on,
