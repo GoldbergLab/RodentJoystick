@@ -14,6 +14,8 @@ js_touch_dist.m
 	Magnitude Distribution (1)
 find_sector.m
 	Activity Color Map (1) - won't work with multiple days (requires separate plot per day)
+		distance
+		velocity, acceleration (check existing)
 	Angle Distribution (Linear) (1) - Reward Rate, Threshold - won't work well with multiple days (too much data) - separate plot per day
 trajectory_analysis.m - windows, start, end
 	Trajectory Magnitude Analysis (1) - any plot
