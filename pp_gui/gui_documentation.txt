@@ -66,6 +66,7 @@ Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
     Arguments:
     stats struct - can only plot a single distribution
         no other arguments, unless you want ones for color mapping
+        plot accumulated data from all days
     Outputs:
      pdf: = 100*100 cell array of probability distribution
     GUI Comments: Can't be used for plotting multiple days, lock to single day

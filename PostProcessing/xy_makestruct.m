@@ -34,7 +34,7 @@ filelist = dir(strcat(working_dir_1,'/*.mat'));
 load(strcat(working_dir_1,'/',filelist(1).name));
 
 fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
-time_stamp = fileinfo.datenum;
+[time_stamp] = fileinfo.datenum;
 % start_frame = str2num(filelist(1).name(1:end-4));
 start_frame_first = start_frame;
 
