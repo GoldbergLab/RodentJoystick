@@ -1,0 +1,93 @@
+
+General GUI Documentation
+Multiple Days Feature
+Single Day
+Ability to Save All plots without Gui buttons/interface
+
+make_plots.m
+1. Nosepoke Joystick Onset Distribution, 2. Nosepoke Post Onset Distribution
+    Arguments: 
+    jstruct(s) - vector of jstructs to plot (list of days essentially)
+    histogram interval - int > 0
+    combineflag (1/0) - combine all data
+    axes handle (possibly empty) - plots data onto axes handle
+    Outputs:
+    {[onset, probability], [onset, probability], ...} for each day
+    labels (struct w/ xlabel, ylabel, title, legend (dates));
+3. Hold Length Distribution
+    Arguments:
+    jstruct(s) - vector of jstructs to plot (list of days)
+    histogram interval - int > 0
+    combineflag (1/0) - combine all data
+    axes handle (possibly empty) - plots all data onto axes handle (even multiple days)
+
+    Outputs:
+    {[hold_length, probability], [hold_length, probability], ...} for each day
+    labels (struct w/ xlabel, ylabel, title, legend (dates))
+4. Hold Length Distribution under Threshold
+    Arguments:
+    jstruct(s) - vector of jstructs to plot (list of days)
+    histogram itnerval - int > 0
+    threshold - int
+    combineflag (1/0) - combine all data
+    axes handle (possibly empty) - plots all data onto axes handle (even multiple days)
+
+    Outputs:
+    data:= {[hold_length, probability], [hold_length, probability], ...} for each day (or combined)
+    labels (struct w/ xlabel, ylabel, title, legend (dates))
+
+generate_time_distr.m
+5. Nosepoke/Reward Distribution
+    Arguments:
+    jstruct(s) - vector of jstructs to plot (list of days)
+    histogram interval - int > 0 (representing number of minutes)
+    combineflag (1/0) - combine all data from jstructs
+    Outputs:
+    data:= 
+    {[time bins, nosepoke count, reward count], [time bins, nosepoke count, reward count], ...}
+    labels (struct w/ xlabel, ylabel, title, legend (dates))
+
+hold_time_distr.m
+6. Hold Time Distribution (same as 2?)
+7. Reward Rate by Hold Time Histogram, 8. Joystick Onset to Reward Distribution
+    Arguments:
+    stats struct(s) (take trajectory struct from each though)
+    histogram interval
+    combineflag (1/0) - combine all data from jstructs
+    end time (in ms - 2000 is normal)
+
+    Outputs:
+    data:= {[holdtimes, rewardtimes, js2rew], ...} for each day - note these are the raw lists of times, not processed for histogram use
+    labels (struct w/ list of dates);
+
+find_sector.m
+    split up into helper functions -> each of these 
+Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
+    Arguments:
+    stats struct - can only plot a single distribution
+        no other arguments, unless you want ones for color mapping
+        plot accumulated data from all days
+    Outputs:
+     pdf: = 100*100 cell array of probability distribution
+    GUI Comments: Can't be used for plotting multiple days, lock to single day
+
+12. Angle Distribution and Target Sector (Linear) 
+    Arguments:
+    reward_rate (typically 25)
+    threshold (typically 75) - magnitude at which angles above are included in probability distribution
+
+    Outputs: 
+    Single Target Sector [[t1 t2]]
+    Angle Probability Distribution (vector)
+
+
+
+
+
+
+
+
+
+
+
+
