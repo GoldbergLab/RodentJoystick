@@ -35,14 +35,13 @@
 
 function [targsec, distr, fh, angle_distr, cache] = find_sector(stats, varargin)
 %% argument handling
-default = {25, 75, 'log', [25 75], 'no'};
+default = {25, 75, 'no'};
 numvarargs = length(varargin);
 if numvarargs > 5
     error('find_sector: too many arguments (> 6), only one required and five optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[targ_rate, thresh, pflag, colorperc, cacheflag] = default{:};
-if strcmp(pflag, 'log'); colorperc = [0 99]; end;
+[targ_rate, thresh, cacheflag] = default{:};
 
 % basic structure initialization
 tstruct = stats.traj_struct;
@@ -88,7 +87,7 @@ angle_dists(angle_dists > 180)= 360 - angle_dists(angle_dists>180);
 [~, max_dist] = max(angle_dists);
 start_angle = pos_starts(max_dist);
 [targsec, distr] = calc_target_sector(start_angle, trajindices, sample_size, targ_rate/100);
-[fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, sample_size, targsec, thresh, cacheflag);
+[fh, cache] = draw_plots(stats, angle_distr, sample_size, targsec, thresh, cacheflag);
 titlestr = strcat('Target Sector: ',num2str(targsec(1)),'->',num2str(targsec(2)));
 subplottitle(fh, titlestr,'fontsize', 14, 'yoff', 0.05, 'xoff', -0.1);
 end
@@ -106,7 +105,7 @@ end
 %   sector: a two entry vector [a1 a2] where a1 defines the start angle, and
 %           a2 definies the end angle, moving counterclockwise.
 %           I.e., sector = [350 10] defines a 20 degree arc (not 340)
-function sector = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
+function [sector, dist] = calc_target_sector(start_angle, traj_indices, sample_size, target_rate)
 second = -1;
 first = start_angle; union_indices = traj_indices(start_angle).traj_ind;
 distribution = zeros(360, 1);
@@ -131,30 +130,7 @@ if second == -1; error('Unable to compute target sector'); end
 sector = [first second]; dist = distribution;
 end
 
-function [fh, cache] = draw_plots(stats, angle_distr, pflag, colorperc, ss, target, thresh, cacheflag)
-%% just gathering data, with some basic processing;
-data = stats.traj_pdf_jstrial;
-if strcmp(pflag, 'log')
-    data = log(data);
-    traj_pdf = reshape(data, 100*100, 1);
-    traj_pdf = sort(traj_pdf(traj_pdf ~= -Inf ));
-else
-    traj_pdf = reshape(data, 100*100, 1);
-    traj_pdf = sort(traj_pdf(traj_pdf ~= 0));
-end
-%% Calculate information for plotting traj_pdf
-tstr = ['Trajectory Distribution: (',pflag,' scale)'];
-xlab = '0.5*X+50'; ylab = '0.5*Y+ 50';
-pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
-pcolorval2 = traj_pdf(pcv2_ind);
-pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
-pcolorval1 = traj_pdf(pcv1_ind);
-
-cache.colormap.data = data;
-cache.colormap.title = tstr;
-cache.colormap.caxis = [pcolorval1 pcolorval2];
-cache.colormap.xlabel = xlab;
-cache.colormap.ylabel = ylab;
+function [fh, cache] = draw_plots(stats, angle_distr, ss, target, thresh, cacheflag)
 
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
@@ -200,14 +176,11 @@ fh = [];
 if strcmp(cacheflag, 'no')
     %plot traj_pdf
     fh = figure('Position', [0, 0, 600,1000]);
+    ax1 = subplot(3,1,1); 
+    activity_color_map(stats, ax1);
     
-    subplot(3,1,1); 
-    hold on; title(cache.colormap.title); 
-    xlabel(cache.colormap.xlabel); ylabel(cache.colormap.ylabel);
-    pcolor(cache.colormap.data); shading flat; axis square;
-    caxis(cache.colormap.caxis); hold off;
-
-    subplot(3,1,2); 
+    subplot(3,1,2);
+    hold on;
     title(cache.angledistr.title);
     xlabel(cache.angledistr.xlabel); ylabel(cache.angledistr.ylabel);
     axis(cache.angledistr.actual.axis); hold on;
@@ -223,13 +196,13 @@ if strcmp(cacheflag, 'no')
     end
     hold off;
     
-    subplot(3,1,3);
-    title(cache.polardistr.title);
-    polar(cache.polardistr.angles, cache.polardistr.distribution, 'r'); hold on;
-    targ1 = cache.polardistr.target1; targ2 = cache.polardistr.target2;
-    polar(targ1, cache.polardistr.distribution(targ1), 'g'); hold on;
-    polar(targ2, cache.polardistr.distribution(targ2), 'g'); hold on;
-    hold off;
+%     subplot(3,1,3);
+%     title(cache.polardistr.title);
+%     polar(cache.polardistr.angles, cache.polardistr.distribution, 'r'); hold on;
+%     targ1 = cache.polardistr.target1; targ2 = cache.polardistr.target2;
+%     polar(targ1, cache.polardistr.distribution(targ1), 'g'); hold on;
+%     polar(targ2, cache.polardistr.distribution(targ2), 'g'); hold on;
+%     hold off;
 end
 end
 
