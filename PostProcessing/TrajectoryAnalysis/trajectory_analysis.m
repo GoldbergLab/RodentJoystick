@@ -1,33 +1,46 @@
 %[bin_summary, labels, fh] = 
 %   trajectory_analysis(stats) OR trajectory_analysis(stats, plot_range, ... )
 %   OPTIONAL ARG ORDER:
-%       plot_range,hold_time_range,pflag, plot_contingencies, datestr,sflag
+%       plot_range,hold_time_range, plot_contingencies, pflag
+%       datestr, sflag, axeslst
 %   plots the trajectory distributions from stats using the (optional)
-%   arguments for a hold time range, whether or not to plot, whether to
-%   plot the lines indicating the contigencies (constants just below the
-%   function header), and the string representation of the date
-%   It also returns fh, the figure handle, if plotted - otherwise fh is not
-%   assigned
+%   arguments for a hold time range, contigency lines (constants just below the
+%   function header), whether to actually plot data, string representation
+%   of the date, what group of statistics to plot, and also a list of axes
+%   on which to plot the data
+%   It returns the bin statistics, labels for the axes to be used in the gui,
+%   and the figure handle, if no axes list was given.
 %   EXAMPLE:  
 %       trajectory_analysis(stats,4)
 %       trajectory_analysis(stats,4,[1000 1600], [400 40 40])
 %   OUTPUTS:
-%       sortedtraj :: a struct with the following fields:
-%
+%       bin_summary :: a struct with the following fields:
+%           lt, geq - bin contains all trajectories with hold times in
+%               the length geq - lt (greater or equal to, and strictly less than)
+%           med - double vector with median at each time point
+%           upperbnd - double vector of 75th percentile at each time point
+%           lowerbnd - double vector of 25th percentile at each time point
+%           mean - double vector of mean at each time point
+%           stdev - double vector of standard deviation at each time point
+%           numbers - double vector containing percentage of trajectories
+%               from bin used at each point. (time 0 will always be 100).
+%       labels :: a struct containing the x, y labels (same for all bins)
+%           and the titles for each plot
 %       fh :: the figure handle corresponding to the plot generate when
-%           'plot' flag is used, otherwise unassigned
-%       cache :: used for post processing gui
+%           'plot' flag is used, otherwise empty
 %   ARGUMENTS: 
 %       stats :: the result from xy_getstats(jstruct) for some jstruct
 %       OPTIONAL ARGS:
-%       plot_range :: number representing number of plots. DEFAULT: 10
-%       hold_time_range :: the time range [A B] (ms) for which plots are
-%           generated. Plots start at time A and end at B
+%       plot_range :: number representing number of plots. DEFAULT: 4
+%       hold_time_range :: the time range [A B] (ms) for which trajectories
+%           are included, i.e. any trajectory with a hold time in the range
+%           [A, B] is analyzed
 %           DEFAULT: [400 1400]
 %       plot_contingencies :: [HT T1 T2] this vector tells which lines to
-%           plot - HT is the hold time, T1 and T2 are the respective
-%           deviations (i.e. 30 60)
-%           value of [0 0] or [0 0 0] doesn't plot any lines
+%           indicate contingencies as a reference - 
+%           HT is the hold time, T1 and T2 are the respective deviations 
+%               EX: [300 30 60]
+%           value of [0 0] or [0 0 0] doesn't plot any lines   
 %           DEFAULT: [0 0 0] - no plotting 
 %       pflag :: 1 if plots are desired, otherwise just returns bin statistics
 %           DEFAULT: 1
@@ -38,18 +51,19 @@
 %           'median' - plots median and first/third quartiles,
 %           'mean'- plots mean and mean+/- stdev
 %           DEFAULT: 'median'
+%       axes_lst :: a list of axes handles of where to plot. If specified,
+%           length(axes_lst) >= plot_range
 function [bin_summary, labels, fh] = trajectory_analysis(stats, varargin)
-%how many plots to do - this depends on other stuff, look through
-%below as well. Look through subplotting routine to make sure nothing
-%critical is changed
 
+% Argument Manipulation
 default = {4,[400 1400], [300 30 60], 1, 'N/A', 'median', []};
 numvarargs = length(varargin);
 if numvarargs > 7
-    error('trajectory_analysis: too many arguments (> 8), only one required and seven optional.');
+    error('too many arguments (> 8), only one required and seven optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst] = default{:};
+
 %divide the desired time range into number of bins based on number of plots
 %desired
 bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
@@ -58,29 +72,34 @@ tstruct=stats.traj_struct;
 totaltraj = length(tstruct);
 %[~,~,~, rw_or_stop] = hold_time_distr(tstruct, bin_length, 'data');
 %sortedtraj = sort_traj_into_bins(tstruct, bins, rw_or_stop);
+
+%perform processing
 hts = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, hts);
 
-%sometimes we only want the data from sorted traj, hence the option not to
-%plot
 labels.xlabel = 'Time(ms)';
 labels.ylabel = 'Joystick Mag/Trajectory Percentage';
 fh = [];
-disp(length(axeslst)<1);
+
+%if trajectory_analysis is given no axes handles, but expected to plot,
+%generate its own
 if pflag == 1 && length(axeslst)<1;
-    disp('executed this step');
     fh = figure('Position', [100, 100, 1440, 900]);
     for i = 1:PLOT_RANGE
         axeslst(i) = subplot(2, PLOT_RANGE/2, i);
     end
-end;
+elseif pflag == 1 && (length(axeslst) < PLOT_RANGE)
+    error('Not enough axes handles provided for desired number of bins');
+end
 
+%plotting, and actual statistics
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
     [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
     bin_summary(i).mean = mean; bin_summary(i).md = median;
     bin_summary(i).stdev = stdev;  bin_summary(i).upperbnd = upperbnd;
-    bin_summary(i).lowerbnd = lowerbnd;
+    bin_summary(i).lowerbnd = lowerbnd; 
+    bin_summary(i).lt = bin.lt; bin_summary(i).geq = bin.geq;
     
     time = 1:1:length(numbers); inittraj = numbers(1); 
     numbers = 100*numbers./inittraj;
