@@ -81,6 +81,9 @@ Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
     Angle Probability Distribution (vector)
 
 
+GUI features
+    console - display key statistics 
+    print features
 
 
 
