@@ -1,13 +1,12 @@
-%[targsec, distr, fh, angle_distr] 
-%   find_sector(stats) or find_sector(stats, reward_rate, ... )
-%   OPTIONAL ARG ORDER:
-%       reward_rate, thresh, pflag, colorperc
+%[targsec, cumulative_distr, angle_distr, labels] = 
+%   perform_sector_analysis(stats, [reward_rate, thresh, plotflag, ax])
 %   computes the required target sector (angles) required for 'reward_rate'
-%   a percentage of trials to be rewarded.
+%   a percentage of trials to be rewarded, looking only at portions of
+%   trajectories with magnitude greater than the threshold thresh
 %   EXAMPLE:  
 %       targsec = find_sector(stats,25)
 %       targsec = find_sector(stats,25, 95)
-%       targsec = find_sector(stats, 25, 95, 'log', [0 99])
+%       targsec = find_sector(stats, 25, 95, 'log', [0 99]) 
 %   OUTPUTS:
 %       targsec :: a sector with targsec(1) defining the start angle, and
 %           targsec(2) defining the end angle, moving counterclockwise.
@@ -27,7 +26,7 @@
 %           DEFAULT: 75
 %       plotflag :: 0 results in not plotting, just returning data, 1
 %           plots all, 2 plots just distribution with highlight targeted
-%           but without reference
+%           but without reference, 3 plots just distribution
 %           DEFAULT: 1
 %       ax :: an axes handle for perform_sector_analysis to plot data on.
 %           if empty (as by default) and plotflag is on, then generates a
@@ -163,17 +162,19 @@ if plotflag > 0
     angles = 1:1:360;
     distribution = angle_distr./ss;
     plot(angles, distribution);
-    target1 = []; target2 = [];
-    t1 = target(1); t2 = target(2);
-    if t1<t2
-        target1=t1:1:t2;
-        target2=t1:1:t2;
-    else
-        target1=t1:1:360;
-        target2=1:1:t2;
+    if plotflag < 3
+        target1 = []; target2 = [];
+        t1 = target(1); t2 = target(2);
+        if t1<t2
+            target1=t1:1:t2;
+            target2=t1:1:t2;
+        else
+            target1=t1:1:360;
+            target2=1:1:t2;
+        end
+        plot(target1, distribution(target1), 'g');
+        plot(target2, distribution(target2), 'g');
     end
-    plot(target1, distribution(target1), 'g');
-    plot(target2, distribution(target2), 'g');
     hold off;
 end
 end

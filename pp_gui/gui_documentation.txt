@@ -83,7 +83,8 @@ Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
 
 GUI features
     console - display key statistics 
-    print features
+    print features for all plots
+    scrolling through directory with 
 
 
 

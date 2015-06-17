@@ -99,7 +99,7 @@ for i=1:length(filelist)
 end
 end
 
-% pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
+% [pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
 % onset/offset pairs for example, pairs(1, 1) and pairs(1,2) will return 
 % the times that a nosepoke came on and went off for the first nosepoke
 % in the file
