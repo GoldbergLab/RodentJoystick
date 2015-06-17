@@ -4,8 +4,10 @@ Multiple Days Feature
 Single Day
 Ability to Save All plots without Gui buttons/interface
 
+Standard Color Order for Multiple Days: 'rgbkmcyrgbkmcyrgbkmcy'
+
 make_plots.m
-1. Nosepoke Joystick Onset Distribution, 2. Nosepoke Post Onset Distribution
+1.x Nosepoke Joystick Onset Distribution
     Arguments: 
     jstruct(s) - vector of jstructs to plot (list of days essentially)
     histogram interval - int > 0
@@ -14,7 +16,16 @@ make_plots.m
     Outputs:
     {[onset, probability], [onset, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates));
-3. Hold Length Distribution
+2.x Nosepoke Post Onset Distribution
+    Arguments: 
+    jstruct(s) - vector of jstructs to plot (list of days essentially)
+    histogram interval - int > 0
+    combineflag (1/0) - combine all data
+    axes handle (possibly empty) - plots data onto axes handle
+    Outputs:
+    {[onset, probability], [onset, probability], ...} for each day
+    labels (struct w/ xlabel, ylabel, title, legend (dates));
+3.s Hold Length Distribution
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
     histogram interval - int > 0
@@ -24,7 +35,7 @@ make_plots.m
     Outputs:
     {[hold_length, probability], [hold_length, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates))
-4. Hold Length Distribution under Threshold
+4.s  Hold Length Distribution under Threshold
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
     histogram itnerval - int > 0
@@ -49,7 +60,10 @@ generate_time_distr.m
 
 hold_time_distr.m
 6. Hold Time Distribution (same as 2?)
-7. Reward Rate by Hold Time Histogram, 8. Joystick Onset to Reward Distribution
+    No, not the same
+
+7. Reward Rate by Hold Time Histogram, 
+8. Joystick Onset to Reward Distribution
     Arguments:
     stats struct(s) (take trajectory struct from each though)
     histogram interval
@@ -62,7 +76,7 @@ hold_time_distr.m
 
 find_sector.m
     split up into helper functions -> each of these 
-Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
+9.x Activity Heat Map: 9. Distance, 10. Velocity, 11. Acceleration
     Arguments:
     stats struct - can only plot a single distribution
         no other arguments, unless you want ones for color mapping
@@ -70,8 +84,27 @@ Activity Color Map: 9. Distance, 10. Velocity, 11. Acceleration
     Outputs:
      pdf: = 100*100 cell array of probability distribution
     GUI Comments: Can't be used for plotting multiple days, lock to single day
+10. Velocity Heat Map:
+    Arguments:
+    stats struct - can only plot a single distribution
+        no other arguments, unless you want ones for color mapping
+        plot accumulated data from all days
+    ax - to plot onto 
+    logmapping - put on a logarithmic scale
+    color
+    Outputs:
+     pdf: = 100*100 cell array of probability distribution
+    GUI Comments: Can't be used for plotting multiple days, lock to single day
 
-12. Angle Distribution and Target Sector (Linear) 
+    approximate velocity as follows
+    v_x = diff(x)2, v_y = diff(y)
+    v = sqrt(v_x.^2+v_y.^2)
+    plot velocity on the grid as follows
+11. Acceleration Heat Map
+    Arguments:
+    stats struct - can only plot a single distribution
+
+12.x Angle Distribution and Target Sector (Linear) 
     Arguments:
     reward_rate (typically 25)
     threshold (typically 75) - magnitude at which angles above are included in probability distribution

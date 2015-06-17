@@ -42,7 +42,7 @@ if length(jstruct)>25
     xlabel('Time (ms)'); ylabel('# of trials');
     title('JS first contact hold time at thresh');
     stairs(dist_time_hld, holddist_vect,clrstr(k),'LineWidth',2);
-    s1{k} = strcat(s{k},' ',num2str(numel(hold_dist)));
+    s1{k} = strcat(s{k},' (',num2str(numel(hold_dist)), ')');
     legend(s1,'Interpreter','none');
     hold on
     

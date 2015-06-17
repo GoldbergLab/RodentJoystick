@@ -1,19 +1,19 @@
 function [data, labels] = np_post_distribution(jslist, varargin)
-%np_post_distribution(jslist [interv, ax, combineflag, plotflag]) 
+%np_post_distribution(jslist [interv, combineflag, plotflag, ax]) 
 % plots the nose poke vs post touch time distribution
 % for the data from a given jstruct. If multiple jstructs are given, it
 % plots all data on the same axes
 % ARGUMENTS:
 %   jslist :: list of jstructs - may contain a single jstruct
 %   interv :: histogram interval (optional, default 20ms)
-%   ax :: list of axes handles - plots all data (if multiple jstructs) on
-%       the first element in ax. If no axes are given and plotflag is on,
-%       creates a new figure (optional, default empty)
 %   combineflag :: if multiple jstructs are given, combines all data and
 %       makes a single plot if 1, plots structs individually if 0
 %       (optional, default 0)
 %   plotflag :: whether to plot (1) or just return data (0)
 %       (optional, default 1)
+%   ax :: list of axes handles - plots all data (if multiple jstructs) on
+%       the first element in ax. If no axes are given and plotflag is on,
+%       creates a new figure (optional, default empty)
 % OUTPUTS:
 %   data :: cell array, where each cell is an n x 2 matrix representing the
 %       dist_times and probability data at each bin
@@ -63,10 +63,8 @@ if combineflag==0
     if plotflag == 1
         xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
         legend(labels.legend);
-        hold on;
+        hold off;
     end
-    hold off;
-
 else
 %% Plot jstructs combined data
     combined = [];

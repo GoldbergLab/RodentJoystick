@@ -1,9 +1,11 @@
 %[targsec, distr, fh, angle_distr] 
-%   find_sector(stats) or find_sector(stats, reward_rate, ... )
+%   find_sector(stats) or 
+%   find_sector(stats, [reward_rate, thresh, pflag])
 %   OPTIONAL ARG ORDER:
-%       reward_rate, thresh, pflag, colorperc
+%       reward_rate, thresh, pflag
 %   computes the required target sector (angles) required for 'reward_rate'
-%   a percentage of trials to be rewarded.
+%   percentage of trials to be rewarded looking only at portions of the
+%   trajectory >= thresh.
 %   EXAMPLE:  
 %       targsec = find_sector(stats,25)
 %       targsec = find_sector(stats,25, 95)
@@ -25,13 +27,9 @@
 %       thresh :: only trajectory points with a magnitude above thresh will
 %           be used in computing angle distributions and then target sector
 %           DEFAULT: 75
-%       pflag :: changes color mapping: 'log' places the color mapping on a
-%           logarithmic scale, 'norm' leaves probabilities as is.
-%           DEFAULT: 'log'
-%       colorperc :: [c1 c2] tells color plotter for trajectory
-%           distributions the percentiles caxis should use. This is automatically 
-%           set to [0 99] if logarithmic color mapping is used
-%           DEFAULT: [20 80]
+%       pflag :: 1 or 0 - 1 tells find_sector to create plots. 0 indicates
+%           just computation
+%           DEFAULT: 1
 
 function [targsec] = find_sector(stats, varargin)
 default = {25, 75, 1};
@@ -46,8 +44,8 @@ figure;
 ax1 = subplot(2, 1, 1);
 ax2 = subplot(2, 1, 2);
 
-activity_color_map(stats, ax1);
-targsec = perform_sector_analysis(targ_rate, thresh, plotflag, ax2);
+activity_color_map(stats, [2 4], 1, ax1);
+targsec = perform_sector_analysis(stats, targ_rate, thresh, plotflag, ax2);
 
     
 

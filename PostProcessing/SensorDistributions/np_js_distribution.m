@@ -1,19 +1,19 @@
 function [data, labels] = np_js_distribution(jslist, varargin)
-%np_js_distribution(jslist [interv, ax, combineflag, plotflag]) 
+%np_js_distribution(jslist [interv, combineflag, plotflag, ax]) 
 % plots the nose poke vs joystick touch time distribution
 % for the data from a given jstruct. If multiple jstructs are given, it
 % plots all data on the same axes
 % ARGUMENTS:
 %   filenames :: list of jstructs - may contain a single jstruct
 %   interv :: histogram interval (optional, default 20ms)
-%   ax :: list of axes handles - plots all data (if multiple jstructs) on
-%       the first element in ax. If no axes are given and plotflag is on,
-%       creates a new figure (optional, default empty)
 %   combineflag :: if multiple jstructs are given, combines all data and
 %       makes a single plot if 1, plots structs individually if 0
 %       (optional, default 0)
 %   plotflag :: whether to plot (1) or just return data (0)
 %       (optional, default 1)
+%   ax :: list of axes handles - plots all data (if multiple jstructs) on
+%       the first element in ax. If no axes are given and plotflag is on,
+%       creates a new figure (optional, default empty)
 % OUTPUTS:
 %   data :: cell array, where each cell is an n x 2 matrix representing the
 %       dist_times and probability data at each bin
@@ -49,24 +49,21 @@ if combineflag==0
     for i= 1:length(jslist)
         load(jslist(i).name);
         labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
-
         %processing
         stats = xy_getstats(jstruct);
         np_js = histc(stats.np_js,dist_time);
         np_js = np_js./(sum(np_js));
         data{i} = [dist_time', np_js];
         if plotflag==1
-            stairs(ax(1), dist_time,np_js, colors(i), 'LineWidth',2, 'LineStyle',':');
+            stairs(ax(1), dist_time,np_js, colors(i), 'LineWidth',1);
             hold on;
         end
     end
     if plotflag == 1
         xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
         legend(labels.legend);
-        hold on;
+        hold off;
     end
-    hold off;
-
 else
 %% Plot jstructs combined data
     combined = [];
@@ -80,7 +77,8 @@ else
     np_js = np_js./(sum(np_js));
     data{1} = [dist_time', np_js];
     if plotflag == 1
-        stairs(ax(1), dist_time,np_js, colors(1), 'LineWidth', 2);
+        axes(ax(1));
+        stairs(dist_time,np_js, colors(1), 'LineWidth', 1);
         xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
         legend([labels.legend{1}, '-', labels.legend{end}])
     end
