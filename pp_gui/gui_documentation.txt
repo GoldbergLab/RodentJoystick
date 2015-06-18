@@ -48,7 +48,7 @@ make_plots.m
     labels (struct w/ xlabel, ylabel, title, legend (dates))
 
 generate_time_distr.m
-5. Nosepoke/Reward Distribution
+5.s Nosepoke/Reward Distribution
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
     histogram interval - int > 0 (representing number of minutes)
@@ -63,7 +63,7 @@ hold_time_distr.m
     No, not the same
 
 7. Reward Rate by Hold Time Histogram, 
-8. Joystick Onset to Reward Distribution
+8.s Joystick Onset to Reward Distribution
     Arguments:
     stats struct(s) (take trajectory struct from each though)
     histogram interval
