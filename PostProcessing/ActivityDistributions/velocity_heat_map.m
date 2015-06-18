@@ -1,5 +1,5 @@
 function [mediandata, labels] = velocity_heat_map(stats,varargin)
-%accel_heat_map(stats, [ax, data]) plots the median of the acceleration profile
+%velocity_heat_map(stats, [ax, data]) plots the median of the velocity profile
 %given by the trajectories in stats
 % ARGUMENTS:
 %   stats :: single stats structure
