@@ -7,8 +7,9 @@ function [data, labels] = holdtime_firstcontact_distribution(jslist, varargin)
 %   jslist :: list of structs containing filenames like the output of rdir
 %       - may contain a single struct - this is not the same as a list of
 %       jstructs
+% OPTIONAL ARGS:
 %   dist_thresh :: the distance threshold desired. 
-%       DEFAULT: 150 (plots everything
+%       DEFAULT: 150 (plots everything)
 %   interv :: histogram interval (optional, default 20ms)
 %   combineflag :: if multiple jstructs are given, combines all data and
 %       makes a single plot if 1, plots structs individually if 0
@@ -24,68 +25,60 @@ function [data, labels] = holdtime_firstcontact_distribution(jslist, varargin)
 %   labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
-default = {20, 0, 1, []};
+default = {40, 20, 0, 1, []};
 numvarargs = length(varargin);
 if numvarargs > 4
     error(['too many arguments (> 5), only one required ' ... 
             'and four optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, combineflag, plotflag, ax] = default{:};
+[dist_thresh, interv, combineflag, plotflag, ax] = default{:};
 %% Initialize Labels and some data
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 labels.xlabel = 'Time (ms)';
-labels.ylabel = 'Probability';
-labels.title = 'Nosepoke Joystick Touch Distribution';
+labels.ylabel = 'Trials Count';
+labels.title = ['Max Hold Times Under ',num2str(dist_thresh),' Distribution'];
 if plotflag == 1 && length(ax) <1
         figure;
         ax(1) = gca();
 end
-if combineflag == 1
-    data = cell(1, 1);
-else
-    data = cell(length(jslist), 1);
-end
-dist_time = -1000:interv:1000;
-
-%% Plot jstructs individually
+if combineflag == 1; data = cell(1, 1); else data = cell(length(jslist), 1); end
+dist_time = 0:interv:1000;
+LINEWIDTH = 1;
+%% Get individual data
 if combineflag==0
     for i= 1:length(jslist)
         load(jslist(i).name);
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
-        %processing
-        stats = xy_getstats(jstruct);
-        np_js = histc(stats.np_js,dist_time);
-        np_js = np_js./(sum(np_js));
-        data{i} = [dist_time', np_js];
-        if plotflag==1
-            stairs(ax(1), dist_time,np_js, colors(i), 'LineWidth',1);
-            hold on;
-        end
-    end
-    if plotflag == 1
-        xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
-        legend(labels.legend);
-        hold off;
+        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
+        %processing now
+        [~,hold_dist]=xy_holddist(jstruct,dist_thresh,0.75);
+        holddist_vect = histc(hold_dist,dist_time);
+        data{i} = [dist_time', holddist_vect'];
     end
 else
-%% Plot jstructs combined data
+    LINEWIDTH=2;
+%% Get jstructs combined data
     combined = [];
     for i= 1:length(jslist)
         load(jslist(i).name);
         combined = [combined, jstruct];
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
+        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
     end
-    stats = xy_getstats(combined);
-    np_js = histc(stats.np_js, dist_time);
-    np_js = np_js./(sum(np_js));
-    data{1} = [dist_time', np_js];
-    if plotflag == 1
-        axes(ax(1));
-        stairs(dist_time,np_js, colors(1), 'LineWidth', 2);
-        xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
-        legend([labels.legend{1}, '-', labels.legend{end}])
-    end
+    labels.legend = [labels.legend{1},'-',labels.legend{end}];
+    [~,hold_dist]=xy_holddist(combined,dist_thresh,0.75);
+    holddist_vect = histc(hold_dist,dist_time);
+    data{1} = [dist_time', holddist_vect'];
 end
-
+if plotflag==1
+    axes(ax(1));hold on;
+    for i = 1:length(data)
+        stuff = data{i};
+        dist_time = stuff(:, 1);
+        holddist_vect = stuff(:, 2);
+        stairs(dist_time, holddist_vect, colors(i), 'LineWidth',LINEWIDTH);
+    end
+    xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
+    legend(labels.legend);
+    hold off;
+end
 

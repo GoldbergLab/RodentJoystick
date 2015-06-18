@@ -13,9 +13,9 @@ clrstr = 'rgbkmcyrgbkmcyrgbkmcy';
 
 for i=1:1:length(list)
 load(list(i).name);
+holddist_mederror = zeros(5, 4);
 if length(jstruct)>25
     disp(list(i).name)
-    jstruct_stats = xy_getstats(jstruct,[1 inf]);
     s{k} = datestr(jstruct(3).real_time, 'mm/dd/yyyy');
   
     %% Less than 15%
