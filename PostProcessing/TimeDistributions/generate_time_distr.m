@@ -41,10 +41,10 @@ if plotflag == 1 && length(ax) <1; figure; ax(1) = gca(); end
 
 interval = interval*60;
 [times, np_plot, rew_plot, day] = gen_final_data(jstruct, interval);
-labels.times = times;
 labels.day = day;
 labels.title = 'Activity Distribution';
 labels.xlabel = 'Time (hours)';
+labels.ylabel = 'Count';
 labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
 labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
 if plotflag == 1

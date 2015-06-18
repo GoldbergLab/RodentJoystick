@@ -19,7 +19,7 @@
 %       otherwise does nothing
 % OUTPUTS: None
 
-function multi_time_distr(jslist, varargin)
+function [data, labels] = multi_time_distr(jslist, varargin)
     %Default argument handling:
 default = {30, 'single', 0, Inf, []};
 numvarargs = length(varargin);
@@ -30,9 +30,9 @@ end
 %normal code from here on
 [interval, layout, combineflag, ylim, ax] = default{:};
 if strcmp(layout,'single')
-    multi_time_distr_single(jslist, interval, combineflag, ax);
+    [data, labels] = multi_time_distr_single(jslist, interval, combineflag, ax);
 elseif strcmp(layout,'col')
-    multi_time_distr_multi(jslist, interval, ylim);
+    [data, labels] = multi_time_distr_multi(jslist, interval, ylim);
 else
     s1 ='Invalid flag. \n multi_time_distr(interval, flag) takes';
     s2 = ' an interval argument(integer) (for the histogram) and a';
@@ -46,27 +46,29 @@ end
 %   nosepoke/reward time distribution with bin size specified by interval
 %   of each jstruct in jslist on its own figure, starting at sfignum and 
 %   incrementing by 1 each time
-function multi_time_distr_single(jslist, interval, combineflag, ax)
+function [data, labels] = multi_time_distr_single(jslist, interval, combineflag, ax)
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 if length(ax) <1
         figure;
         ax(1) = gca();
 end
-leg = [];
+data = cell(length(jslist), 1);
+leg = []; labelstmp = [];
 if combineflag==0
     leg = cell(2*length(jslist), 1);
     for i=1:length(jslist)
         clear jstruct;
         load(jslist(i).name);
-       [~,~,~,~, labels]=generate_time_distr(jstruct, interval, 1, ax, colors(i));
-        leg{2*i}=labels.legend{2};
-        leg{2*i-1}=labels.legend{1};
+        [np_plot, rew_plot,~,times, labelstmp]=generate_time_distr(jstruct, interval, 1, ax, colors(i));
+        data{i} = [times', np_plot, rew_plot];
+        leg{2*i}=labelstmp.legend{2};
+        leg{2*i-1}=labelstmp.legend{1};
     end
     legend('Location', 'northwest');
     legend('boxoff');
 else
     clear jstruct; load(jslist(1).name);
-    [~,~,day1]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
+    [~,~,day1, labelstmp]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
     clear jstruct; load(jslist(end).name);
     [~,~,day2]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
     leg{1} = strcat(datestr(day1, 'mm/dd'), '-',datestr(day2, 'mm/dd/yy'),': Nosepoke');
@@ -79,6 +81,8 @@ else
     end
     generate_time_distr(combined, interval, 1, ax, colors(1));
 end
+labels = labelstmp;
+labels.legend = leg;
 legend(leg);
 legend('Location', 'northwest');
 legend('boxoff');
