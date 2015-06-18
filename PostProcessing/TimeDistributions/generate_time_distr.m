@@ -31,9 +31,9 @@
 function [np_plot, rew_plot, day, times, labels] = generate_time_distr(jstruct, varargin)
 default = {15, 1, [], 'r'};
 numvarargs = length(varargin);
-if numvarargs > 4
-    error(['too many arguments (> 5), only one required ' ... 
-            'and four optional.']);
+if numvarargs > 5
+    error(['too many arguments (> 6), only one required ' ... 
+            'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
 [interval, plotflag, ax, color] = default{:};
@@ -45,8 +45,8 @@ labels.times = times;
 labels.day = day;
 labels.title = 'Activity Distribution';
 labels.xlabel = 'Time (hours)';
-labels.legend{1} = strcat(datestr(floor(day)),' - Nosepoke'); 
-labels.legend{2} = strcat(datestr(floor(day)),' - Reward');
+labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
+labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
 if plotflag == 1
     plot_data(ax, times, np_plot, rew_plot, labels, color);
 end

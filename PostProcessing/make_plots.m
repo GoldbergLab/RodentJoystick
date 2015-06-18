@@ -1,36 +1,23 @@
 
 function [hold_len]=make_plots(list,dist_thresh_ip)
 k=1;
+
+figure(1); ax1 = gca();
+%np_js_distribution/np_post_distribution(jslist [interv, combineflag, plotflag, ax])
+disp('Nosepoke Joystick Touch Distribution');
+np_js_distribution(list, 30, 0, 1, ax1);
+disp('Nosepoke Post Distribution');
+figure(2); ax2 = gca();
+np_post_distribution(list, 30, 0, 1, ax2);
+clrstr = 'rgbkmcyrgbkmcyrgbkmcy';
+
 for i=1:1:length(list)
 load(list(i).name);
 if length(jstruct)>25
     disp(list(i).name)
     jstruct_stats = xy_getstats(jstruct,[1 inf]);
-    clrstr = 'rgbcmykrgbcmykrgbcmykrgbcmyk';
-    
-    %%np_js dist
-    dist_time = -1000:40:1000;
-    np_js_plot = histc(jstruct_stats.np_js,dist_time);
-    np_js_plot = np_js_plot./(sum(np_js_plot));
-    figure(1)
-    xlabel('Time (ms)'); ylabel('Probability'); title('JS NP distribution');
-    stairs(dist_time,np_js_plot,clrstr(k),'LineWidth',2);
     s{k} = datestr(jstruct(3).real_time, 'mm/dd/yyyy');
-    legend(s,'Interpreter','none');
-    hold on
-    
-    %%np_post dist
-    dist_time = -1000:20:1000;
-    np_post_plot = histc(jstruct_stats.np_js_post,dist_time);
-    np_post_plot = np_post_plot./(sum(np_post_plot));
-    %np_js_fit = fit(dist_time',np_js_plot,'cubicinterp');
-    figure(2); xlabel('Time (ms)'); ylabel('Probability');
-    title('Post NP distribution');
-    stairs(dist_time,np_post_plot,clrstr(k),'LineWidth',2);
-    legend(s,'Interpreter','none');
-    hold on
-    
-    
+  
     %% Less than 15%
     [~,hold_dist]=xy_holddist(jstruct,dist_thresh_ip,0.75);
     
@@ -39,9 +26,9 @@ if length(jstruct)>25
     dist_time_hld = 0:10:600;
     holddist_vect = histc(hold_dist,dist_time_hld);
     figure(3)
+    stairs(dist_time_hld, holddist_vect,clrstr(k),'LineWidth',2);
     xlabel('Time (ms)'); ylabel('# of trials');
     title('JS first contact hold time at thresh');
-    stairs(dist_time_hld, holddist_vect,clrstr(k),'LineWidth',2);
     s1{k} = strcat(s{k},' (',num2str(numel(hold_dist)), ')');
     legend(s1,'Interpreter','none');
     hold on
@@ -58,17 +45,17 @@ if length(jstruct)>25
         hold on
     catch
     end 
-    for ll=1:100
-        [~,hold_dist] = xy_holddist(jstruct,ll,75);
-        hold_totaldist(ll,:) = histc(hold_dist,dist_time_hld);
-    end
+%     for ll=1:100
+%         [~,hold_dist] = xy_holddist(jstruct,ll,75);
+%         hold_totaldist(ll,:) = histc(hold_dist,dist_time_hld);
+%     end
     k=k+1;
 end
 end
-    figure(1)
-    saveas(gcf,'fig1');
-    figure(2)
-    saveas(gcf,'fig2');
+    %figure(1)
+    %saveas(gcf,'fig1');
+    %figure(2)
+    %saveas(gcf,'fig2');
     figure(3)
     saveas(gcf,'fig3');
     figure(4)

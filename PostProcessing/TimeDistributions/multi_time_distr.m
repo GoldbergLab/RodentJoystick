@@ -19,19 +19,18 @@
 %       otherwise does nothing
 % OUTPUTS: None
 
-function leg = multi_time_distr(jslist, varargin)
+function multi_time_distr(jslist, varargin)
     %Default argument handling:
-default = {30, 'single', 0, Inf};
+default = {30, 'single', 0, Inf, []};
 numvarargs = length(varargin);
-if numvarargs > 3
-    error('too many arguments (> 5), only one required and four optional.');
+if numvarargs > 5
+    error('too many arguments (> 6), only one required and five optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 %normal code from here on
-[interval, layout, combineflag, ylim] = default{:};
-leg = [];
+[interval, layout, combineflag, ylim, ax] = default{:};
 if strcmp(layout,'single')
-    leg = multi_time_distr_single(jslist, interval, combineflag);
+    multi_time_distr_single(jslist, interval, combineflag, ax);
 elseif strcmp(layout,'col')
     multi_time_distr_multi(jslist, interval, ylim);
 else
@@ -47,10 +46,13 @@ end
 %   nosepoke/reward time distribution with bin size specified by interval
 %   of each jstruct in jslist on its own figure, starting at sfignum and 
 %   incrementing by 1 each time
-function leg = multi_time_distr_single(jslist, interval, combineflag)
+function multi_time_distr_single(jslist, interval, combineflag, ax)
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-figure;
-ax = gca();
+if length(ax) <1
+        figure;
+        ax(1) = gca();
+end
+leg = [];
 if combineflag==0
     leg = cell(2*length(jslist), 1);
     for i=1:length(jslist)
@@ -60,7 +62,6 @@ if combineflag==0
         leg{2*i}=labels.legend{2};
         leg{2*i-1}=labels.legend{1};
     end
-    legend(leg);
     legend('Location', 'northwest');
     legend('boxoff');
 else
@@ -68,10 +69,19 @@ else
     [~,~,day1]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
     clear jstruct; load(jslist(end).name);
     [~,~,day2]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
-    leg{1} = strcat(datestr(day1), '-',datestr(day2),': Nosepoke');
-    leg{2} = strcat(datestr(day1), '-',datestr(day2),': Reward');
-
+    leg{1} = strcat(datestr(day1, 'mm/dd'), '-',datestr(day2, 'mm/dd/yy'),': Nosepoke');
+    leg{2} = strcat(datestr(day1, 'mm/dd'), '-',datestr(day2, 'mm/dd/yy'),': Reward');
+    combined = [];
+    for i=1:length(jslist)
+        clear jstruct;
+        load(jslist(i).name);
+        combined = [combined, jstruct];
+    end
+    generate_time_distr(combined, interval, 1, ax, colors(1));
 end
+legend(leg);
+legend('Location', 'northwest');
+legend('boxoff');
 end
 
 function multi_time_distr_multi(jslist, interval, ylim)
@@ -83,14 +93,14 @@ for i = 1:plot_size
     load(jslist(i).name);
     ax = subplot(plot_size,1,i); hold on;
     [~, ~, day]=generate_time_distr(jstruct, interval, 1, ax);
-    subplot(plot_size,1,i); hold on;
+    axes(ax);
     axis([0, 24, 0, ylim]);
     %minor formatting
     legend('Nosepoke', 'Reward'); legend('boxoff');
     if i == plot_size
         xlabel('Time (hours)');
     end
-    ylabel(datestr(floor(day)));
+    ylabel(datestr(floor(day), 'mm/dd/yy'));
     hold on;
 end
 end

@@ -20,16 +20,16 @@ function [data, labels] = np_js_distribution(jslist, varargin)
 %   labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
-default = {20, 0, 1, []};
+colors = 'rgbkmcyrgbkmcyrgbkmcy';
+default = {20, 0, 1, [], colors(1)};
 numvarargs = length(varargin);
-if numvarargs > 4
-    error(['too many arguments (> 5), only one required ' ... 
-            'and four optional.']);
+if numvarargs > 5
+    error(['too many arguments (> 6), only one required ' ... 
+            'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, combineflag, plotflag, ax] = default{:};
+[interv, combineflag, plotflag, ax, combinecolor] = default{:};
 %% Initialize Labels and some data
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
 labels.title = 'Nosepoke Joystick Touch Distribution';
@@ -48,18 +48,21 @@ dist_time = -1000:interv:1000;
 if combineflag==0
     for i= 1:length(jslist)
         load(jslist(i).name);
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
+        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
+        
         %processing
         stats = xy_getstats(jstruct);
         np_js = histc(stats.np_js,dist_time);
         np_js = np_js./(sum(np_js));
         data{i} = [dist_time', np_js];
         if plotflag==1
-            stairs(ax(1), dist_time,np_js, colors(i), 'LineWidth',1);
+            axes(ax(1));
+            stairs(dist_time, np_js, colors(i), 'LineWidth',1);
             hold on;
         end
     end
     if plotflag == 1
+        axes(ax(1));
         xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
         legend(labels.legend);
         hold off;
@@ -70,7 +73,7 @@ else
     for i= 1:length(jslist)
         load(jslist(i).name);
         combined = [combined, jstruct];
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
+        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
     end
     stats = xy_getstats(combined);
     np_js = histc(stats.np_js, dist_time);
@@ -78,9 +81,11 @@ else
     data{1} = [dist_time', np_js];
     if plotflag == 1
         axes(ax(1));
-        stairs(dist_time,np_js, colors(1), 'LineWidth', 1);
+        hold on;
+        stairs(dist_time,np_js, combinecolor, 'LineWidth', 2);
         xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
         legend([labels.legend{1}, '-', labels.legend{end}])
+        hold off;
     end
 end
 

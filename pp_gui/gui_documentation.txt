@@ -25,7 +25,7 @@ make_plots.m
     Outputs:
     {[onset, probability], [onset, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates));
-3.s Hold Length Distribution
+3.s Hold Length Distribution (Max Hold Length)
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
     histogram interval - int > 0
@@ -48,7 +48,7 @@ make_plots.m
     labels (struct w/ xlabel, ylabel, title, legend (dates))
 
 generate_time_distr.m
-5.s Nosepoke/Reward Distribution
+5.x Nosepoke/Reward Distribution
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
     histogram interval - int > 0 (representing number of minutes)
@@ -59,8 +59,14 @@ generate_time_distr.m
     labels (struct w/ xlabel, ylabel, title, legend (dates))
 
 hold_time_distr.m
-6. Hold Time Distribution (same as 2?)
-    No, not the same
+6. Hold Time Distribution (same as 2?-> No)
+    All trajectory hold times
+    Arguments:
+    stats - struct
+    histogram interval - 50
+    end time (in ms) - 2000
+    Outputs:
+    data:=
 
 7. Reward Rate by Hold Time Histogram, 
 8.s Joystick Onset to Reward Distribution
@@ -75,7 +81,6 @@ hold_time_distr.m
     labels (struct w/ list of dates);
 
 find_sector.m
-    split up into helper functions -> each of these 
 9.x Activity Heat Map: 9. Distance, 10. Velocity, 11. Acceleration
     Arguments:
     stats struct - can only plot a single distribution
@@ -84,7 +89,7 @@ find_sector.m
     Outputs:
      pdf: = 100*100 cell array of probability distribution
     GUI Comments: Can't be used for plotting multiple days, lock to single day
-10. Velocity Heat Map:
+10. x Velocity Heat Map:
     Arguments:
     stats struct - can only plot a single distribution
         no other arguments, unless you want ones for color mapping
