@@ -1,15 +1,11 @@
 function activity_summary_heat_maps(stats,varargin)
-%activity_color_map(stats [plotflag, ax, logmapping, colorperc ]) plots a velocity heat map given
-%by the valid trajectories
+%activity_summary_heat_maps(stats) plots the activity heat map, velocity
+%and acceleration profiles including variation on a single figure
 % ARGUMENTS:
 %   stats :: single stats structure
 %   OPTIONAL:
 %   ax :: at least 5 axes (different) instructing
-%       activity_summary_heat_maps of where to plot distributions
-%   colorperc :: [lower upper] - colorperc defines the color percentiles
-%       for the color mapping when logarithmic mapping is turned off
-%   ax :: an axes handle (can be empty) for where activity_color_map should
-%       plot 
+%       activity_summary_heat_maps where to plot distributions
 
 default = {[]};
 numvarargs = length(varargin);

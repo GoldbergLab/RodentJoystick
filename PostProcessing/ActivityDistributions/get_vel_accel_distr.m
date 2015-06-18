@@ -1,19 +1,18 @@
 function [median, variation, accel, accelv] = get_vel_accel_distr(stats,varargin)
-%activity_color_map(stats [plotflag, ax, logmapping, colorperc ]) plots a velocity heat map given
-%by the valid trajectories
+%[median, variation, accel, accelv] = get_vel_accel_distr(stats) returns
+%the relative velocity and acceleration distributions (their medians, and
+%the differences between their 75th and 25th percentiles
 % ARGUMENTS:
 %   stats :: single stats structure
-%   plotflag :: instructs velocity_heat_map which plots to generate
-%       0 :: plots nothing, just gives data;
-%       1 :: plots just velocity heat map
-%       2 :: plots just velocity variation
-%       3 :: plots both
-%   logmappping :: a flag indicating whether the function should plot using
-%       a logarithmic scale, or standard scale (1 or 0)
-%   colorperc :: [lower upper] - colorperc defines the color percentiles
-%       for the color mapping when logarithmic mapping is turned off
-%   ax :: an axes handle (can be empty) for where activity_color_map should
-%       plot 
+% OUTPUTS: all structures are 201x201 doubles corresponding to cells
+% representing blocks in the x-y coordinate space -100:1:100 x -100:1:100
+%   median :: median of the velocity profiles for each cell
+%   variation :: difference between the 75th and 25th percentiles of the
+%       velocity profile for each cell
+%   accel :: median of the acceleration profiles for each cell
+%   accelv :: difference between the 75th and 25th percentiles of the
+%       acceleration profile for each cell
+
 
 default = {};
 numvarargs = length(varargin);

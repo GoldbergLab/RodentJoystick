@@ -1,6 +1,8 @@
 function [labels] = draw_heat_map(data, ax, type, scale, varargin)
-%Creates a two dimensional heat map, representing things such as activity
-%distributions.
+%Creates a two dimensional heat map, representing activity
+%distributions. Allows for logarithmic scaling and selecting color
+%percentiles for which to plot. Returns the X, Y labels used as well as the
+%final title.
 default = {1, [5 80]};
 numvarargs = length(varargin);
 if numvarargs > 2

@@ -1,14 +1,11 @@
 function [mediandata, labels] = velocity_heat_map(stats,varargin)
-%activity_color_map(stats [plotflag, ax, logmapping, colorperc ]) plots a velocity heat map given
-%by the valid trajectories
+%accel_heat_map(stats, [ax, data]) plots the median of the acceleration profile
+%given by the trajectories in stats
 % ARGUMENTS:
 %   stats :: single stats structure
-%   logmappping :: a flag indicating whether the function should plot using
-%       a logarithmic scale, or standard scale (1 or 0)
-%   colorperc :: [lower upper] - colorperc defines the color percentiles
-%       for the color mapping when logarithmic mapping is turned off
-%   ax :: an axes handle (can be empty) for where activity_color_map should
-%       plot 
+%   ax :: an axes handle (can be empty) for where to plot 
+%   data :: since the function get_vel_accel_distr is costly, the plotting
+%       routine can take in data directly if it has already been computed
 
 default = {[], []};
 numvarargs = length(varargin);
