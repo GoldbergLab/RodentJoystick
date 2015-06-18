@@ -1,3 +1,29 @@
+List of Plots
+make_plots.m - hist interval
+	Nosepoke Joystick Onset Distribution (1)
+	Nosepoke Touch Post Onset Distribution (1)
+	Hold Length Distribution (1)
+	Hold Length Within Threshold Distribution (1) - threshold
+generate_time_distr.m - hist interval
+	Time (Activity/Reward) Distribution (1) - works with multiple days
+hold_time_distr.m - hist interval
+	Hold Time Distribution (1)
+	Reward Rate Distribution (1)
+	Joystick Reward Onset Distribution (1) - 
+js_touch_dist.m
+	Magnitude Distribution (1)
+find_sector.m
+	Activity Color Map (1) - won't work with multiple days (requires separate plot per day)
+		distance
+		velocity, acceleration (check existing)
+	Angle Distribution (Linear) (1) - Reward Rate, Threshold - won't work well with multiple days (too much data) - separate plot per day
+trajectory_analysis.m - windows, start, end
+	Trajectory Magnitude Analysis (1) - any plot
+	Trajectory Magnitude Analysis (2) - link column
+	Trajectory Magnitude Analysis (3) - link row
+	Trajectory Magnitude Analysis (4) - link block
+
+
 TrajectoryAnalysis\trajectory_analysis
 TrajectoryAnalysis\find_sector
 TimeDistributions\generate_time_distr
@@ -26,11 +52,16 @@ So have two GUI options - single day/multi day
 single day plots:
 np_js_distribution
 np_post_distribution
-js_hold time onset distributions (both)
+(both)
 generate_time_distr
 trajectory_analysis
 find_sector - angle sector information
-hold_time_distr - mean, median, stdev
+hold_time_distr (3) - 
+    js_hold time onset distributions
+    rewarded trajectory rate 
+    hold_time_distr
+    mean, median, stdev 
+onset to reward time (hold_time_distr)
 make_pdfplots - same size as trajectory analysis
 
 multi_day_plots:

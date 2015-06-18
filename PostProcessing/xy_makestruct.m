@@ -34,7 +34,7 @@ filelist = dir(strcat(working_dir_1,'/*.mat'));
 load(strcat(working_dir_1,'/',filelist(1).name));
 
 fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
-time_stamp = fileinfo.datenum;
+[time_stamp] = fileinfo.datenum;
 % start_frame = str2num(filelist(1).name(1:end-4));
 start_frame_first = start_frame;
 
@@ -99,7 +99,7 @@ for i=1:length(filelist)
 end
 end
 
-% pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
+% [pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
 % onset/offset pairs for example, pairs(1, 1) and pairs(1,2) will return 
 % the times that a nosepoke came on and went off for the first nosepoke
 % in the file

@@ -1,57 +1,54 @@
 
-% [np_plot, rew_plot, day, times] = generate_time_distr(jstruct,int,fignum,flag)
+% [np_plot, rew_plot, day, times] 
+%   = generate_time_distr(jstruct, [interval, plotflag, ax, color])
 %   takes in the jstruct as an argument and either generates 
 %   (1) plots of the nose poke and reward distributions over time
 % or(2) data of the nose poke, reward, and times for further
 %         manipulation or plotting
 % ARGUMENTS:
-%   flag:: the flag indicating what generate_time_distr should do
-%       'plot' - creates a plot on figure (fignum) with title day 
-%       'data' - returns data of nose_poke, reward, and times for
-%           further manipulation/plotting
 %   jstruct :: the jstruct with data
 %       PRE: must have datetime, reward_onset, and np_pairs fields
 %   interval :: the interval used for generating data/histogram bins (minutes)
 %       PRE: must be greater than 0 (should also be an integer for
 %           meaningful results)
-%   fignum:: the number (integer) assigned to the figure generated
-%       if the 'plot' flag is used
-%       PRE: must be greater than or equal to 0
-% OUTPUTS: [np_plot, rew_plot, times]
+%   plotflag:: the flag indicating what generate_time_distr should do
+%       1 - creates a plot on figure (fignum) with title day 
+%       0 - returns data of nose_poke, reward, and times for
+%           further manipulation/plotting
+%   ax:: handle to an axes for plotting - must be a valid handle if
+%       nonempty
+%   color :: string representation of color to plot with
+% OUTPUTS: [np_plot, rew_plot, day, times]
 %   times:: array of time of data collection, in hours
 %       can be relative (0 is start time of data collection) or absolute
 %       (0 is 12am) depending on use of 'delay' argument
 %   day :: day of data collection/jstruct - using Matlab reference time (an
 %       integer on the order of 10^5)
-% if 'plot' flag is used:
-%       np_plot:: handle to the figure generated of nose poke distribution
-%       rew_plot:: handle to the figure generated of reward distribution
-% if 'data' flag is used:
-%       np_plot :: vector of nose poke distributions for a histogram plot
-%       rew_plot:: vector of reward distributions for a histogram plot
-% Example Use Cases:
-%   generate_time_distr(jstruct, 10, 1, 'plot')
-%   [np_plot, rew_plot, day, times] = generate_time_distr(jstruct, 10, 1, 'data')
-%   generate_time_distr(jstruct, 10, 1, 'plot')
+%   np_plot :: vector of nose poke distributions for a histogram plot
+%   rew_plot:: vector of reward distributions for a histogram plot
 
       
-function [np_plot, rew_plot, day, times, cache] = generate_time_distr(jstruct, interval, fignum, flag)
+function [np_plot, rew_plot, day, times, labels] = generate_time_distr(jstruct, varargin)
+default = {15, 1, [], 'r'};
+numvarargs = length(varargin);
+if numvarargs > 5
+    error(['too many arguments (> 6), only one required ' ... 
+            'and five optional.']);
+end
+[default{1:numvarargs}] = varargin{:};
+[interval, plotflag, ax, color] = default{:};
+if plotflag == 1 && length(ax) <1; figure; ax(1) = gca(); end
+
 interval = interval*60;
 [times, np_plot, rew_plot, day] = gen_final_data(jstruct, interval);
-cache.times = times;
-cache.np_data = np_plot;
-cache.rw_data = rew_plot;
-cache.day = day;
-cache.title = datestr(floor(day));
-cache.xlabel = 'Time (hours)';
-cache.legend = {'Nosepoke'; 'Reward'};
-cache.axis = [0, 24, 0, inf];
-if strcmp(flag, 'plot')
-    [plot] = plot_data(fignum, cache);
-    np_plot = plot; rew_plot = plot;
-elseif  strcmp(flag, 'data')
-else
-    error('invalid flag argument')
+labels.day = day;
+labels.title = 'Activity Distribution';
+labels.xlabel = 'Time (hours)';
+labels.ylabel = 'Count';
+labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
+labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
+if plotflag == 1
+    plot_data(ax, times, np_plot, rew_plot, labels, color);
 end
 end
 
@@ -72,7 +69,6 @@ function [times, np_data, rew_data, day] = gen_final_data(jstruct, int)
     [np_data] = histc(nptime, times);
     [rew_data] = histc(rewtime, times);
     times = times./3600;
-
 end
 
 % gen_hist_data (senson, histint) gives the following vectors
@@ -144,16 +140,18 @@ end
 %   label :: string labeling the y-axis
 %   day :: an integer representing the MATLAB day
 % and ontimes, the time when the sensor comes on
-function [plot] = plot_data(fig, cache)
-    plot = figure(fig);
+function plot_data(ax, times, np_plot, rew_plot, labels, color)
+    axes(ax);
     hold on;
-    xlabel(cache.xlabel);
-    title(cache.title);
-    stairs(cache.times, cache.np_data, 'b');
-    stairs(cache.times, cache.rw_data, 'r');
-    legend(cache.legend{1}, cache.legend{2});
+    xlabel(labels.xlabel);
+    title(labels.title);
+    stairs(times, np_plot, color);
+    stairs(times, rew_plot, color, 'LineStyle', ':');
+    legend(labels.legend{1}, labels.legend{2});
     legend('boxoff');
-    axis(cache.axis);
+    axis([0, 24, 0, inf]);
+    x = [0, 4, 8, 12, 16, 20, 24];
+    set(gca,'XTick',x);
     hold off;
 end
 

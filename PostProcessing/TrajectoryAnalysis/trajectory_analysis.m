@@ -1,56 +1,69 @@
-%[sortedtraj, fh, cache] = 
+%[bin_summary, labels, fh] = 
 %   trajectory_analysis(stats) OR trajectory_analysis(stats, plot_range, ... )
 %   OPTIONAL ARG ORDER:
-%       plot_range,hold_time_range,pflag, plot_contingencies, datestr,sflag
+%       plot_range,hold_time_range, plot_contingencies, pflag
+%       datestr, sflag, axeslst
 %   plots the trajectory distributions from stats using the (optional)
-%   arguments for a hold time range, whether or not to plot, whether to
-%   plot the lines indicating the contigencies (constants just below the
-%   function header), and the string representation of the date
-%   It also returns fh, the figure handle, if plotted - otherwise fh is not
-%   assigned
+%   arguments for a hold time range, contigency lines (constants just below the
+%   function header), whether to actually plot data, string representation
+%   of the date, what group of statistics to plot, and also a list of axes
+%   on which to plot the data
+%   It returns the bin statistics, labels for the axes to be used in the gui,
+%   and the figure handle, if no axes list was given.
 %   EXAMPLE:  
 %       trajectory_analysis(stats,4)
 %       trajectory_analysis(stats,4,[1000 1600], [400 40 40])
 %   OUTPUTS:
-%       sortedtraj :: a struct with the following fields:
-%
+%       bin_summary :: a struct with the following fields:
+%           lt, geq - bin contains all trajectories with hold times in
+%               the length geq - lt (greater or equal to, and strictly less than)
+%           med - double vector with median at each time point
+%           upperbnd - double vector of 75th percentile at each time point
+%           lowerbnd - double vector of 25th percentile at each time point
+%           mean - double vector of mean at each time point
+%           stdev - double vector of standard deviation at each time point
+%           numbers - double vector containing percentage of trajectories
+%               from bin used at each point. (time 0 will always be 100).
+%       labels :: a struct containing the x, y labels (same for all bins)
+%           and the titles for each plot
 %       fh :: the figure handle corresponding to the plot generate when
-%           'plot' flag is used, otherwise unassigned
-%       cache :: used for post processing gui
+%           'plot' flag is used, otherwise empty
 %   ARGUMENTS: 
 %       stats :: the result from xy_getstats(jstruct) for some jstruct
 %       OPTIONAL ARGS:
-%       plot_range :: number representing number of plots. DEFAULT: 10
-%       hold_time_range :: the time range [A B] (ms) for which plots are
-%           generated. Plots start at time A and end at B
+%       plot_range :: number representing number of plots. DEFAULT: 4
+%       hold_time_range :: the time range [A B] (ms) for which trajectories
+%           are included, i.e. any trajectory with a hold time in the range
+%           [A, B] is analyzed
 %           DEFAULT: [400 1400]
 %       plot_contingencies :: [HT T1 T2] this vector tells which lines to
-%           plot - HT is the hold time, T1 and T2 are the respective
-%           deviations (i.e. 30 60)
-%           value of [0 0] or [0 0 0] doesn't plot any lines
-%           DEFAULT: [300 30 60] - no plotting 
-%       pflag :: 'plot' if plot is desired, otherwise just returns
-%           binned trajectories in sortedtraj
-%           DEFAULT: 'plot'
+%           indicate contingencies as a reference - 
+%           HT is the hold time, T1 and T2 are the respective deviations 
+%               EX: [300 30 60]
+%           value of [0 0] or [0 0 0] doesn't plot any lines   
+%           DEFAULT: [0 0 0] - no plotting 
+%       pflag :: 1 if plots are desired, otherwise just returns bin statistics
+%           DEFAULT: 1
 %       datestr :: string representation of the date, used for title
 %           DEFAULT: 'N/A'
 %       sflag :: optional argument that tells what group of statistics to
-%           plot. 'median' - plots median and first/third quartiles,
-%           'mean'- plots mean and mean+/- stdev, 'both' - plots both
-%           groups
+%           plot. 
+%           'median' - plots median and first/third quartiles,
+%           'mean'- plots mean and mean+/- stdev
 %           DEFAULT: 'median'
-function [sortedtraj, fh, cache] = trajectory_analysis(stats, varargin)
-%how many plots to do - this depends on other stuff, look through
-%below as well. Look through subplotting routine to make sure nothing
-%critical is changed
+%       axes_lst :: a list of axes handles of where to plot. If specified,
+%           length(axes_lst) >= plot_range
+function [bin_summary, labels, fh] = trajectory_analysis(stats, varargin)
 
-default = {10,[400 1400], [300 30 60], 'plot', 'N/A', 'median', 'no'};
+% Argument Manipulation
+default = {4,[400 1400], [300 30 60], 1, 'N/A', 'median', []};
 numvarargs = length(varargin);
 if numvarargs > 7
-    error('trajectory_analysis: too many arguments (> 8), only one required and seven optional.');
+    error('too many arguments (> 8), only one required and seven optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, cacheflag] = default{:};
+[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst] = default{:};
+
 %divide the desired time range into number of bins based on number of plots
 %desired
 bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
@@ -59,33 +72,61 @@ tstruct=stats.traj_struct;
 totaltraj = length(tstruct);
 %[~,~,~, rw_or_stop] = hold_time_distr(tstruct, bin_length, 'data');
 %sortedtraj = sort_traj_into_bins(tstruct, bins, rw_or_stop);
+
+%perform processing
 hts = hold_time_distr(tstruct, bin_length, 'data');
 sortedtraj = sort_traj_into_bins(tstruct, bins, hts);
 
-%sometimes we only want the data from sorted traj, hence the option not to
-%plot
-if strcmp('plot', pflag)
+labels.xlabel = 'Time(ms)';
+labels.ylabel = 'Joystick Mag/Trajectory Percentage';
+fh = [];
+
+%if trajectory_analysis is given no axes handles, but expected to plot,
+%generate its own
+if pflag == 1 && length(axeslst)<1;
     fh = figure('Position', [100, 100, 1440, 900]);
     for i = 1:PLOT_RANGE
-        bin = sortedtraj(i);
-        [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
-        cache(i).upperbnd = upperbnd; cache(i).lowerbnd = lowerbnd;
-        cache(i).median = median; cache(i).mean = mean; cache(i).stdev=stdev;
-        cache(i).time = 1:1:length(numbers);
-        inittraj = numbers(1); cache(i).numbers = 100*numbers./inittraj;
-        tstr = strcat(num2str(bin.geq), '-', num2str(bin.lt), ' ms:');
-        percent = num2str(100*inittraj/totaltraj, 4); format bank;
-        cache(i).title = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
-        cache(i).axis = [0, bin.lt, 0, 100];
-        cache(i).xlabel = 'Time(ms)'; cache(i).ylabel = 'Joystick Mag/Traj Percentage';
-        cache(i).contigency = CONTL;
-        cache(i).legend_flag = sflag;
-        %entire block below can be copied to plot from cache in gui
-        if strcmp(cacheflag, 'no')
-        subplot(2, PLOT_RANGE/2, i);
-        title(cache(i).title, 'FontSize', 8); hold on;
-        axis(cache(i).axis); ylabel(cache(i).ylabel); xlabel(cache(i).xlabel);
-        CONTL = cache(i).contingency;
+        axeslst(i) = subplot(2, PLOT_RANGE/2, i);
+    end
+elseif pflag == 1 && (length(axeslst) < PLOT_RANGE)
+    error('Not enough axes handles provided for desired number of bins');
+end
+
+%plotting, and actual statistics
+for i = 1:PLOT_RANGE
+    bin = sortedtraj(i);
+    [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
+    bin_summary(i).mean = mean; bin_summary(i).md = median;
+    bin_summary(i).stdev = stdev;  bin_summary(i).upperbnd = upperbnd;
+    bin_summary(i).lowerbnd = lowerbnd; 
+    bin_summary(i).lt = bin.lt; bin_summary(i).geq = bin.geq;
+    
+    time = 1:1:length(numbers); inittraj = numbers(1); 
+    numbers = 100*numbers./inittraj;
+    bin_summary(i).numbers = numbers;
+    
+    tstr = strcat(num2str(bin.geq), '-', num2str(bin.lt), ' ms:');
+    percent = num2str(100*inittraj/totaltraj, 4); format bank;
+    titlestr = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
+    labels.title{i} = titlestr;
+    
+    if pflag == 1
+        axes(axeslst(i));
+        ubd = upperbnd; lbd = lowerbnd; md = median; me = mean; stdv = stdev;
+        if strcmp(sflag, 'median')
+            plot(time, ubd, 'r', 'LineStyle', ':'); hold on;
+            plot(time, md, 'r', 'LineWidth', 1);
+            plot(time, lbd, 'r', 'LineStyle', ':');
+        else
+            plot(time, me+stdv, 'b', 'LineStyle', ':'); hold on;
+            plot(time, me, 'b', 'LineWidth', 2); 
+            plot(time, me-stdv, 'b', 'LineStyle', ':');
+        end
+        plot( time, numbers, ':c');
+        title(axeslst(i), labels.title{i}, 'FontSize', 8); hold on;
+        axis(axeslst(i), [0, bin.lt, 0, 100]);
+        ylabel(axeslst(i), labels.xlabel); xlabel(axeslst(i), labels.ylabel);
+        
         if sum(CONTL)>0
             CONTLINE_COLORS = [0.4, 0.4, 0.4];
             line([0 2000], [CONTL(2) CONTL(2)], 'Color', CONTLINE_COLORS);
@@ -94,29 +135,16 @@ if strcmp('plot', pflag)
             end
             line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
         end
-        time = cache(i).time; ubd = cache(i).upperbnd; lbd = cache(i).lowerbnd;
-        md = cache(i).median; me = cache(i).mean; stdv = cache(i).stdev;
-        if strcmp(sflag, 'median')
-            plot(time, ubd, 'r', time, md, 'g', time, lbd, 'r'); hold on;
-        elseif strcmp(sflag, 'mean')
-            plot(time, me+stdv, 'y', time, me, 'b', time, me-stdv, 'y'); hold on;
-        else
-            plot(time, ubd, 'r', time, md, 'g', time, lbd, 'r'); hold on;
-            plot(time, me+stdv, 'y', time, me, 'b', time, me-stdv, 'y'); hold on;
-        end
-        plot(time, cache(i).numbers, ':c');
-        end
-        end
     end
-    if strcmp(cacheflag, 'no')
-        if strcmp(sflag, 'median')
-            legend('3rd quartile','median', '1st quartile');
-        elseif strcmp(sflag, 'mean')
-            legend('mean+stdev','mean', 'mean-stdev');
-        else
-            legend('3rd quartile','median', '1st quartile', 'mean+stdev','mean', 'mean-stdev');
-        end
-        P = subplottitle(fh, datestr, 'yoff', -0.6);
+end
+if pflag == 1
+    if strcmp(sflag, 'median')
+        legend('3rd quartile','median', '1st quartile');
+    else
+        legend('mean+stdev','mean', 'mean-stdev');
+    end
+    if ~isempty(fh)
+        subplottitle(fh, datestr, 'yoff', -0.6);
     end
 end
 end

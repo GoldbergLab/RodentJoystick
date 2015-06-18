@@ -9,15 +9,9 @@ end
 [default{1:numvarargs}] = varargin{:};
 [index] = default{:};
 
-%Count the Number of nosepokes
-%Count the Number of JS (onsets and offsets)
-%Count the Number of JS_post (onsets and offsets)
-%Count the Number of Pellets dispensed
-np_count=0;
-js_r_count = 0;
-js_l_count = 0;
-pellet_count = 0;
-trialnum=0;
+%Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
+%and Number of Pellets dispensed
+np_count=0; js_r_count = 0; js_l_count = 0; pellet_count = 0;
 for i=1:length(jstruct)
     np_count = np_count + size(jstruct(i).np_pairs,1);
     js_r_count = js_r_count + size(jstruct(i).js_pairs_r,1);
@@ -56,7 +50,8 @@ jstruct_stats.np_js_post = list(find((list>-10000)&(list<10000)));
 traj_struct = [];
 traj_pdf_jstrial= zeros(100,100);
 k=0;
- 
+
+trialnum=0; 
 for struct_index=1:length(jstruct)
     %% initialize   
     traj_x = jstruct(struct_index).traj_x;
@@ -118,7 +113,6 @@ for struct_index=1:length(jstruct)
                 
                 %If optogenetic expt was on, determine if "Hit" trial or
                 %"Catch" trial
-                
                 try
                 if sum(((laser_on(:,1))>js_pairs_r(j,1))&((laser_on(:,1))<js_pairs_r(j,2)))>0
                     laser = 1;
