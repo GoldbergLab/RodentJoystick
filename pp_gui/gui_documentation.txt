@@ -5,7 +5,7 @@ Single Day
 Ability to Save All plots without Gui buttons/interface
 
 Standard Color Order for Multiple Days: 'rgbkmcyrgbkmcyrgbkmcy'
-
+x = done, s = started
 make_plots.m
 1.x Nosepoke Joystick Onset Distribution
     Arguments: 
@@ -99,7 +99,8 @@ find_sector.m
     approximate velocity as follows
     v_x = diff(x)2, v_y = diff(y)
     v = sqrt(v_x.^2+v_y.^2)
-    plot velocity on the grid as follows
+    plot velocity on the grid as follows;
+
 11. Acceleration Heat Map
     Arguments:
     stats struct - can only plot a single distribution
