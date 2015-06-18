@@ -106,7 +106,7 @@ find_sector.m
     v = sqrt(v_x.^2+v_y.^2)
     plot velocity on the grid as follows;
 
-11. Acceleration Heat Map
+11.x Acceleration Heat Map
     Arguments:
     stats struct - can only plot a single distribution
 
