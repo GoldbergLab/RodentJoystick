@@ -44,7 +44,7 @@ else
 end
 dist_time = -1000:interv:1000;
 
-%% Plot jstructs individually
+%% get jstructs data individually
 if combineflag==0
     for i= 1:length(jslist)
         load(jslist(i).name);
@@ -52,23 +52,11 @@ if combineflag==0
         
         %processing
         stats = xy_getstats(jstruct);
-        np_js = histc(stats.np_js,dist_time);
-        np_js = np_js./(sum(np_js));
+        np_js = histc(stats.np_js,dist_time); np_js = np_js./(sum(np_js));
         data{i} = [dist_time', np_js];
-        if plotflag==1
-            axes(ax(1));
-            stairs(dist_time, np_js, colors(i), 'LineWidth',1);
-            hold on;
-        end
-    end
-    if plotflag == 1
-        axes(ax(1));
-        xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
-        legend(labels.legend);
-        hold off;
     end
 else
-%% Plot jstructs combined data
+%% get jstructs combined data
     combined = [];
     for i= 1:length(jslist)
         load(jslist(i).name);
@@ -76,17 +64,26 @@ else
         labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
     end
     stats = xy_getstats(combined);
-    np_js = histc(stats.np_js, dist_time);
-    np_js = np_js./(sum(np_js));
+    np_js = histc(stats.np_js, dist_time); np_js = np_js./(sum(np_js));
     data{1} = [dist_time', np_js];
-    if plotflag == 1
-        axes(ax(1));
-        hold on;
-        stairs(dist_time,np_js, combinecolor, 'LineWidth', 2);
-        xlabel(labels.xlabel); ylabel(labels.ylabel); title(labels.title);
-        legend([labels.legend{1}, '-', labels.legend{end}])
-        hold off;
+    labels.legend = {[labels.legend{1}, '-', labels.legend{end}]};
+
+end
+
+if plotflag == 1
+    axes(ax(1));
+    hold on;
+    LINEWIDTH = 1; if length(data)==1; LINEWIDTH = 2; end;
+    for i = 1:length(data)
+        tmpdata = data{i};
+        dist_time = tmpdata(:, 1);
+        np_js = tmpdata(:, 2);
+        stairs(dist_time, np_js, colors(i), 'LineWidth', LINEWIDTH);
     end
+    xlabel(labels.xlabel); ylabel(labels.ylabel);
+    title(labels.title);
+    legend(labels.legend);
+    hold off;
 end
 
 

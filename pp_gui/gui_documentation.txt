@@ -25,9 +25,10 @@ make_plots.m
     Outputs:
     {[onset, probability], [onset, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates));
-3.s Hold Length Distribution (Max Hold Length)
+3.x Hold Length Distribution (Max Hold Length)
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
+    threshold - int
     histogram interval - int > 0
     combineflag (1/0) - combine all data
     axes handle (possibly empty) - plots all data onto axes handle (even multiple days)
@@ -35,10 +36,10 @@ make_plots.m
     Outputs:
     {[hold_length, probability], [hold_length, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates))
-4.s  Hold Length Distribution under Threshold
+4.x  Hold Length Distribution under Threshold
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
-    histogram itnerval - int > 0
+    histogram interval - int > 0
     threshold - int
     combineflag (1/0) - combine all data
     axes handle (possibly empty) - plots all data onto axes handle (even multiple days)

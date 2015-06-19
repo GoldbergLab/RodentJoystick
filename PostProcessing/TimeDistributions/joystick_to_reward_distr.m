@@ -1,5 +1,7 @@
-function [stats, data, labels] = joystick_to_reward_distr(jslist, varargin )
-%js_to_reward plots the distribution of joystick to reward onset times with
+function [data, labels, summary] = joystick_to_reward_distr(jslist, varargin )
+%[data, labels, summary] 
+% = joystick_to_reward_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
+%joystick_to_reward_distr plots the distribution of joystick to reward onset times with
 %a histogram interval specified by hist_int on a time range of 0 to
 %time_range milliseconds
 %OUTPUTS:
@@ -25,75 +27,49 @@ function [stats, data, labels] = joystick_to_reward_distr(jslist, varargin )
 %       DEFAULT : 2000
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {20, 2000, 0, 1, []};
+default = {20, 2000, 0, [], []};
 numvarargs = length(varargin);
-if numvarargs > 4
-    error('hold_time_distr: too many arguments (> 5), only two required and four optional.');
+if numvarargs > 5
+    error('too many arguments (> 6), only 1 required and 5 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hist_int, TIME_RANGE, combineflag, plotflag, ax] = default{:};
-if (plotflag== 1 && length(ax)<1); figure; ax = gca(); end
+[hist_int, TIME_RANGE, combineflag, ax, allstuff] = default{:};
+if (length(ax)<1); figure; ax = gca(); end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-labels.xlabel = 'Time (ms)';
+labels.xlabel = 'JS to Reward Onset Time (ms)';
 labels.ylabel = 'Probability';
 labels.title = 'Joystick Onset to Reward Time Distribution';
 
-%% Actually get data now
-if combineflag==0
-%% GET LIST of individual data
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
-        %processing
-        stats = xy_getstats(jstruct);
-        js2rew = []; j=1;
-        tstruct = stats.traj_struct;
-        for k = 1:length(tstruct)
-            if tstruct(k).rw == 1
-                js2rew(j) = tstruct(k).rw_onset;
-                j = j+1;
-            end
-        end
-        data{i} = js2rew;
-    end
+if ~isempty(allstuff)
+    extradata = allstuff.extradata;
+    dates = allstuff.dates;
+    allstats = allstuff.allstats;
 else
-%% FIND COMBINED DATA    
-
-    combined = [];
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
-    end
-    stats = xy_getstats(combined);
-    js2rew = [];
-    tstruct = stats.traj_struct;
-    for k = 1:length(tstruct)
-        if tstruct(k).rw == 1
-            js2rew(j) = tstruct(k).rw_onset;
-            j = j+1;
-        end
-    end
-    data{1} = js2rew;
-
+    [extradata, dates, allstats] = get_rewardandht_times(jslist, hist_int, TIME_RANGE, combineflag);
 end
+labels.legend = dates;
+data = cell(length(extradata), 1); summary = cell(length(extradata), 1);
+for i = 1:length(extradata)
+    datatmp = extradata{i};
+%REFERENCE: datatmp = [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist];
+    time = datatmp(:, 1);
+    ht_hist = datatmp(:, 2);
+    data{i} = [time, ht_hist];
+    summary{i} = allstats{i}.js2rew;
+end
+
 %% PLOT ALL DATA
-time_range = 0:hist_int:TIME_RANGE;
-if plotflag == 1
-    axes(ax(1));
-    for i = 1:length(data)
-        js2rew_distr = histc(time_range, data{i});
-        js2rew_distr = js2rew_distr./sum(js2rew_distr);
-        stairs(time_range, js2rew_distr, colors(i), 'LineWidth', 1);
-    end
-    xlabel(labels.xlabel); ylabel(labels.ylabel); 
-    title(labels.title);
-    if combineflag==1
-        legend([labels.legend{1}, '-', labels.legend{end}])
-    else
-        legend(labels.legend);
-    end
+axes(ax(1));
+hold on;
+LINEWIDTH = 1; if length(extradata)==1; LINEWIDTH = 2; end;
+for i = 1:length(data)
+    datatmp = data{i};
+    stairs(datatmp(:, 1), datatmp(:, 2), colors(i), 'LineWidth', LINEWIDTH);
 end
+xlabel(labels.xlabel); ylabel(labels.ylabel);
+title(labels.title);
+legend(labels.legend);
+hold off;
 
 end
 

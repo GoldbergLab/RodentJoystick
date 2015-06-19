@@ -10,29 +10,34 @@ function [data, labels] = holdtime_firstcontact_distribution(jslist, varargin)
 % OPTIONAL ARGS:
 %   dist_thresh :: the distance threshold desired. 
 %       DEFAULT: 150 (plots everything)
-%   interv :: histogram interval (optional, default 20ms)
+%   interv :: histogram interval (ms)
+%       DEFAULT: 20 
 %   combineflag :: if multiple jstructs are given, combines all data and
 %       makes a single plot if 1, plots structs individually if 0
-%       (optional, default 0)
+%       DEFAULT :: 0
+%   normalize :: normalizes each plot to its sum to allow comparison of
+%       distributions (1 normalizes, 0 doesn't)
+%       DEFAULT :: 0
 %   plotflag :: whether to plot (1) or just return data (0)
-%       (optional, default 1)
+%       DEFAULT :: 1
 %   ax :: list of axes handles - plots all data (if multiple jstructs) on
 %       the first element in ax. If no axes are given and plotflag is on,
-%       creates a new figure (optional, default empty)
+%       creates a new figure 
+%       DEFAULT :: []
 % OUTPUTS:
 %   data :: cell array, where each cell is an n x 2 matrix representing the
 %       dist_times and probability data at each bin
 %   labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
-default = {40, 20, 0, 1, []};
+default = {150, 20, 0, 0, 1, []};
 numvarargs = length(varargin);
-if numvarargs > 4
-    error(['too many arguments (> 5), only one required ' ... 
-            'and four optional.']);
+if numvarargs > 6
+    error(['too many arguments (> 7), only 1 required ' ... 
+            'and 6 optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[dist_thresh, interv, combineflag, plotflag, ax] = default{:};
+[dist_thresh, interv, combineflag, normalize, plotflag, ax] = default{:};
 %% Initialize Labels and some data
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 labels.xlabel = 'Time (ms)';
@@ -53,6 +58,9 @@ if combineflag==0
         %processing now
         [~,hold_dist]=xy_holddist(jstruct,dist_thresh,0.75);
         holddist_vect = histc(hold_dist,dist_time);
+        if normalize == 1
+            holddist_vect = holddist_vect./sum(holddist_vect);
+        end
         data{i} = [dist_time', holddist_vect'];
     end
 else
@@ -64,9 +72,12 @@ else
         combined = [combined, jstruct];
         labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
     end
-    labels.legend = [labels.legend{1},'-',labels.legend{end}];
+    labels.legend = {[labels.legend{1},'-',labels.legend{end}]};
     [~,hold_dist]=xy_holddist(combined,dist_thresh,0.75);
     holddist_vect = histc(hold_dist,dist_time);
+    if normalize == 1
+        holddist_vect = holddist_vect./sum(holddist_vect);
+    end
     data{1} = [dist_time', holddist_vect'];
 end
 if plotflag==1
