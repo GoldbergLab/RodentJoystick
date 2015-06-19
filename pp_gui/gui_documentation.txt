@@ -119,7 +119,7 @@ find_sector.m
     Outputs: 
     Single Target Sector [[t1 t2]]
     Angle Probability Distribution (vector)
-13.s Trajectory Analysis
+13.x Trajectory Analysis
     Arguments:
         Num plots (predecided)
         Time Window (start, end)
@@ -143,6 +143,7 @@ Ideas for Future Optimization
             would have
         velocity and acceleration heat maps;
         trajectory analysis bin and structure;
+    
         
 
 
