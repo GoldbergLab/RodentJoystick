@@ -129,6 +129,22 @@ GUI features
     print features for all plots
     scrolling through directory with 
 
+Ideas for Future Optimization
+    Pass days by directory lists rather than filenames
+    Save multiple postprocessing structs used repeatedly in initial postprocessing step rather
+        than regenerate each structure each time.
+    Postprocessing structures to be saved
+    Already saved:
+        jstruct
+        stats
+    Should save (recognize that combining data would pose some difficulties - figure out a way 
+        around this - probably not that hard)
+        raw holdtime data, including summary stats;
+            would have
+        velocity and acceleration heat maps;
+        trajectory analysis bin and structure;
+        
+
 
 
 

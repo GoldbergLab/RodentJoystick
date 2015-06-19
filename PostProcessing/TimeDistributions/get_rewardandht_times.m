@@ -49,7 +49,7 @@ if combineflag==0
     statistics = cell(length(jslist), 1);
     for i= 1:length(jslist)
         load(jslist(i).name);
-        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
+        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
         stats = xy_getstats(jstruct);
         [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE);
         statistics{i} = tmpstats;
@@ -61,7 +61,7 @@ else
     for i= 1:length(jslist)
         load(jslist(i).name);
         combined = [combined, jstruct];
-        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yyyy');
+        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
     end
     stats = xy_getstats(combined);
     [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE);
