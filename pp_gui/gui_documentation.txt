@@ -60,7 +60,7 @@ generate_time_distr.m
     labels (struct w/ xlabel, ylabel, title, legend (dates))
 
 hold_time_distr.m
-6. Hold Time Distribution (same as 2?-> No)
+6.x Hold Time Distribution (same as 2?-> No)
     All trajectory hold times
     Arguments:
     stats - struct
@@ -69,8 +69,8 @@ hold_time_distr.m
     Outputs:
     data:=
 
-7. Reward Rate by Hold Time Histogram, 
-8.s Joystick Onset to Reward Distribution
+7.x Reward Rate by Hold Time Histogram, 
+8.x Joystick Onset to Reward Distribution
     Arguments:
     stats struct(s) (take trajectory struct from each though)
     histogram interval
@@ -119,7 +119,10 @@ find_sector.m
     Outputs: 
     Single Target Sector [[t1 t2]]
     Angle Probability Distribution (vector)
-
+13.s Trajectory Analysis
+    Arguments:
+        Num plots (predecided)
+        Time Window (start, end)
 
 GUI features
     console - display key statistics 

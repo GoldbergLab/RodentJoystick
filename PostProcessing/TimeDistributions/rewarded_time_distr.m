@@ -1,15 +1,15 @@
-function [data, labels, summary] = joystick_to_reward_distr(jslist, varargin )
+function [data, labels, summary] = rewarded_time_distr(jslist, varargin )
 %[data, labels, summary] 
-% = joystick_to_reward_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
-%joystick_to_reward_distr plots the distribution of joystick onset to reward onset
-% times with intervals defined by hist_int for a range [0, TIME_RANGE];
+% = rewarded_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
+%rewarded_time_distr plots the distribution of rewarded trajectories' hold
+%times using intervals defined by hist_int for a range [0, TIME_RANGE].
 %OUTPUTS:
 %   data :: cell array with a cell for each jstruct in jslist containing
 %       histogram data for each cell has the format:
-%       [time, js2rew_ht] (js2rew_ht has already been binned)
+%       [time, rew_ht] (rew_ht has already been binned)
 %   labels :: struct containing xlabel, ylabel, title, and legend
 %   summary :: cell array with a cell for each jstruct in jslist containing
-%       statistics describing js onset to reward time distribution for each day
+%       statistics describing rewarded hold time distribution for each day
 %       each cell has the format:
 %       [firstquartile median thirdquartile mean stdev]
 %ARGUMENTS:
@@ -30,10 +30,13 @@ function [data, labels, summary] = joystick_to_reward_distr(jslist, varargin )
 %       this data directly to avoid attempting to generate data multiple
 %       E.g. one such call might look like: 
 %       [data, dates, statistics] = get_rewardandht_times(jslist)
+%       allstuff.data = data; allstuff.dates=dates;
+%       allstuff.statistics=statistics;
 %       hold_time_distr([], 20, 2000, 0, ax, data)
 %       Note that in this case, none of the other arguments except for ax
 %       will have any effect since it will simply plot the results from
 %       data
+
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
 default = {20, 2000, 0, [], []};
@@ -45,10 +48,9 @@ end
 [hist_int, TIME_RANGE, combineflag, ax, allstuff] = default{:};
 if (length(ax)<1); figure; ax = gca(); end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-labels.xlabel = 'JS to Reward Onset Time (ms)';
+labels.xlabel = 'Hold Times (ms)';
 labels.ylabel = 'Probability';
-labels.title = 'Joystick Onset to Reward Time Distribution';
-
+labels.title = 'Rewarded Trajectories Hold Time Distribution';
 if ~isempty(allstuff)
     extradata = allstuff.data;
     dates = allstuff.dates;
@@ -62,9 +64,9 @@ for i = 1:length(extradata)
     datatmp = extradata{i};
 %REFERENCE: datatmp = [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist];
     time = datatmp(:, 1);
-    js2rew_hist = datatmp(:, 6);
-    data{i} = [time, js2rew_hist];
-    summary{i} = allstats{i}.js2rew;
+    rew_hist = datatmp(:, 4);
+    data{i} = [time, rew_hist];
+    summary{i} = allstats{i}.reward;
 end
 
 %% PLOT ALL DATA
@@ -79,6 +81,5 @@ xlabel(labels.xlabel); ylabel(labels.ylabel);
 title(labels.title);
 legend(labels.legend);
 hold off;
-
 end
 
