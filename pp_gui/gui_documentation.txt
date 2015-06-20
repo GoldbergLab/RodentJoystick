@@ -25,9 +25,10 @@ make_plots.m
     Outputs:
     {[onset, probability], [onset, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates));
-3.s Hold Length Distribution (Max Hold Length)
+3.x Hold Length Distribution (Max Hold Length)
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
+    threshold - int
     histogram interval - int > 0
     combineflag (1/0) - combine all data
     axes handle (possibly empty) - plots all data onto axes handle (even multiple days)
@@ -35,10 +36,10 @@ make_plots.m
     Outputs:
     {[hold_length, probability], [hold_length, probability], ...} for each day
     labels (struct w/ xlabel, ylabel, title, legend (dates))
-4.s  Hold Length Distribution under Threshold
+4.x  Hold Length Distribution under Threshold
     Arguments:
     jstruct(s) - vector of jstructs to plot (list of days)
-    histogram itnerval - int > 0
+    histogram interval - int > 0
     threshold - int
     combineflag (1/0) - combine all data
     axes handle (possibly empty) - plots all data onto axes handle (even multiple days)
@@ -59,7 +60,7 @@ generate_time_distr.m
     labels (struct w/ xlabel, ylabel, title, legend (dates))
 
 hold_time_distr.m
-6. Hold Time Distribution (same as 2?-> No)
+6.x Hold Time Distribution (same as 2?-> No)
     All trajectory hold times
     Arguments:
     stats - struct
@@ -68,8 +69,8 @@ hold_time_distr.m
     Outputs:
     data:=
 
-7. Reward Rate by Hold Time Histogram, 
-8.s Joystick Onset to Reward Distribution
+7.x Reward Rate by Hold Time Histogram, 
+8.x Joystick Onset to Reward Distribution
     Arguments:
     stats struct(s) (take trajectory struct from each though)
     histogram interval
@@ -118,12 +119,32 @@ find_sector.m
     Outputs: 
     Single Target Sector [[t1 t2]]
     Angle Probability Distribution (vector)
-
+13.x Trajectory Analysis
+    Arguments:
+        Num plots (predecided)
+        Time Window (start, end)
 
 GUI features
     console - display key statistics 
     print features for all plots
     scrolling through directory with 
+
+Ideas for Future Optimization
+    Pass days by directory lists rather than filenames
+    Save multiple postprocessing structs used repeatedly in initial postprocessing step rather
+        than regenerate each structure each time.
+    Postprocessing structures to be saved
+    Already saved:
+        jstruct
+        stats
+    Should save (recognize that combining data would pose some difficulties - figure out a way 
+        around this - probably not that hard)
+        raw holdtime data, including summary stats;
+            would have
+        velocity and acceleration heat maps;
+        trajectory analysis bin and structure;
+    
+        
 
 
 

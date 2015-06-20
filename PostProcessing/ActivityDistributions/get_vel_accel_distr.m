@@ -1,4 +1,4 @@
-function [median, variation, accel, accelv] = get_vel_accel_distr(stats,varargin)
+function [data] = get_vel_accel_distr(stats,varargin)
 %[median, variation, accel, accelv] = get_vel_accel_distr(stats) returns
 %the relative velocity and acceleration distributions (their medians, and
 %the differences between their 75th and 25th percentiles
@@ -12,6 +12,8 @@ function [median, variation, accel, accelv] = get_vel_accel_distr(stats,varargin
 %   accel :: median of the acceleration profiles for each cell
 %   accelv :: difference between the 75th and 25th percentiles of the
 %       acceleration profile for each cell
+%   TODO :: decompose acceleration into tangential and normal components at
+%       each point in trajectory
 
 
 default = {};
@@ -21,13 +23,13 @@ if numvarargs > 1
 end
 [default{1:numvarargs}] = varargin{:};
 [tmp] = default{:};
-
-velocities = cell(201, 201);
-median = zeros(201, 201);
-variation = zeros(201, 201);
-accelerations = cell(201, 201);
-accel = zeros(201, 201);
-accelv = zeros(201, 201);
+SIZE = 101;
+velocities = cell(SIZE, SIZE);
+median = zeros(SIZE, SIZE);
+variation = zeros(SIZE, SIZE);
+accelerations = cell(SIZE, SIZE);
+accel = zeros(SIZE, SIZE);
+accelv = zeros(SIZE, SIZE);
 tstruct = stats.traj_struct;
 for i = 1:length(tstruct);
     x = tstruct(i).traj_x;
@@ -50,8 +52,8 @@ for i = 1:length(tstruct);
     end
 end
 
-for indx = 1:201
-    for indy = 1:201
+for indx = 1:SIZE
+    for indy = 1:SIZE
         v = velocities{indx, indy};
         quartiles = [0, 0, 0];
         if ~isempty(v)
@@ -69,6 +71,10 @@ for indx = 1:201
         accelv(indx, indy) = quartilesa(3) - quartilesa(1);
     end
 end
+data.vel = median;
+data.velvar = variation;
+data.accel = accel;
+data.accelvar = accelv;
 end
 
 %necessary transposition occurs here too - but it doesn't eliminate
@@ -79,4 +85,7 @@ function [indx, indy] = trajectorypos_to_index(x, y)
     %transposition in step below
     indy= x + 101;
     indx = y + 101;
+    %now bin in 2 so that we have same bin size as activity map
+    indx = max(min(round(indx./2), 101), 1);
+    indy = max(min(round(indy./2), 101), 1);
 end

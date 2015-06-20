@@ -15,13 +15,14 @@ end
 [default{1:numvarargs}] = varargin{:};
 [ax, accelvar] = default{:};
 if isempty(accelvar)
-    [~, ~, ~, accelvar] = get_vel_accel_distr(stats,varargin);
+    data = get_vel_accel_distr(stats,varargin);
+    accelvar = data.accelvar;
 end
 if length(ax) < 1
     figure;
     ax(1) = gca(); 
 end
 tstr = 'Acceleration Variation Distribution';
-labels = draw_heat_map(accelvar, ax,tstr, -100:1:100, 0, [10 85]);
+labels = draw_heat_map(accelvar, ax,tstr, -100:2:100, 0, [10 85]);
 
 end

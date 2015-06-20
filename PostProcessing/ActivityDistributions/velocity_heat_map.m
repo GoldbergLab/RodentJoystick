@@ -15,13 +15,14 @@ end
 [default{1:numvarargs}] = varargin{:};
 [ax, mediandata] = default{:};
 if isempty(mediandata)
-    [mediandata] = get_vel_accel_distr(stats,varargin);
+    [data] = get_vel_accel_distr(stats,varargin);
+    mediandata = data.vel;
 end
 if length(ax) < 1
     figure;
     ax(1) = gca(); 
 end
 tstr = 'Velocity Distribution';
-labels = draw_heat_map(mediandata, ax,tstr, -100:1:100, 1, [5 80]);
+labels = draw_heat_map(mediandata, ax,tstr, -100:2:100, 1, [5 80]);
 
 end

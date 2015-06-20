@@ -1,5 +1,6 @@
-%[bin_summary, labels, fh] = 
-%   trajectory_analysis(stats) OR trajectory_analysis(stats, plot_range, ... )
+function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
+%[bin_summary, labels, graphgroups] = 
+%   trajectory_analysis(stats, [PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst])
 %   OPTIONAL ARG ORDER:
 %       plot_range,hold_time_range, plot_contingencies, pflag
 %       datestr, sflag, axeslst
@@ -26,7 +27,7 @@
 %               from bin used at each point. (time 0 will always be 100).
 %       labels :: a struct containing the x, y labels (same for all bins)
 %           and the titles for each plot
-%       fh :: the figure handle corresponding to the plot generate when
+%       lhandle :: the figure handle corresponding to the plot generate when
 %           'plot' flag is used, otherwise empty
 %   ARGUMENTS: 
 %       stats :: the result from xy_getstats(jstruct) for some jstruct
@@ -44,25 +45,22 @@
 %           DEFAULT: [0 0 0] - no plotting 
 %       pflag :: 1 if plots are desired, otherwise just returns bin statistics
 %           DEFAULT: 1
-%       datestr :: string representation of the date, used for title
-%           DEFAULT: 'N/A'
-%       sflag :: optional argument that tells what group of statistics to
-%           plot. 
-%           'median' - plots median and first/third quartiles,
-%           'mean'- plots mean and mean+/- stdev
-%           DEFAULT: 'median'
 %       axes_lst :: a list of axes handles of where to plot. If specified,
 %           length(axes_lst) >= plot_range
-function [bin_summary, labels, fh] = trajectory_analysis(stats, varargin)
+%       color :: color to plot all data with
+%       multi :: 2 if both quartiles and percents should also be plotted
+%               1 if just both quartiles in addition to median
+%               0 plots just median (useful when multiple days prevents a clear
+%               graph
 
 % Argument Manipulation
-default = {4,[400 1400], [300 30 60], 1, 'N/A', 'median', []};
+default = {4,[400 1400], [300 30 60], 1, [], 'r', 1};
 numvarargs = length(varargin);
 if numvarargs > 7
     error('too many arguments (> 8), only one required and seven optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst] = default{:};
+[PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag] = default{:};
 
 %divide the desired time range into number of bins based on number of plots
 %desired
@@ -70,28 +68,24 @@ bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
 bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
 tstruct=stats.traj_struct; 
 totaltraj = length(tstruct);
-%[~,~,~, rw_or_stop] = hold_time_distr(tstruct, bin_length, 'data');
-%sortedtraj = sort_traj_into_bins(tstruct, bins, rw_or_stop);
 
 %perform processing
-hts = hold_time_distr(tstruct, bin_length, 'data');
-sortedtraj = sort_traj_into_bins(tstruct, bins, hts);
+sortedtraj = sort_traj_into_bins(tstruct, bins);
 
 labels.xlabel = 'Time(ms)';
-labels.ylabel = 'Joystick Mag/Trajectory Percentage';
-fh = [];
+labels.ylabel = 'Joystick Magnitude (%)';
 
 %if trajectory_analysis is given no axes handles, but expected to plot,
 %generate its own
 if pflag == 1 && length(axeslst)<1;
-    fh = figure('Position', [100, 100, 1440, 900]);
+    figure('Position', [100, 100, 1440, 900]);
     for i = 1:PLOT_RANGE
         axeslst(i) = subplot(2, PLOT_RANGE/2, i);
     end
 elseif pflag == 1 && (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
-
+bin_summary = struct;
 %plotting, and actual statistics
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
@@ -100,12 +94,11 @@ for i = 1:PLOT_RANGE
     bin_summary(i).stdev = stdev;  bin_summary(i).upperbnd = upperbnd;
     bin_summary(i).lowerbnd = lowerbnd; 
     bin_summary(i).lt = bin.lt; bin_summary(i).geq = bin.geq;
-    
-    time = 1:1:length(numbers); inittraj = numbers(1); 
-    numbers = 100*numbers./inittraj;
+    time = 1:1:length(numbers); 
+    inittraj = numbers(1); numbers = 100*numbers./inittraj;
     bin_summary(i).numbers = numbers;
     
-    tstr = strcat(num2str(bin.geq), '-', num2str(bin.lt), ' ms:');
+    tstr = strcat(num2str(round(bin.geq)), '-', num2str(round(bin.lt)), ' ms:');
     percent = num2str(100*inittraj/totaltraj, 4); format bank;
     titlestr = [tstr, num2str(inittraj), ' trajectories, ', percent,' %'];
     labels.title{i} = titlestr;
@@ -113,16 +106,17 @@ for i = 1:PLOT_RANGE
     if pflag == 1
         axes(axeslst(i));
         ubd = upperbnd; lbd = lowerbnd; md = median; me = mean; stdv = stdev;
-        if strcmp(sflag, 'median')
-            plot(time, ubd, 'r', 'LineStyle', ':'); hold on;
-            plot(time, md, 'r', 'LineWidth', 1);
-            plot(time, lbd, 'r', 'LineStyle', ':');
-        else
-            plot(time, me+stdv, 'b', 'LineStyle', ':'); hold on;
-            plot(time, me, 'b', 'LineWidth', 2); 
-            plot(time, me-stdv, 'b', 'LineStyle', ':');
+        lhandle = plot(time, md, color, 'LineWidth', 1); hold on;
+%       plot(time, me+stdv, color, 'LineStyle', ':', 'Parent', graphgroups); hold on;
+%       plot(time, me, color, 'Parent', graphgroups); 
+%       plot(time, me-stdv, color, 'LineStyle', ':', 'Parent', graphgroups);
+        if multiflag
+            plot(time, ubd, color, 'LineStyle', ':');
+            plot(time, lbd, color, 'LineStyle', ':');
         end
-        plot( time, numbers, ':c');
+        if multiflag>1
+            plot( time, numbers, color, 'LineStyle', '--');
+        end
         title(axeslst(i), labels.title{i}, 'FontSize', 8); hold on;
         axis(axeslst(i), [0, bin.lt, 0, 100]);
         ylabel(axeslst(i), labels.xlabel); xlabel(axeslst(i), labels.ylabel);
@@ -135,16 +129,6 @@ for i = 1:PLOT_RANGE
             end
             line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
         end
-    end
-end
-if pflag == 1
-    if strcmp(sflag, 'median')
-        legend('3rd quartile','median', '1st quartile');
-    else
-        legend('mean+stdev','mean', 'mean-stdev');
-    end
-    if ~isempty(fh)
-        subplottitle(fh, datestr, 'yoff', -0.6);
     end
 end
 end
@@ -200,20 +184,19 @@ end
 % will be a vector of structs containing fields for the range
 % each struct has a field for a vector of structs containing
 % trajectories
-function sortedtraj = sort_traj_into_bins(tstruct, bins, holdtimes)
-
+function sortedtraj = sort_traj_into_bins(tstruct, bins)
 for i = 2:length(bins)
    sortedtraj(i-1) = struct('geq', bins(i-1),'lt',bins(i));
 end
 bin_traj_indices = ones(length(bins)-1, 1); 
 %each bin has a vector of trajectory structures (simplified from tstruct)
 % store the indices so we know at what index to add each new trajectory
-for i = 1:length(holdtimes)
-    bin_ind = bin_index(bins, holdtimes(i));
+for i = 1:length(tstruct)
+    bin_ind = bin_index(bins, length(tstruct(i).magtraj));
     if bin_ind ~= -1
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', holdtimes(i));
+        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', length(tstruct(i).magtraj));
     end
 end
 end

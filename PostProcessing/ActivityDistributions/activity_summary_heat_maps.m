@@ -14,7 +14,8 @@ if numvarargs > 3
 end
 [default{1:numvarargs}] = varargin{:};
 [ax] = default{:};
-[vel, velvar, accel, accelvar] = get_vel_accel_distr(stats,varargin);
+[data] = get_vel_accel_distr(stats,varargin);
+vel = data.vel; velvar=data.velvar; accel=data.accel; accelvar = data.accelvar;
 if length(ax) < 5
     figure;
     ax(1) = subplot(2, 4, [1, 2, 5, 6]);
