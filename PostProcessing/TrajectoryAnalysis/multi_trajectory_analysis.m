@@ -1,6 +1,6 @@
 function [labels] = multi_trajectory_analysis(jslist, varargin)
 %[data, labels, summary] 
-% = multi_trajectory_analysis(jslist, [plot_range, hold_time_range, plot_contingencies, plotflag, axes_lst])
+% = multi_trajectory_analysis(jslist, [plot_range, hold_time_range, plot_contingencies, combineflag, axes_lst])
 %rewarded_time_distr plots the distribution of rewarded trajectories' hold
 %times using intervals defined by hist_int for a range [0, TIME_RANGE].
 % ARGUMENTS: 
@@ -34,7 +34,7 @@ if length(axeslst)<1;
     for i = 1:PLOT_RANGE
         axeslst(i) = subplot(2, PLOT_RANGE/2, i);
     end
-elseif pflag == 1 && (length(axeslst) < PLOT_RANGE)
+elseif (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';

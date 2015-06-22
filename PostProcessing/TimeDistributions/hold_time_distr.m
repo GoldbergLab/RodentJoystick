@@ -1,6 +1,6 @@
 function [data, labels, summary] = hold_time_distr(jslist, varargin )
 %[data, labels, summary] 
-% = hold_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
+% = hold_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, ax, allstuff])
 %hold_time_distr plots the distribution of hold times with intervals
 %defined by hist_int for a range [0, TIME_RANGE];
 %OUTPUTS:

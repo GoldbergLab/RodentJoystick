@@ -1,6 +1,6 @@
 function [data, labels, summary] = rewarded_time_distr(jslist, varargin )
 %[data, labels, summary] 
-% = rewarded_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
+% = rewarded_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, ax, alldata])
 %rewarded_time_distr plots the distribution of rewarded trajectories' hold
 %times using intervals defined by hist_int for a range [0, TIME_RANGE].
 %OUTPUTS:

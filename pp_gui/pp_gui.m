@@ -669,8 +669,6 @@ end
 populate_function_list(hObject);
 
 end
-
-
 function ax6arg1_Callback(hObject, eventdata, handles)
 % hObject    handle to ax6arg1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -679,7 +677,6 @@ function ax6arg1_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of ax6arg1 as text
 %        str2double(get(hObject,'String')) returns contents of ax6arg1 as a double
 end
-
 % --- Executes during object creation, after setting all properties.
 function ax6arg1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ax6arg1 (see GCBO)
@@ -692,8 +689,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 end
-
-
 function ax6arg2_Callback(hObject, eventdata, handles)
 % hObject    handle to ax6arg2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -702,7 +697,6 @@ function ax6arg2_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of ax6arg2 as text
 %        str2double(get(hObject,'String')) returns contents of ax6arg2 as a double
 end
-
 % --- Executes during object creation, after setting all properties.
 function ax6arg2_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ax6arg2 (see GCBO)
@@ -715,8 +709,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 end
-
-
 function ax6arg3_Callback(hObject, eventdata, handles)
 % hObject    handle to ax6arg3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -725,7 +717,6 @@ function ax6arg3_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of ax6arg3 as text
 %        str2double(get(hObject,'String')) returns contents of ax6arg3 as a double
 end
-
 % --- Executes during object creation, after setting all properties.
 function ax6arg3_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ax6arg3 (see GCBO)
