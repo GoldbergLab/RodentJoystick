@@ -8,6 +8,7 @@ function_list = {'Nosepoke Joystick Onset Distribution';
                     'Hold Length Distribution (Max)';
                     'Hold Length Distribution (Threshold)';
                     'Hold Time Distribution (Trajectories)';
+                    'Rewarded Hold Time Distribution';
                     'Reward Rate by Hold Time Distribution';
                     'Joystick Onset to Reward Distribution';
                     'Nosepoke/Reward Activity Distribution';
