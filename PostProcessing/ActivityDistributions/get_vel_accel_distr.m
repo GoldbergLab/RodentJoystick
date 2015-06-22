@@ -28,8 +28,12 @@ velocities = cell(SIZE, SIZE);
 median = zeros(SIZE, SIZE);
 variation = zeros(SIZE, SIZE);
 accelerations = cell(SIZE, SIZE);
+accelerations_t = cell(SIZE, SIZE);
 accel = zeros(SIZE, SIZE);
 accelv = zeros(SIZE, SIZE);
+accel_tan = zeros(SIZE, SIZE);
+accelv_tan = zeros(SIZE, SIZE);
+
 tstruct = stats.traj_struct;
 for i = 1:length(tstruct);
     x = tstruct(i).traj_x;
@@ -38,13 +42,23 @@ for i = 1:length(tstruct);
     v_y = diff(y);
     a_x = diff(v_x);
     a_y = diff(v_y);
+    %v dot a = 0 -> orthonormal
+    %v dot a = a -> tangential
+    %tangential component = v/|v| dot a
     v = sqrt(v_x.^2 + v_y.^2);
+    v_x_norm = v_x ./v; 
+    v_y_norm = v_y ./v;
+    av_x = v_x_norm(1:end-1) .* a_x;
+    av_y = v_y_norm(1:end-1) .* a_y;
+    a_tan = abs(av_x + av_y);
     a = sqrt(a_x.^2 + a_y.^2);
+    %disp([a', a_tan']);
     [ind_x, ind_y] = trajectorypos_to_index(x, y);
     ind_x = ind_x(1:end-1); ind_y = ind_y(1:end-1);
     for j = 1:length(ind_x)
         if j>2
             accelerations{ind_x(j), ind_y(j)} = [accelerations{ind_x(j), ind_y(j)}, a(j-1)];
+            accelerations_t{ind_x(j), ind_y(j)} = [accelerations_t{ind_x(j), ind_y(j)}, a_tan(j-1)];
         end
         old = velocities{ind_x(j), ind_y(j)};
         newv = [old; v(j)];
@@ -69,12 +83,24 @@ for indx = 1:SIZE
         end
         accel(indx, indy) = quartilesa(2);
         accelv(indx, indy) = quartilesa(3) - quartilesa(1);
+        
+        a_tan = accelerations{indx, indy};
+        quartilesat = [0, 0, 0];
+        if ~isempty(a)
+            quartilesat = prctile(a_tan,[25 50 75]);
+        end
+        disp([sort(a'), sort(a_tan')]);
+        accel_tan(indx, indy) = quartilesat(2);
+        accelv_tan(indx, indy) = quartilesat(3) - quartilesat(1);
     end
 end
 data.vel = median;
 data.velvar = variation;
 data.accel = accel;
 data.accelvar = accelv;
+data.accel_tan = accel_tan;
+data.accelv_tan = accelv_tan;
+%data.
 end
 
 %necessary transposition occurs here too - but it doesn't eliminate

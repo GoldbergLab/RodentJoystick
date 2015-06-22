@@ -15,14 +15,12 @@ end
 [default{1:numvarargs}] = varargin{:};
 [ax] = default{:};
 [data] = get_vel_accel_distr(stats,varargin);
-vel = data.vel; velvar=data.velvar; accel=data.accel; accelvar = data.accelvar;
+vel = data.vel; velvar=data.velvar; accel=data.accel; 
+accelvar = data.accelvar; acceltan = data.accel_tan;
 if length(ax) < 5
-    figure;
-    ax(1) = subplot(2, 4, [1, 2, 5, 6]);
-    j = 2;
-    for i = [3,4,7,8]
-        ax(j) = subplot(2, 4, i);
-        j=j+1;
+    figure;    
+    for j = 1:6
+        ax(j) = subplot(2, 3, j);
     end
 end
 activity_heat_map(stats, 1, [2 99], ax(1));
@@ -31,4 +29,5 @@ velocity_heat_map([], ax(2), vel);
 velocityvar_heat_map([], ax(3), velvar);
 accel_heat_map([], ax(4), accel);
 accelvar_heat_map([], ax(5), accelvar);
+acceltan_heat_map([], ax(6), acceltan);
 end
