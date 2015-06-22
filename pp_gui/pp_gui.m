@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 22-Jun-2015 11:01:57
+% Last Modified by GUIDE v2.5 22-Jun-2015 15:39:07
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -73,25 +73,7 @@ function varargout = pp_gui_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 end
 
-
-% --- Executes when selected object is changed in daytypeselect.
-function daytypeselect_SelectionChangeFcn(hObject, eventdata, handles)
-% hObject    handle to the selected object in daytypeselect 
-% eventdata  structure with the following fields (see UIBUTTONGROUP)
-%	EventName: string 'SelectionChanged' (read only)
-%	OldValue: handle of the previously selected object or empty if none was selected
-%	NewValue: handle of the currently selected object
-% handles    structure with handles and user data (see GUIDATA)
-
-if eventdata.NewValue == handles.singledayselect
-else
-end
-%MATLAB doesn't reset listbox index to 1, so you have to manually change the
-%selected value of the listbox, or there's an indexing error if value is
-%out of range
-guidata(hObject, handles);
-end
-
+%% Day selection buttons/tools
 % --- Executes on button press in helpbutton.
 function helpbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to helpbutton (see GCBO)
@@ -99,62 +81,38 @@ function helpbutton_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 end
 
-% --- Executes on selection change in dateselectionbox.
-function dateselectionbox_Callback(hObject, eventdata, handles)
-% hObject    handle to dateselectionbox (see GCBO)
+% --- Executes on button press in selectdays.
+function selectdays_Callback(hObject, eventdata, handles)
+% hObject    handle to selectdays (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns dateselectionbox contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from dateselectionbox
-%Only replot if adding a single day - then you can plot immediately;
-if get(handles.singledayselect, 'Value') == 1
-    contents = cellstr(get(hObject, 'String'));
-    datedir = contents{get(hObject, 'Value')};
-    set(handles.daystoplotlabel, 'String', datedir);
+tempdirlist = uipickfiles('filter','K:\DataSync\expt_opto_thal_var_2\', 'output', 'struct');
+if ~isempty(tempdirlist)
+    [~, ind] = sort({tempdirlist.name});
+    handles.dirlist = tempdirlist(ind);
 end
-end
-
-% --- Executes during object creation, after setting all properties.
-function dateselectionbox_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to dateselectionbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: listbox controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-handles.workingdirstring = 'K:\DataSync\expt_opto_thal_var_2';
-handles.daystoplotlabel = {};
-guidata(hObject, handles);
-end
-
-
-% --- Executes on button press in selectdirbutton.
-function selectdirbutton_Callback(hObject, eventdata, handles)
-% hObject    handle to selectdirbutton (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-workingdirtemp = uigetdir(handles.workingdirstring);
-if workingdirtemp == 0
-    workingdirtemp = handles.workingdirstring;
-end
-set(handles.workingdirlabel, 'String', workingdirtemp);
-handles.workingdirstring = workingdirtemp;
-filelisting = dir(workingdirtemp);
-j = 1;
-for i = 1:length(filelisting)
-    matcheshidden = length(regexp(filelisting(i).name, '[.].*'));
-    if filelisting(i).isdir && ~matcheshidden
-        str_list{j} = filelisting(i).name; j=j+1;
+try
+    %update label of days being plotted;
+    labeltxt = '';
+    dirlist = handles.dirlist;
+    for i = 1:length(dirlist)
+        namestr = dirlist(i).name;
+        labeltxt = [labeltxt, namestr(end-15:end), ','];
     end
+    labeltxt = labeltxt(1:end-2);
+    set(handles.daystoplotlabel, 'String', labeltxt);
+catch
+end
+guidata(hObject, handles);
 end
 
-set(handles.dateselectionbox, 'String', str_list);
-set(handles.dateselectionbox, 'Value', 1);
-guidata(hObject, handles);
+% --- Executes on button press in combinedays.
+function combinedays_Callback(hObject, eventdata, handles)
+% hObject    handle to combinedays (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of combinedays
 end
 
 
@@ -162,7 +120,7 @@ end
 %to just add new analysis functions, change these helper functions (separate files)
 
 %This function handles the entire plotting routine
-%function [handles] = plot_all_days(dirlist, plotname, handles, args, axnum);
+%function [handles] = plot_all_days(handles, axnum);
 
 %loads arguments
 %function [handles] = load_arguments(plotname, handles, axnum)
@@ -174,7 +132,7 @@ end
 % these functions should never have code related to performing specific
 % plots. Call the general helper functions listed above to avoid copying
 % and pasting code/redundancies.
-% Each axes i has several items associated:
+% Each axes i (axes[i]) has several items associated:
 %   ax[i]plotselect :: populated by analysis function list on creation,
 %       loads arguments on callback
 %   ax[i]arg1, ax[i]arg2, ax[i]arg3 :: space for arguments, not affected by
@@ -183,8 +141,6 @@ end
 %   ax[i]arg1label, ax[i]arg2label, ax[i]arg3label :: gui text labels for
 %       argument spaces. not affected by self callback/create functions -
 %       only change on callback to ax[i]plotselect
-%   xlabel[i], ylabel[i], Title[i] :: gui text labels with room for x, y,
-%       and title labels.
 
 %Argument Handling - nothing happens here, exist solely to not crash gui
 function ax1arg1_Callback(hObject, eventdata, handles)
@@ -265,6 +221,8 @@ function plotax1_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 1);
+guidata(hObject, handles);
 end
 
 
@@ -368,6 +326,8 @@ function plotax2_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 2);
+guidata(hObject, handles);
 end
 
 % --- Executes on selection change in ax3plotselect.
@@ -470,6 +430,8 @@ function plotax3_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 3);
+guidata(hObject, handles);
 end
 
 % --- Executes on selection change in ax4plotselect.
@@ -573,6 +535,8 @@ function plotax4_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax4 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 4);
+guidata(hObject, handles);
 end
 
 % --- Executes on selection change in ax5plotselect.
@@ -675,6 +639,8 @@ function plotax5_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax5 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 5);
+guidata(hObject, handles);
 end
 
 % --- Executes on selection change in ax6plotselect.
@@ -778,4 +744,6 @@ function plotax6_Callback(hObject, eventdata, handles)
 % hObject    handle to plotax6 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+handles = plot_all_days(handles, 6);
+guidata(hObject, handles);
 end

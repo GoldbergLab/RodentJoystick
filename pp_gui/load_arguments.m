@@ -26,43 +26,65 @@ arg1label = '-'; arg2label = '-'; arg3label = '-';
 %Labels will be truncated > 8 characters - use the help function to add
 %more information.
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
+    arg1 = '20';
+    arg1label = 'Interv'; %Histogram interval (ms)
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
+    arg1 = '20';
+    arg1label = 'Interv'; %Histogram interval (ms)
 elseif strcmp(plotname, 'Hold Length Distribution (Max)')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '0'; arg2label = 'Normalize'; %whether to normalize distributions
+    arg1 = '20';
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '0'; 
+    arg2label = 'Normalize'; %whether to normalize distributions
 elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg3 = '50'; arg3label = 'Thresh'; %Distance threshold
-    arg2 = '0'; arg2label = 'Normalize'; %whether to normalize distributions
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg3 = '50'; 
+    arg3label = 'Thresh'; %Distance threshold
+    arg2 = '0'; 
+    arg2label = 'Normalize'; %whether to normalize distributions
 elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; arg2label = 'End Time'; %what time range to plot
-elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; arg2label = 'End Time'; %what time range to plot
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '2000'; 
+    arg2label = 'End Time'; %what time range to plot
+elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '2000'; 
+    arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Reward Rate by Hold Time Distribution')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; arg2label = 'End Time'; %what time range to plot
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '2000'; 
+    arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; arg2label = 'End Time'; %what time range to plot
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '2000'; 
+    arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
-    arg1 = '20'; arg1label = 'Interv'; %Histogram interval (ms)
+    arg1 = '20'; 
+    arg1label = 'Interv'; %Histogram interval (min)
 elseif strcmp(plotname, 'Activity Heat Map')
 elseif strcmp(plotname, 'Velocity Heat Map')
 elseif strcmp(plotname, 'Acceleration Heat Map')
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
-    arg1 = '25'; arg1label = 'Rew Rate'; %Desired reward rate
-    arg2 = '75'; arg2label = 'Thresh'; %Histogram interval (ms)
+    arg1 = '25'; 
+    arg1label = 'Rew Rate'; %Desired reward rate
+    arg2 = '75'; 
+    arg2label = 'Thresh'; %Histogram interval (ms)
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
-    arg1 = '300'; arg1label = 'Start'; %start time;
-    arg2 = '900'; arg2label = 'End'; %end time;
+    arg1 = '300'; 
+    arg1label = 'Start'; %start time;
+    arg2 = '900'; 
+    arg2label = 'End'; %end time;
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
-    arg1 = '200'; arg1label = 'Start'; %start time;
-    arg2 = '1400'; arg2label = 'End'; %end time;
+    arg1 = '200'; 
+    arg1label = 'Start'; %start time;
+    arg2 = '1400'; 
+    arg2label = 'End'; %end time;
 end
 
 %% GUI Handling/Data manipulation;

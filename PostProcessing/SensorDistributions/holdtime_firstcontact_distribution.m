@@ -1,5 +1,5 @@
 function [data, labels] = holdtime_firstcontact_distribution(jslist, varargin)
-%holdtime_firstcontact_distribution(jslist, [dist_thresh, interv, combineflag, plotflag, ax]) 
+%holdtime_firstcontact_distribution(jslist, [dist_thresh, interv, combineflag, normalize, plotflag, ax]) 
 % plots the hold time distribution
 % for the data from a given jstruct. If multiple jstructs are given, it
 % plots all data on the same axes.
