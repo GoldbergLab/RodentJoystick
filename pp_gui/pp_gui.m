@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 15-Jun-2015 10:20:33
+% Last Modified by GUIDE v2.5 22-Jun-2015 11:01:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -82,194 +82,22 @@ function daytypeselect_SelectionChangeFcn(hObject, eventdata, handles)
 %	OldValue: handle of the previously selected object or empty if none was selected
 %	NewValue: handle of the currently selected object
 % handles    structure with handles and user data (see GUIDATA)
-posfunctionarray = {'Nosepoke Joystick Distribution';
-        'Nosepoke Post Distribution';
-        'NP Joystick and NP Post Distr';
-        'Activity Distribution';
-        'Hold Time Distributions';
-        'Find Sector';
-        'Trajectory Analysis (4)';
-        'Trajectory Analysis (6)'};
-handles.assignedplots = {};
+
 if eventdata.NewValue == handles.singledayselect
-    handles.possiblefunctionarray =posfunctionarray;
-    set(handles.addday, 'Visible', 'off');
-elseif eventdata.NewValue == handles.twodayselect 
-    handles.possiblefunctionarray = posfunctionarray(1:6);
-    set(handles.addday, 'Visible', 'on');
 else
-    handles.possiblefunctionarray = posfunctionarray(1:4);
-    set(handles.addday, 'Visible', 'on');
 end
-set(handles.plottingfunctions, 'String', handles.possiblefunctionarray);
 %MATLAB doesn't reset listbox index to 1, so you have to manually change the
 %selected value of the listbox, or there's an indexing error if value is
 %out of range
-set(handles.plottingfunctions, 'Value', 1);
 guidata(hObject, handles);
 end
 
-
-% --- Executes during object creation, after setting all properties.
-function plottingfunctions_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to plottingfunctions (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: listbox controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-%Argument Handling - nothing happens here, exist solely to not crash gui
-function ax1arg1_Callback(hObject, eventdata, handles)
-% do nothing
-end
-% --- Executes during object creation, after setting all properties.
-function ax1arg1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to ax1arg1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-function ax1arg2_Callback(hObject, eventdata, handles)
-% do nothing
-end
-% --- Executes during object creation, after setting all properties.
-function ax1arg2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to ax1arg2 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-function ax1arg3_Callback(hObject, eventdata, handles)
-% do nothing
-end
-% --- Executes during object creation, after setting all properties.
-function ax1arg3_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to ax1arg3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-end
-
-
-% --- Executes on selection change in plottingfunctions, updates argument text
-function plottingfunctions_Callback(hObject, eventdata, handles)
-% hObject    handle to plottingfunctions (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns plottingfunctions contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from plottingfunctions
-contents = cellstr(get(hObject, 'String'));
-plotname = contents{get(hObject, 'Value')};
-
-%0, 1, 2 for single, two, multi day respectively
-daytype = 0;
-if get(handles.singledayselect, 'Value') == 1
-    daytype = 1;
-elseif get(handles.twodayselect, 'Value') == 1
-    daytype = 2;
-elseif get(handles.twodayselect, 'Value') == 1
-    daytype = 3;
-end
-
-
-if strcmp(plotname,'Nosepoke Joystick Distribution') || strcmp(plotname,'Nosepoke Post Distribution')
-    set(handles.ax1arg1label, 'String', '-');
-    set(handles.ax1arg2label, 'String', '-');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '1');
-    elseif(daytype == 2)
-        set(handles.axesused, 'String', '2');
-    else
-        set(handles.axesused, 'String', '6');
-    end    
-elseif strcmp(plotname,'Activity Distribution')
-    set(handles.ax1arg1label, 'String', 'Interval');
-    set(handles.ax1arg2label, 'String', '-');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '1');
-    elseif(daytype == 2)
-        set(handles.axesused, 'String', '2');
-    else
-        set(handles.axesused, 'String', '6');
-    end
-elseif strcmp(plotname, 'Hold Time Distributions')
-    set(handles.ax1arg1label, 'String', 'Interval');
-    set(handles.ax1arg2label, 'String', 'End Time');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '3');
-    elseif(daytype == 2)
-        set(handles.axesused, 'String', '6');
-    end
-elseif strcmp(plotname, 'Find Sector')
-    set(handles.ax1arg1label, 'String', 'Reward Rate');
-    set(handles.ax1arg2label, 'String', 'Thresh.');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '3');
-    elseif(daytype == 2)
-        set(handles.axesused, 'String', '6');
-    end
-elseif strcmp(plotname, 'Trajectory Analysis (4)')
-    set(handles.ax1arg1label, 'String', 'Start');
-    set(handles.ax1arg2label, 'String', 'End');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '4');
-    end
-elseif strcmp (plotname, 'Trajectory Analysis (6)');
-    set(handles.ax1arg1label, 'String', 'Start');
-    set(handles.ax1arg2label, 'String', 'End');
-    set(handles.ax1arg3label, 'String', '-');
-    if (daytype == 1)
-        set(handles.axesused, 'String', '6');
-    end
-else
-    set(handles.ax1arg1label, 'String', '-');
-    set(handles.ax1arg2label, 'String', '-');
-    set(handles.ax1arg3label, 'String', '-');
-end
-end
-
-
-% --- Executes on button press in argumentshelp.
-function argumentshelp_Callback(hObject, eventdata, handles)
-% hObject    handle to argumentshelp (see GCBO)
+% --- Executes on button press in helpbutton.
+function helpbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to helpbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 end
-
-% --- Executes on button press in addfunction.
-function addfunction_Callback(hObject, eventdata, handles)
-% hObject    handle to addfunction (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-end
-
 
 % --- Executes on selection change in dateselectionbox.
 function dateselectionbox_Callback(hObject, eventdata, handles)
@@ -330,32 +158,80 @@ guidata(hObject, handles);
 end
 
 
-% --- Executes on button press in addday.
-function addday_Callback(hObject, eventdata, handles)
-% hObject    handle to addday (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles structure with handles and user data (see GUIDATA)
-contents = cellstr(get(handles.dateselectionbox, 'String'));
-datedir = contents{get(handles.dateselectionbox, 'Value')};
-set(handles.daystoplotlabel, 'String', datedir);
-
-maxlen = 2;
-numdaysadded = length(handles.daystoplotlabel);
-daysadded = handles.daystoplotlabel;
-if numdaysadded<maxlen
-    handles.daystoplotlabel{numdaysadded+1}=datedir;
-else
-    daysadded = daysadded(2:end);
-    
-end
-end
+%% General Helper Plotting Functions (loading arguments, plotting routines)
+%to just add new analysis functions, change these helper functions (separate files)
 
 %This function handles the entire plotting routine
-function plot_all_days(handles)
+%function [handles] = plot_all_days(dirlist, plotname, handles, args, axnum);
 
+%loads arguments
+%function [handles] = load_arguments(plotname, handles, axnum)
 
+%general function that will populate the listboxes with functions
+%function [obj] = populate_function_list(obj)
+
+%% Specific plotting routines
+% these functions should never have code related to performing specific
+% plots. Call the general helper functions listed above to avoid copying
+% and pasting code/redundancies.
+% Each axes i has several items associated:
+%   ax[i]plotselect :: populated by analysis function list on creation,
+%       loads arguments on callback
+%   ax[i]arg1, ax[i]arg2, ax[i]arg3 :: space for arguments, not affected by
+%       callback/change functions of self. changed on callback by
+%       ax[i]plotselect to load default arguments
+%   ax[i]arg1label, ax[i]arg2label, ax[i]arg3label :: gui text labels for
+%       argument spaces. not affected by self callback/create functions -
+%       only change on callback to ax[i]plotselect
+%   xlabel[i], ylabel[i], Title[i] :: gui text labels with room for x, y,
+%       and title labels.
+
+%Argument Handling - nothing happens here, exist solely to not crash gui
+function ax1arg1_Callback(hObject, eventdata, handles)
+% do nothing
 end
+% --- Executes during object creation, after setting all properties.
+function ax1arg1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ax1arg1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+function ax1arg2_Callback(hObject, eventdata, handles)
+% do nothing
+end
+% --- Executes during object creation, after setting all properties.
+function ax1arg2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ax1arg2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+function ax1arg3_Callback(hObject, eventdata, handles)
+% do nothing
+end
+% --- Executes during object creation, after setting all properties.
+function ax1arg3_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to ax1arg3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
 
 % --- Executes on selection change in ax1plotselect.
 function ax1plotselect_Callback(hObject, eventdata, handles)
@@ -365,6 +241,8 @@ function ax1plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax1plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax1plotselect
+handles = load_arguments(hObject, handles, 1);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -378,6 +256,7 @@ function ax1plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
 end
 
 
@@ -397,6 +276,8 @@ function ax2plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax2plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax2plotselect
+handles = load_arguments(hObject, handles, 2);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -410,6 +291,7 @@ function ax2plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
 end
 
 
@@ -496,6 +378,8 @@ function ax3plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax3plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax3plotselect
+handles = load_arguments(hObject, handles, 3);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -509,6 +393,7 @@ function ax3plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
 end
 
 
@@ -595,6 +480,8 @@ function ax4plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax4plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax4plotselect
+handles = load_arguments(hObject, handles, 4);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -608,6 +495,8 @@ function ax4plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
+
 end
 
 
@@ -694,6 +583,8 @@ function ax5plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax5plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax5plotselect
+handles = load_arguments(hObject, handles, 5);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -707,6 +598,7 @@ function ax5plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
 end
 
 
@@ -793,6 +685,8 @@ function ax6plotselect_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ax6plotselect contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ax6plotselect
+handles = load_arguments(hObject, handles, 6);
+guidata(hObject, handles);
 end
 
 % --- Executes during object creation, after setting all properties.
@@ -806,6 +700,8 @@ function ax6plotselect_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_function_list(hObject);
+
 end
 
 

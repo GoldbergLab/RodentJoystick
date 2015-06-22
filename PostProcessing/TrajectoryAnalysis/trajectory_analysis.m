@@ -54,7 +54,7 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %               graph
 
 % Argument Manipulation
-default = {4,[400 1400], [300 30 60], 1, [], 'r', 1};
+default = {4,[400 1400], [0 0 0], 1, [], 'r', 2};
 numvarargs = length(varargin);
 if numvarargs > 7
     error('too many arguments (> 8), only one required and seven optional.');
@@ -192,11 +192,12 @@ bin_traj_indices = ones(length(bins)-1, 1);
 %each bin has a vector of trajectory structures (simplified from tstruct)
 % store the indices so we know at what index to add each new trajectory
 for i = 1:length(tstruct)
-    bin_ind = bin_index(bins, length(tstruct(i).magtraj));
+    %This is where our definition of hold time comes into effect:
+    bin_ind = bin_index(bins,tstruct(i).rw_or_stop);
     if bin_ind ~= -1
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', length(tstruct(i).magtraj));
+        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', tstruct(i).rw_or_stop);
     end
 end
 end
