@@ -12,7 +12,7 @@ for i = 1:length(dir_list)
     end
 end
 
-disp([num2str(actual_count), ' entries out of the input list were actually',...
-        ' directories. doAllpp attempted to process those directories.', ...
-        ' doAllpp failed on the following directories:');
+disp([num2str(actual_count), ' entries out of the input list were actually']);
+disp('directories. doAllpp attempted to process those directories.');
+disp('doAllpp failed on the following directories (possibly none):');
 disp(failed);
