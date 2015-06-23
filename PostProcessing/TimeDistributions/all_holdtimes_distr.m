@@ -1,6 +1,6 @@
-function all_holdtimes_distr(jslist, varargin)
+function all_holdtimes_distr(dirlist, varargin)
 %data = 
-% all_holdtimes_distr(jslist, [hist_int, TIME_RANGE, combineflag])
+% all_holdtimes_distr(dirlist, [hist_int, TIME_RANGE, combineflag])
 %   Plots the following hold time related distributions:
 %   hold time distribution
 %   rewarded trajectories' hold times distribution
@@ -21,7 +21,7 @@ ax1 = subplot(2,2, 1);
 ax2 = subplot(2,2, 2);
 ax3 = subplot(2,2, 3);
 ax4 = subplot (2, 2, 4);
-[data, dates, statistics] = get_rewardandht_times(jslist, hist_int, TIME_RANGE, combineflag);
+[data, dates, statistics] = get_rewardandht_times(dirlist, hist_int, TIME_RANGE, combineflag);
 allstuff.data = data; allstuff.dates=dates; allstuff.stats=statistics;
 
 %to make sure that it's actually plotting using the data and not attempting

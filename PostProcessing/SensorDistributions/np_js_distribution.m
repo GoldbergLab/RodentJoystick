@@ -1,10 +1,10 @@
-function [data, labels] = np_js_distribution(jslist, varargin)
-%np_js_distribution(jslist [interv, combineflag, plotflag, ax]) 
+function [data, labels] = np_js_distribution(dirlist, varargin)
+%np_js_distribution(dirlist, [interv, combineflag, plotflag, ax]) 
 % plots the nose poke vs joystick touch time distribution
-% for the data from a given jstruct. If multiple jstructs are given, it
+% for the data from a given day. If multiple days are given, it
 % plots all data on the same axes
 % ARGUMENTS:
-%   filenames :: list of jstructs - may contain a single jstruct
+%   dirlist :: list of directory structs (with name field)
 %   interv :: histogram interval (optional, default 20ms)
 %   combineflag :: if multiple jstructs are given, combines all data and
 %       makes a single plot if 1, plots structs individually if 0
@@ -40,40 +40,24 @@ end
 if combineflag == 1
     data = cell(1, 1);
 else
-    data = cell(length(jslist), 1);
+    data = cell(length(dirlist), 1);
 end
 dist_time = -1000:interv:1000;
 
-%% get jstructs data individually
-if combineflag==0
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-        
-        %processing
-        stats = xy_getstats(jstruct);
-        np_js = histc(stats.np_js,dist_time); np_js = np_js./(sum(np_js));
-        data{i} = [dist_time', np_js];
-    end
-else
-%% get jstructs combined data
-    combined = [];
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-    end
-    stats = xy_getstats(combined);
-    np_js = histc(stats.np_js, dist_time); np_js = np_js./(sum(np_js));
-    data{1} = [dist_time', np_js];
-    labels.legend = {[labels.legend{1}, '-', labels.legend{end}]};
-
+[statslist, dates] = load_stats(dirlist, combineflag);
+labels.legend = dates;
+for i=1:length(statslist)
+    stats = statslist(i);
+    np_js = histc(stats.np_js,dist_time);
+    np_js = np_js./(sum(np_js));
+    data{i} = [dist_time', np_js];
 end
 
+%% Plot data
 if plotflag == 1
     axes(ax(1));
     hold on;
-    LINEWIDTH = 1; if length(data)==1; LINEWIDTH = 2; end;
+    if length(data)==1; LINEWIDTH = 2; else LINEWIDTH = 1; end;
     for i = 1:length(data)
         tmpdata = data{i};
         dist_time = tmpdata(:, 1);

@@ -143,8 +143,36 @@ Ideas for Future Optimization
             would have
         velocity and acceleration heat maps;
         trajectory analysis bin and structure;
-    
-        
+
+Functions by Input (current/suggested) improved by dedicated combine function?;
+np_js_distribution(jstructlist/ statslist) y
+np_post_distribution(jslist/statslist) y
+holdtime_firstcontact_distribution(jslist) y
+
+heat_maps(stats/dir)
+activity_heat_map
+velocity_heat_map,velocityvar_heat_map, accel_heat_map, acceltan_heat_map, accelvar_heat_map
+    calls get_vel_accel_distr(stats) -> get combined stats? not a problem;
+    ->compute_vel_accel_distr(stats/day)
+    ->(data) = get_vel_accel_distr(dirlist, combineflag)
+hold_time_distr group (jslist/statslist) y
+    calls get_rewardandht_times(jslist/dirlist);
+    -> get_rewardandht_times(dirlist);
+        load reward/ht times data from folder
+    -> compute_rewardandht_times(jslist/dirlist);
+        uses stats
+multi_time_distr
+    jslist ->dir list -> list of jstructs
+
+
+
+recommendations for combined functions:
+[statsfname struct list, days strings (cell array)] = load_stats(dirlist, combineflag)
+[jstructlist (struct), days strings] = load_jstructs(dirlist, combineflag)
+
+
+
+
 
 
 

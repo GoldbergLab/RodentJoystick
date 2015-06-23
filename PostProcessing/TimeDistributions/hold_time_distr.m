@@ -1,19 +1,19 @@
-function [data, labels, summary] = hold_time_distr(jslist, varargin )
+function [data, labels, summary] = hold_time_distr(dirlist, varargin )
 %[data, labels, summary] 
-% = hold_time_distr(jslist, [hist_int, TIME_RANGE, combineflag, ax, allstuff])
+% = hold_time_distr(dirlist, [hist_int, TIME_RANGE, combineflag, ax, allstuff])
 %hold_time_distr plots the distribution of hold times with intervals
 %defined by hist_int for a range [0, TIME_RANGE];
 %OUTPUTS:
-%   data :: cell array with a cell for each jstruct in jslist containing
+%   data :: cell array with a cell for each jstruct in dirlist containing
 %       histogram data for each cell has the format:
 %       [time, holdtime_ht] (holdtime ht has already been binned)
 %   labels :: struct containing xlabel, ylabel, title, and legend
-%   summary :: cell array with a cell for each jstruct in jslist containing
+%   summary :: cell array with a cell for each jstruct in dirlist containing
 %       statistics describing hold time distribution for each day
 %       each cell has the format:
 %       [firstquartile median thirdquartile mean stdev]
 %ARGUMENTS:
-%   jslist :: list of jstructs including filenames
+%   dirlist :: list of directories corresponding to days (struct from rdir)
 %   OPTIONAL
 %   hist_int :: size of the bins for histogram generation (in ms)
 %       DEFAULT : 20
@@ -29,7 +29,7 @@ function [data, labels, summary] = hold_time_distr(jslist, varargin )
 %       if other plots using this data are generated, you can just pass
 %       this data directly to avoid attempting to generate data multiple
 %       E.g. one such call might look like: 
-%       [data, dates, statistics] = get_rewardandht_times(jslist)
+%       [data, dates, statistics] = get_rewardandht_times(dirlist)
 %       hold_time_distr([], 20, 2000, 0, ax, data)
 %       Note that in this case, none of the other arguments except for ax
 %       will have any effect since it will simply plot the results from
@@ -54,7 +54,7 @@ if ~isempty(allstuff)
     dates = allstuff.dates;
     allstats = allstuff.stats;
 else
-    [extradata, dates, allstats] = get_rewardandht_times(jslist, hist_int, TIME_RANGE, combineflag);
+    [extradata, dates, allstats] = get_rewardandht_times(dirlist, hist_int, TIME_RANGE, combineflag);
 end
 labels.legend = dates;
 data = cell(length(extradata), 1); summary = cell(length(extradata), 1);

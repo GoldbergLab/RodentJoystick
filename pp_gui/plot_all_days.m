@@ -55,11 +55,11 @@ end
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     arg1 = str2num(arg1);
     cla(axes(axnum), 'reset');
-    np_js_distribution(jslist, arg1, combineflag, 1, axes(axnum));
+    np_js_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = str2num(arg1);
     cla(axes(axnum), 'reset');
-    np_post_distribution(jslist, arg1, combineflag, 1, axes(axnum));
+    np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Hold Length Distribution (Max)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'Normalize'; %whether to normalize distributions
@@ -67,7 +67,7 @@ elseif strcmp(plotname, 'Hold Length Distribution (Max)')
     arg2 = str2num(arg2);
     arg2 = ~(~arg2);
     cla(axes(axnum), 'reset');
-    holdtime_firstcontact_distribution(jslist, 150, arg1, combineflag, arg2, 1, axes(axnum));  
+    holdtime_firstcontact_distribution(dirlist, 150, arg1, combineflag, arg2, 1, axes(axnum));  
 elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'Normalize'; %whether to normalize distributions
@@ -77,35 +77,35 @@ elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
     arg3 = str2num(arg3);
     arg2 = ~(~arg2);
     cla(axes(axnum), 'reset');
-    holdtime_firstcontact_distribution(jslist, arg3, arg1, combineflag, arg2, 1, axes(axnum)); 
+    holdtime_firstcontact_distribution(dirlist, arg3, arg1, combineflag, arg2, 1, axes(axnum)); 
 elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     cla(axes(axnum), 'reset');
-    hold_time_distr(jslist, arg1, arg2, combineflag, axes(axnum), []);
+    hold_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     cla(axes(axnum), 'reset');
-    rewarded_time_distr(jslist, arg1, arg2, combineflag, axes(axnum), []);
+    rewarded_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Reward Rate by Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     cla(axes(axnum), 'reset');
-    rewardrate_distr(jslist, arg1, arg2, combineflag, axes(axnum), []);
+    rewardrate_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     cla(axes(axnum), 'reset');
-    joystick_to_reward_distr(jslist, arg1, arg2, combineflag, axes(axnum), []);
+    joystick_to_reward_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);

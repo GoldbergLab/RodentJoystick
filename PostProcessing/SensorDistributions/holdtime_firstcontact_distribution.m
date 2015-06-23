@@ -48,40 +48,24 @@ if plotflag == 1 && length(ax) <1
         ax(1) = gca();
 end
 if combineflag == 1; data = cell(1, 1); else data = cell(length(jslist), 1); end
+
 dist_time = 0:interv:1000;
-LINEWIDTH = 1;
-%% Get individual data
-if combineflag==0
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-        %processing now
-        [~,hold_dist]=xy_holddist(jstruct,dist_thresh,0.75);
-        holddist_vect = histc(hold_dist,dist_time);
-        if normalize == 1
-            holddist_vect = holddist_vect./sum(holddist_vect);
-        end
-        data{i} = [dist_time', holddist_vect'];
-    end
-else
-    LINEWIDTH=2;
-%% Get jstructs combined data
-    combined = [];
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-        labels.legend{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-    end
-    labels.legend = {[labels.legend{1},'-',labels.legend{end}]};
-    [~,hold_dist]=xy_holddist(combined,dist_thresh,0.75);
+[jstructlist, dates] = load_jstructs(jslist, combineflag);
+labels.legend = dates;
+
+for i = 1:length(jstructlist)
+    jstruct = jstructlist{i};
+    [~,hold_dist]=xy_holddist(jstruct,dist_thresh,0.75);
     holddist_vect = histc(hold_dist,dist_time);
     if normalize == 1
         holddist_vect = holddist_vect./sum(holddist_vect);
     end
-    data{1} = [dist_time', holddist_vect'];
+    data{i} = [dist_time', holddist_vect'];
 end
+
 if plotflag==1
     axes(ax(1));hold on;
+    if length(data)==1; LINEWIDTH = 2; else LINEWIDTH = 1; end;
     for i = 1:length(data)
         stuff = data{i};
         dist_time = stuff(:, 1);

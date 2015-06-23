@@ -1,8 +1,8 @@
-function activity_summary_heat_maps(stats,varargin)
-%activity_summary_heat_maps(stats) plots the activity heat map, velocity
+function activity_summary_heat_maps(dirlist,varargin)
+%activity_summary_heat_maps(dirlist) plots the activity heat map, velocity
 %and acceleration profiles including variation on a single figure
 % ARGUMENTS:
-%   stats :: single stats structure
+%   dirlist :: list of days (directory struct representation)
 %   OPTIONAL:
 %   ax :: at least 5 axes (different) instructing
 %       activity_summary_heat_maps where to plot distributions
@@ -14,16 +14,17 @@ if numvarargs > 3
 end
 [default{1:numvarargs}] = varargin{:};
 [ax] = default{:};
-[data] = get_vel_accel_distr(stats,varargin);
-vel = data.vel; velvar=data.velvar; accel=data.accel; 
-accelvar = data.accelvar; acceltan = data.accel_tan;
+[data] = get_vel_accel_distr(dirlist,varargin);
+vel = data.vel; velvar=data.velv; accel=data.accel; 
+accelvar = data.accelv; acceltan = data.accel_norm;
 if length(ax) < 5
     figure;    
     for j = 1:6
         ax(j) = subplot(2, 3, j);
     end
 end
-activity_heat_map(stats, 1, [2 99], ax(1));
+statscombined = load_stats(dirlist, 1);
+activity_heat_map(statscombined, 1, [2 99], ax(1));
 %testing to see if this will work
 velocity_heat_map([], ax(2), vel);
 velocityvar_heat_map([], ax(3), velvar);
