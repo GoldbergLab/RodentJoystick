@@ -23,5 +23,3 @@ save(strcat(working_dir,'/jstruct.mat'),'jstruct');
 save(strcat(working_dir,'/stats.mat'),'stats');
 save(strcat(working_dir,'/velaccel.mat'), 'velaccel');
 save(strcat(working_dir,'/velaccelraw.mat'), 'velaccelraw');
-
-load('stats.mat'); [velaccel, velaccelraw] = compute_vel_accel_distr(stats); save(strcat(pwd,'/velaccel.mat'), 'velaccel'); save(strcat(pwd,'/velaccelraw.mat'), 'velaccelraw'); clear stats; clear velaccel; clear velaccelraw;
