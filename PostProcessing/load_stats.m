@@ -5,7 +5,7 @@ function [statslist, dates, days] = load_stats(dirlist, combineflag)
 %mm/dd/yy - days is the same information, but in the number format
 %if combineflag == 1, then dates is the string indicating the time range
 
-if combineflag==0
+if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data
     dates = cell(length(dirlist), 1);
     days = zeros(length(dirlist), 1);

@@ -36,16 +36,8 @@ arg2 = get(arg2s(axnum), 'String');
 arg3 = get(arg3s(axnum), 'String');
 combineflag = get(handles.combinedays, 'Value');
 
-if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Velocity Heat Map') ...
-    || strcmp(plotname, 'Velocity Variation Heat Map') || strcmp(plotname, 'Acceleration Heat Map') ...
-    || strcmp(plotname, 'Acceleration Variation Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
-    combined = [];
-    for i=1:length(jslist)
-        clear jstruct;
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-    end
-    statscombined = xy_getstats(combined);
+if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
+    statscombined = load_stats(dirlist, 1);
 end
 
 %% Plotting Routines - edit here to add new functions
@@ -116,17 +108,16 @@ elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
     cla(axes(axnum), 'reset');
-    velocity_heat_map(statscombined, axes(axnum));
+    velocity_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Velocity Variation Heat Map')
     cla(axes(axnum), 'reset');
-    activity_heat_map(statscombined, 1, [2 99], axes(axnum));
-    velocityvar_heat_map(statscombined, axes(axnum));
+    velocityvar_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Acceleration Heat Map')
     cla(axes(axnum), 'reset');
-    accel_heat_map(statscombined, axes(axnum));
+    accel_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
     cla(axes(axnum), 'reset');
-    accelvar_heat_map(statscombined, axes(axnum));
+    accelvar_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg1label = 'Rew Rate'; %Desired reward rate
 %     arg2label = 'Thresh'; %Histogram interval (ms)

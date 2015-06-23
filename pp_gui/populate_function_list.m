@@ -15,7 +15,7 @@ function_list = {'Nosepoke Joystick Onset Distribution';
                     'Activity Heat Map';
                     'Velocity Heat Map';
                     'Velocity Variation Heat Map';
-                    'Accleration Heat Map'
+                    'Acceleration Heat Map'
                     'Acceleration Variation Heat Map';
                     'Angle Distribution (Linear)';
                     'Trajectory Analysis (4)';
