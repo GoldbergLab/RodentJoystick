@@ -1,6 +1,6 @@
 function [data, labels, summary] = joystick_to_reward_distr(jslist, varargin )
 %[data, labels, summary] 
-% = joystick_to_reward_distr(jslist, [hist_int, TIME_RANGE, combineflag, plotflag, ax])
+% = joystick_to_reward_distr(jslist, [hist_int, TIME_RANGE, combineflag, ax, alldata])
 %joystick_to_reward_distr plots the distribution of joystick onset to reward onset
 % times with intervals defined by hist_int for a range [0, TIME_RANGE];
 %OUTPUTS:

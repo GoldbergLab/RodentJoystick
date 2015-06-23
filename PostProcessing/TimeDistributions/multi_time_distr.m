@@ -1,4 +1,4 @@
-% multi_time_distr(jslist[, interval, layout, combineflag, lim]) generates 
+% multi_time_distr(jslist[, interval, layout, combineflag, lim, ax]) generates 
 % histogram time distributions of nosepokes and rewards for all jstructs 
 % in the list jslist - only jslist & interval are required arguments, rest
 % are optional
@@ -17,6 +17,7 @@
 %       otherwise does nothing
 %   ylim :: changes the y-axis limit for all plots if 'col' is selected.
 %       otherwise does nothing
+%   ax :: axes for what to plot data on.
 % OUTPUTS: None
 
 function [data, labels] = multi_time_distr(jslist, varargin)
