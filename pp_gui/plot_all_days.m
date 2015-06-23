@@ -11,7 +11,7 @@ try
     jslist = dirlist;
     for i = 1:length(jslist);
         jslist(i).isdir = 0;
-        jslist(i).name = [jslist(i).name, '\jstruct.mat'];
+        jslist(i).name = [jslist(i).name, '/jstruct.mat'];
     end
 catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');

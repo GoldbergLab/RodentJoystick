@@ -1,4 +1,4 @@
-function [data] = get_vel_accel_distr(stats,varargin)
+function [data, rawdata] = get_vel_accel_distr(stats,varargin)
 %[median, variation, accel, accelv] = get_vel_accel_distr(stats) returns
 %the relative velocity and acceleration distributions (their medians, and
 %the differences between their 75th and 25th percentiles
@@ -19,7 +19,7 @@ function [data] = get_vel_accel_distr(stats,varargin)
 default = {};
 numvarargs = length(varargin);
 if numvarargs > 1
-    error('too many arguments (> 4), only one required and three optional.');
+    error('too many arguments (> 1), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [tmp] = default{:};
@@ -52,7 +52,6 @@ for i = 1:length(tstruct);
     av_y = v_y_norm(1:end-1) .* a_y;
     a_tan = abs(av_x + av_y);
     a = sqrt(a_x.^2 + a_y.^2);
-    %disp([a', a_tan']);
     [ind_x, ind_y] = trajectorypos_to_index(x, y);
     ind_x = ind_x(1:end-1); ind_y = ind_y(1:end-1);
     for j = 1:length(ind_x)
@@ -84,16 +83,18 @@ for indx = 1:SIZE
         accel(indx, indy) = quartilesa(2);
         accelv(indx, indy) = quartilesa(3) - quartilesa(1);
         
-        a_tan = accelerations{indx, indy};
+        a_tan = accelerations_t{indx, indy};
         quartilesat = [0, 0, 0];
         if ~isempty(a)
             quartilesat = prctile(a_tan,[25 50 75]);
         end
-        disp([sort(a'), sort(a_tan')]);
         accel_tan(indx, indy) = quartilesat(2);
         accelv_tan(indx, indy) = quartilesat(3) - quartilesat(1);
     end
 end
+rawdata.vel = velocities;
+rawdata.accel = accelerations;
+rawdata.acceltan = accelerations_t;
 data.vel = median;
 data.velvar = variation;
 data.accel = accel;
