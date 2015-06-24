@@ -25,10 +25,7 @@
 %       thresh :: only trajectory points with a magnitude above thresh will
 %           be used in computing angle distributions and then target sector
 %           DEFAULT: 75
-%       plotflag :: 0 results in not plotting, just returning data, 1
-%           plots all, 2 plots just distribution with highlight targeted
-%           but without reference, 3 plots just distribution
-%           DEFAULT: 1
+%       combineflag :: 0 plots each day individually, 1 combines all days
 %       ax :: an axes handle for perform_sector_analysis to plot data on.
 %           if empty (as by default) and plotflag is on, then generates a
 %           new figure automatically

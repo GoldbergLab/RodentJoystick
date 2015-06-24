@@ -48,8 +48,9 @@ labels.ylabel = 'Count';
 labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
 labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
 if plotflag == 1
-    plot_data(ax, times, np_plot, rew_plot, labels, color);
+    line = plot_data(ax, times, np_plot, rew_plot, labels, color);
 end
+labels.line = line;
 end
 
 % gen_final_data (jstruct, int) gives the following vectors
@@ -140,14 +141,14 @@ end
 %   label :: string labeling the y-axis
 %   day :: an integer representing the MATLAB day
 % and ontimes, the time when the sensor comes on
-function plot_data(ax, times, np_plot, rew_plot, labels, color)
+function line = plot_data(ax, times, np_plot, rew_plot, labels, color)
     axes(ax);
     hold on;
     xlabel(labels.xlabel);
     title(labels.title);
-    stairs(times, np_plot, color);
+    line = stairs(times, np_plot, color);
     stairs(times, rew_plot, color, 'LineStyle', ':');
-    legend(labels.legend{1}, labels.legend{2});
+    %legend(labels.legend{1}, labels.legend{2});
     legend('boxoff');
     axis([0, 24, 0, inf]);
     x = [0, 4, 8, 12, 16, 20, 24];

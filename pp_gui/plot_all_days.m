@@ -8,11 +8,6 @@ function [ handles ] = plot_all_days(handles, axnum)
 %% Argument extraction and plotting information
 try
     dirlist = handles.dirlist;
-    jslist = dirlist;
-    for i = 1:length(jslist);
-        jslist(i).isdir = 0;
-        jslist(i).name = [jslist(i).name, '/jstruct.mat'];
-    end
 catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');
     error('Attempted plotting without any days selected.');
@@ -93,7 +88,7 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);
-    multi_time_distr(jslist, arg1, 'single', combineflag, inf, axes(axnum))
+    multi_time_distr(dirlist, arg1, 'single', combineflag, inf, axes(axnum));
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
@@ -109,7 +104,7 @@ elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg2label = 'Thresh'; %Histogram interval (ms)
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    perform_sector_analysis(statscombined, arg1, arg2, 1, axes(axnum));
+    multi_sector_analysis(dirlist, arg1, arg2, 1, axes(axnum));
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;

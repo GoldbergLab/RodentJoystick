@@ -1,10 +1,10 @@
-% multi_time_distr(jslist[, interval, layout, combineflag, lim, ax]) generates 
+% multi_time_distr(dirlist[, interval, layout, combineflag, lim, ax]) generates 
 % histogram time distributions of nosepokes and rewards for all jstructs 
-% in the list jslist - only jslist & interval are required arguments, rest
+% in the list dirlist - only dirlist is a required argument, rest
 % are optional
 % ARGUMENTS:
-%   jslist :: a list of files referring to saved jstructs:
-%       Ex: jslist(1).name = 'K:\expt4\expt_4_0004_16\Box_2\2_18_2015\jstruct.mat'
+%   dirlist :: a list of files referring to saved (and post processed) dir:
+%       Ex: dirlist(1).name = 'K:\expt4\expt_4_0004_16\Box_2\2_18_2015'
 %   OPTIONAL:
 %   interval :: interval of time in minutes for histogram bin size 
 %       positive nonzero integer
@@ -20,7 +20,7 @@
 %   ax :: axes for what to plot data on.
 % OUTPUTS: None
 
-function [data, labels] = multi_time_distr(jslist, varargin)
+function [data, labels] = multi_time_distr(dirlist, varargin)
     %Default argument handling:
 default = {30, 'single', 0, Inf, []};
 numvarargs = length(varargin);
@@ -31,9 +31,9 @@ end
 %normal code from here on
 [interval, layout, combineflag, ylim, ax] = default{:};
 if strcmp(layout,'single')
-    [data, labels] = multi_time_distr_single(jslist, interval, combineflag, ax);
+    [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax);
 elseif strcmp(layout,'col')
-    [data, labels] = multi_time_distr_multi(jslist, interval, ylim);
+    [data, labels] = multi_time_distr_multi(dirlist, interval, ylim);
 else
     s1 ='Invalid flag. \n multi_time_distr(interval, flag) takes';
     s2 = ' an interval argument(integer) (for the histogram) and a';
@@ -43,59 +43,35 @@ else
 end
 end
 
-%multi_time_distr_indiv(jslist, interval, sfignum) plots the
+%multi_time_distr_indiv(dirlist, interval, sfignum) plots the
 %   nosepoke/reward time distribution with bin size specified by interval
-%   of each jstruct in jslist on its own figure, starting at sfignum and 
+%   of each jstruct in dirlist on its own figure, starting at sfignum and 
 %   incrementing by 1 each time
-function [data, labels] = multi_time_distr_single(jslist, interval, combineflag, ax)
+function [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax)
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-if length(ax) <1
-        figure;
-        ax(1) = gca();
-end
-data = cell(length(jslist), 1);
-leg = []; labelstmp = [];
-if combineflag==0
-    leg = cell(2*length(jslist), 1);
-    for i=1:length(jslist)
-        clear jstruct;
-        load(jslist(i).name);
-        [np_plot, rew_plot,~,times, labelstmp]=generate_time_distr(jstruct, interval, 1, ax, colors(i));
-        data{i} = [times', np_plot, rew_plot];
-        leg{2*i}=labelstmp.legend{2};
-        leg{2*i-1}=labelstmp.legend{1};
-    end
-    legend('Location', 'northwest');
-    legend('boxoff');
-else
-    clear jstruct; load(jslist(1).name);
-    [~,~,day1, labelstmp]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
-    clear jstruct; load(jslist(end).name);
-    [~,~,day2]=generate_time_distr(jstruct, interval, 0, ax, colors(1));
-    leg{1} = strcat(datestr(day1, 'mm/dd'), '-',datestr(day2, 'mm/dd/yy'),': Nosepoke');
-    leg{2} = strcat(datestr(day1, 'mm/dd'), '-',datestr(day2, 'mm/dd/yy'),': Reward');
-    combined = [];
-    for i=1:length(jslist)
-        clear jstruct;
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-    end
-    generate_time_distr(combined, interval, 1, ax, colors(1));
+if length(ax) <1; figure; ax(1) = gca(); end
+data = cell(length(dirlist), 1);
+[jslist, dates] = load_jstructs(dirlist, combineflag);
+for i = 1:length(jslist);
+    jstruct = jslist{i};
+    [np_plot, rew_plot,~,times, labelstmp]=generate_time_distr(jstruct, interval, 1, ax, colors(i));
+    data{i} = [times', np_plot, rew_plot];
+    lines(i) = labelstmp.line;
 end
 labels = labelstmp;
-labels.legend = leg;
-legend(leg);
-legend('Location', 'northwest');
+labels.legend = dates;
+legend(lines, dates);
+%legend('Location', 'northwest');
 legend('boxoff');
 end
 
-function multi_time_distr_multi(jslist, interval, ylim)
+function multi_time_distr_multi(dirlist, interval, ylim)
 figure;
 hold on; 
-plot_size = length(jslist);
+plot_size = length(dirlist);
 for i = 1:plot_size
     clear jstruct;
-    load(jslist(i).name);
+    load(dirlist(i).name);
     ax = subplot(plot_size,1,i); hold on;
     [~, ~, day]=generate_time_distr(jstruct, interval, 1, ax);
     axes(ax);

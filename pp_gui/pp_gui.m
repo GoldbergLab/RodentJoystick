@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 22-Jun-2015 15:39:07
+% Last Modified by GUIDE v2.5 24-Jun-2015 12:04:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -737,4 +737,50 @@ function plotax6_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 handles = plot_all_days(handles, 6);
 guidata(hObject, handles);
+end
+
+
+% --- Executes on button press in saveplotspush.
+function saveplotspush_Callback(hObject, eventdata, handles)
+% hObject    handle to saveplotspush (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% F = getframe(handles.axes1);
+% IM = frame2im(F);
+% imwrite(IM,'test.png');
+
+fh = figure;
+copyobj(handles.axes5, fh);
+ax = gca();
+
+%bunch of random crap you have to do so that figure doesn't display funny
+set(fh, 'Position', [50, 50, 600, 600]);
+set(ax, 'Units', 'normalized');
+set(ax, 'Position', [0.1, 0.1, 0.8, 0.8]);
+pos(3) = 0.8; pos(2) = 0.8;
+
+%set(ax, 'Position', pos);
+%set(fh, 'Position', figpos);
+export_fig test3.png
+%close(fh);
+end
+
+
+% --- Executes when selected object is changed in saveplotsformat.
+function saveplotsformat_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in saveplotsformat 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function saveplotsformat_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to saveplotsformat (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 end

@@ -49,19 +49,19 @@ elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
     arg2 = '2000'; 
     arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
-    arg1 = '20'; 
+    arg1 = '50'; 
     arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; 
+    arg2 = '1500'; 
     arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Reward Rate by Hold Time Distribution')
-    arg1 = '20'; 
+    arg1 = '100'; 
     arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; 
+    arg2 = '1200'; 
     arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
-    arg1 = '20'; 
+    arg1 = '10'; 
     arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '2000'; 
+    arg2 = '1200'; 
     arg2label = 'End Time'; %what time range to plot
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1 = '20'; 
