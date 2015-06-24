@@ -745,24 +745,7 @@ function saveplotspush_Callback(hObject, eventdata, handles)
 % hObject    handle to saveplotspush (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% F = getframe(handles.axes1);
-% IM = frame2im(F);
-% imwrite(IM,'test.png');
-
-fh = figure;
-copyobj(handles.axes5, fh);
-ax = gca();
-
-%bunch of random crap you have to do so that figure doesn't display funny
-set(fh, 'Position', [50, 50, 600, 600]);
-set(ax, 'Units', 'normalized');
-set(ax, 'Position', [0.1, 0.1, 0.8, 0.8]);
-pos(3) = 0.8; pos(2) = 0.8;
-
-%set(ax, 'Position', pos);
-%set(fh, 'Position', figpos);
-export_fig test3.png
-%close(fh);
+save_gui_plots(handles);
 end
 
 
