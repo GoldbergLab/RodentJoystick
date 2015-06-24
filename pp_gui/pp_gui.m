@@ -90,7 +90,6 @@ tempdirlist = uipickfiles('filter','K:\DataSync\expt_opto_thal_var_2\', 'output'
 if ~isempty(tempdirlist)
     [~, ind] = sort({tempdirlist.name});
     handles.dirlist = tempdirlist(ind);
-else
 try
     %update label of days being plotted;
     labeltxt = '';
@@ -114,7 +113,7 @@ try
         trialnum = trialnum + stats.trialnum;
         handles = update_console(handles, text);
     end
-    if length(statslist > 1)
+    if length(statslist) > 1
         pc = ['Total pellets: ', num2str(pellets)];
         sr = ['Overall success rate: ', num2str(pellets/trialnum)];
         text = {pc; sr};
