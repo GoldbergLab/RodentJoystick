@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 24-Jun-2015 15:59:58
+% Last Modified by GUIDE v2.5 24-Jun-2015 18:03:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -90,7 +90,7 @@ tempdirlist = uipickfiles('filter','K:\DataSync\expt_opto_thal_var_2\', 'output'
 if ~isempty(tempdirlist)
     [~, ind] = sort({tempdirlist.name});
     handles.dirlist = tempdirlist(ind);
-end
+else
 try
     %update label of days being plotted;
     labeltxt = '';
@@ -101,9 +101,29 @@ try
     end
     labeltxt = labeltxt(1:end-2);
     set(handles.daystoplotlabel, 'String', labeltxt);
-catch
+    
+    [statslist, dates] = load_stats(dirlist, 0);
+    disp(length(statslist));
+    pellets = 0; trialnum = 0;
+    for i = 1:length(statslist);
+        stats = statslist(i);
+        pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
+        sr = [dates{i},' success rate: ', num2str(stats.srate)];
+        text = {pc; sr};
+        pellets = pellets + stats.pellet_count;
+        trialnum = trialnum + stats.trialnum;
+        handles = update_console(handles, text);
+    end
+    if length(statslist > 1)
+        pc = ['Total pellets: ', num2str(pellets)];
+        sr = ['Overall success rate: ', num2str(pellets/trialnum)];
+        text = {pc; sr};
+        handles = update_console(handles, text);
+    end
+catch e
 end
 guidata(hObject, handles);
+end
 end
 
 % --- Executes on button press in combinedays.
@@ -794,4 +814,28 @@ elseif get(handles.saveplotsseparate, 'Value')==1
     set(handles.saveplotsfig, 'Visible', 'on');
 end
 
+end
+
+
+% --- Executes on selection change in console.
+function console_Callback(hObject, eventdata, handles)
+% hObject    handle to console (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns console contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from console
+end
+
+% --- Executes during object creation, after setting all properties.
+function console_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to console (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 end
