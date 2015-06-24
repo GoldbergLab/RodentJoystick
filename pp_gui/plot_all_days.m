@@ -88,7 +88,8 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);
-    multi_time_distr(dirlist, arg1, 'single', combineflag, inf, axes(axnum));
+    arg2 = str2num(arg2);
+    multi_time_distr(dirlist, arg1, 'single', combineflag, arg2, inf, axes(axnum));
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')

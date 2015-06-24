@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 24-Jun-2015 12:04:40
+% Last Modified by GUIDE v2.5 24-Jun-2015 15:59:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -766,4 +766,32 @@ function saveplotsformat_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to saveplotsformat (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function saveplotsseparate_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to saveplotsseparate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+end
+
+
+% --- Executes when selected object is changed in saveplotslayout.
+function saveplotslayout_SelectionChangeFcn(hObject, eventdata, handles)
+% hObject    handle to the selected object in saveplotslayout 
+% eventdata  structure with the following fields (see UIBUTTONGROUP)
+%	EventName: string 'SelectionChanged' (read only)
+%	OldValue: handle of the previously selected object or empty if none was selected
+%	NewValue: handle of the currently selected object
+% handles    structure with handles and user data (see GUIDATA)
+
+if get(handles.saveplotssingle, 'Value') == 1
+    set(handles.saveplotsfig, 'Visible', 'off');
+    set(handles.saveplotsfig, 'Value', 0.0);
+    set(handles.saveplotspng, 'Value', 1.0);
+elseif get(handles.saveplotsseparate, 'Value')==1
+    set(handles.saveplotsfig, 'Visible', 'on');
+end
+
 end

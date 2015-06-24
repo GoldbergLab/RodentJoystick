@@ -29,14 +29,14 @@
 
       
 function [np_plot, rew_plot, day, times, labels] = generate_time_distr(jstruct, varargin)
-default = {15, 1, [], 'r'};
+default = {15, 0, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 5
     error(['too many arguments (> 6), only one required ' ... 
             'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interval, plotflag, ax, color] = default{:};
+[interval, normalize, plotflag, ax, color] = default{:};
 if plotflag == 1 && length(ax) <1; figure; ax(1) = gca(); end
 
 interval = interval*60;
@@ -48,7 +48,7 @@ labels.ylabel = 'Count';
 labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
 labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
 if plotflag == 1
-    line = plot_data(ax, times, np_plot, rew_plot, labels, color);
+    line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize);
 end
 labels.line = line;
 end
@@ -141,11 +141,15 @@ end
 %   label :: string labeling the y-axis
 %   day :: an integer representing the MATLAB day
 % and ontimes, the time when the sensor comes on
-function line = plot_data(ax, times, np_plot, rew_plot, labels, color)
+function line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize)
     axes(ax);
     hold on;
     xlabel(labels.xlabel);
     title(labels.title);
+    if normalize == 1
+        np_plot = np_plot/sum(np_plot);
+        rew_plot = rew_plot/sum(rew_plot);
+    end
     line = stairs(times, np_plot, color);
     stairs(times, rew_plot, color, 'LineStyle', ':');
     %legend(labels.legend{1}, labels.legend{2});

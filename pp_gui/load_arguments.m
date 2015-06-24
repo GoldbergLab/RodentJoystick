@@ -66,6 +66,8 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1 = '20'; 
     arg1label = 'Interv'; %Histogram interval (min)
+    arg2 = '0';
+    arg2label = 'Normalize';
 elseif strcmp(plotname, 'Activity Heat Map')
 elseif strcmp(plotname, 'Velocity Heat Map')
 elseif strcmp(plotname, 'Acceleration Heat Map')

@@ -22,16 +22,16 @@
 
 function [data, labels] = multi_time_distr(dirlist, varargin)
     %Default argument handling:
-default = {30, 'single', 0, Inf, []};
+default = {30, 'single', 0, 0, Inf, []};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only one required and five optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only one required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 %normal code from here on
-[interval, layout, combineflag, ylim, ax] = default{:};
+[interval, layout, combineflag, normalize, ylim, ax] = default{:};
 if strcmp(layout,'single')
-    [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax);
+    [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax, normalize);
 elseif strcmp(layout,'col')
     [data, labels] = multi_time_distr_multi(dirlist, interval, ylim);
 else
@@ -47,14 +47,14 @@ end
 %   nosepoke/reward time distribution with bin size specified by interval
 %   of each jstruct in dirlist on its own figure, starting at sfignum and 
 %   incrementing by 1 each time
-function [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax)
+function [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax, normalize)
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 if length(ax) <1; figure; ax(1) = gca(); end
 data = cell(length(dirlist), 1);
 [jslist, dates] = load_jstructs(dirlist, combineflag);
 for i = 1:length(jslist);
     jstruct = jslist{i};
-    [np_plot, rew_plot,~,times, labelstmp]=generate_time_distr(jstruct, interval, 1, ax, colors(i));
+    [np_plot, rew_plot,~,times, labelstmp]=generate_time_distr(jstruct, interval, normalize, 1, ax, colors(i));
     data{i} = [times', np_plot, rew_plot];
     lines(i) = labelstmp.line;
 end
