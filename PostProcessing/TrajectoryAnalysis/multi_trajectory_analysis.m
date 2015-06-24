@@ -1,10 +1,11 @@
-function [labels] = multi_trajectory_analysis(jslist, varargin)
+function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %[data, labels, summary] 
-% = multi_trajectory_analysis(jslist, [plot_range, hold_time_range, plot_contingencies, combineflag, axes_lst])
+% = multi_trajectory_analysis(dirlist, [plot_range, hold_time_range, plot_contingencies, combineflag, axes_lst])
 %rewarded_time_distr plots the distribution of rewarded trajectories' hold
 %times using intervals defined by hist_int for a range [0, TIME_RANGE].
 % ARGUMENTS: 
-%       jslist :: the result from xy_getstats(jstruct) for some jstruct
+%       dirlist :: list of days (as directories in struct representation
+%       from rdir)
 %       OPTIONAL ARGS:
 %       plot_range :: number representing number of plots. DEFAULT: 4
 %       hold_time_range :: the time range [A B] (ms) for which trajectories
@@ -38,32 +39,16 @@ elseif (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-dates = cell(length(jslist), 1);
-if combineflag==0
-%% GET LIST of individual data
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        stats = xy_getstats(jstruct);
-        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-        [~, labels, lhandle] = trajectory_analysis(stats, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), 1);
-        groupings(i)=lhandle;
-    end
-    axes(axeslst(PLOT_RANGE));
-    legend(groupings,dates);
-else
-%% FIND COMBINED DATA    
-    combined = [];
-    for i= 1:length(jslist)
-        load(jslist(i).name);
-        combined = [combined, jstruct];
-        dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
-    end
-    stats = xy_getstats(combined);
-    [~, labels, lhandle] = trajectory_analysis(stats, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst,colors(1), 2);
-    groupings(1)=lhandle;
-    axes(axeslst(PLOT_RANGE));
-    legend(groupings, [dates{1},'-',dates{end}]);
+
+[statslist, dates] = load_stats(dirlist, combineflag);
+for i= 1:length(statslist)
+    stats = statslist(i);
+    [~, labels, lhandle] = trajectory_analysis(stats, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), 1);
+    groupings(i)=lhandle;
 end
-end
+axes(axeslst(PLOT_RANGE));
+legend(groupings,dates);
+
+
 
 

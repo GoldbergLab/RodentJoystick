@@ -39,18 +39,16 @@ combineflag = get(handles.combinedays, 'Value');
 if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
     statscombined = load_stats(dirlist, 1);
 end
-
+cla(axes(axnum), 'reset');
 %% Plotting Routines - edit here to add new functions
 % arg1, arg2, arg3 are left as strings from taking from the textboxes
 %    makes it more flexible in case of string args in the future - and
 %    sometimes arguments will be blank;
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     arg1 = str2num(arg1);
-    cla(axes(axnum), 'reset');
     np_js_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = str2num(arg1);
-    cla(axes(axnum), 'reset');
     np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Hold Length Distribution (Max)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
@@ -58,7 +56,6 @@ elseif strcmp(plotname, 'Hold Length Distribution (Max)')
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     arg2 = ~(~arg2);
-    cla(axes(axnum), 'reset');
     holdtime_firstcontact_distribution(dirlist, 150, arg1, combineflag, arg2, 1, axes(axnum));  
 elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
@@ -68,62 +65,50 @@ elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
     arg2 = str2num(arg2);
     arg3 = str2num(arg3);
     arg2 = ~(~arg2);
-    cla(axes(axnum), 'reset');
     holdtime_firstcontact_distribution(dirlist, arg3, arg1, combineflag, arg2, 1, axes(axnum)); 
 elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    cla(axes(axnum), 'reset');
     hold_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    cla(axes(axnum), 'reset');
     rewarded_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Reward Rate by Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    cla(axes(axnum), 'reset');
     rewardrate_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    cla(axes(axnum), 'reset');
     joystick_to_reward_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);
-    cla(axes(axnum), 'reset');
     multi_time_distr(jslist, arg1, 'single', combineflag, inf, axes(axnum))
 elseif strcmp(plotname, 'Activity Heat Map')
-    cla(axes(axnum), 'reset');
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
-    cla(axes(axnum), 'reset');
     velocity_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Velocity Variation Heat Map')
-    cla(axes(axnum), 'reset');
     velocityvar_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Acceleration Heat Map')
-    cla(axes(axnum), 'reset');
     accel_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
-    cla(axes(axnum), 'reset');
     accelvar_heat_map(dirlist, axes(axnum));
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg1label = 'Rew Rate'; %Desired reward rate
 %     arg2label = 'Thresh'; %Histogram interval (ms)
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    cla(axes(axnum), 'reset');
     perform_sector_analysis(statscombined, arg1, arg2, 1, axes(axnum));
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg1label = 'Start'; %start time;
@@ -141,7 +126,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        multi_trajectory_analysis(jslist, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
+        multi_trajectory_analysis(dirlist, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
@@ -154,7 +139,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (6)')
         for i = 1:length(axes)
             cla(axes(i), 'reset');
         end
-        multi_trajectory_analysis(jslist, 6, [arg1 arg2], [0 0 0], combineflag, axes);
+        multi_trajectory_analysis(dirlist, 6, [arg1 arg2], [0 0 0], combineflag, axes);
     end
 end
 

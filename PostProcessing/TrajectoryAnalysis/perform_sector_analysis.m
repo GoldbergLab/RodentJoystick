@@ -1,4 +1,4 @@
-%[targsec, cumulative_distr, angle_distr, labels] = 
+%[targsec, cumulative_distr, angle_distr, labels, line] = 
 %   perform_sector_analysis(stats, [reward_rate, thresh, plotflag, ax])
 %   computes the required target sector (angles) required for 'reward_rate'
 %   a percentage of trials to be rewarded, looking only at portions of
@@ -33,15 +33,15 @@
 %           new figure automatically
 %       
 
-function [targsec, cumulative_distr, angle_distr, labels] = perform_sector_analysis(stats, varargin)
+function [targsec, cumulative_distr, angle_distr, labels, line] = perform_sector_analysis(stats, varargin)
 %% argument handling
-default = {25, 75, 1, []};
+default = {25, 75, 1, [], 'b'};
 numvarargs = length(varargin);
 if numvarargs > 5
     error('find_sector: too many arguments (> 6), only one required and five optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[targ_rate, thresh, plotflag, ax] = default{:};
+[targ_rate, thresh, plotflag, ax, color] = default{:};
 if plotflag == 1 && length(ax)<1; figure; ax = gca(); end;
 
 % basic structure initialization
@@ -93,7 +93,7 @@ if plotflag > 0 && length(ax)<1;
     figure; 
     ax = subplot(1, 1, 1); 
 end;
-labels = draw_plots(stats, ax, angle_distr, sample_size, targsec, thresh, plotflag);
+[labels, line] = draw_plots(stats, ax, angle_distr, sample_size, targsec, thresh, plotflag, color);
 end
 
 %calc_target_sector computes the target sector with the following arguments
@@ -134,7 +134,7 @@ if second == -1; error('Unable to compute target sector'); end
 sector = [first second]; dist = distribution;
 end
 
-function [labels] = draw_plots(stats, ax, angle_distr, ss, target, thresh, plotflag)
+function [labels, line] = draw_plots(stats, ax, angle_distr, ss, target, thresh, plotflag, color)
 %grey color values for linear angle distribution
 colorv = [0.8 0.6 0.4 0.2];
 %% get normalized angle distribution information
@@ -161,7 +161,7 @@ if plotflag > 0
     axis([1 359 0 inf]);
     angles = 1:1:360;
     distribution = angle_distr./ss;
-    plot(angles, distribution);
+    line= plot(angles, distribution, color);
     if plotflag < 3
         target1 = []; target2 = [];
         t1 = target(1); t2 = target(2);
