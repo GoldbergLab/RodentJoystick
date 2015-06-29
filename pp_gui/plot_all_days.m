@@ -6,7 +6,7 @@ function [ handles ] = plot_all_days(handles, axnum)
 % analysis, which does multiple);
 
 %% Argument extraction and plotting information
-try
+% don't change this section if you just want to add a new function
     dirlist = handles.dirlist;
 catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');
@@ -35,10 +35,12 @@ if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution
     statscombined = load_stats(dirlist, 1);
 end
 cla(axes(axnum), 'reset');
-%% Plotting Routines - edit here to add new functions
+%% PLOTTING ROUTINES - EDIT HERE TO ADD NEW FUNCTIONS
+% The following are available to 
 % arg1, arg2, arg3 are left as strings from taking from the textboxes
 %    makes it more flexible in case of string args in the future - and
-%    sometimes arguments will be blank;
+%    sometimes arguments will be '' or '-';
+%
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     arg1 = str2num(arg1);
     np_js_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
