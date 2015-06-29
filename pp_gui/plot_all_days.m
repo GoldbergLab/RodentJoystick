@@ -7,6 +7,7 @@ function [ handles ] = plot_all_days(handles, axnum)
 
 %% Argument extraction and plotting information
 % don't change this section if you just want to add a new function
+try
     dirlist = handles.dirlist;
 catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');
