@@ -108,7 +108,7 @@ elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg2label = 'Thresh'; %Histogram interval (ms)
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    multi_sector_analysis(dirlist, arg1, arg2, 1, axes(axnum));
+    multi_sector_analysis(dirlist, arg1, arg2, combineflag, axes(axnum));
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;

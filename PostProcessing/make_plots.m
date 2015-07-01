@@ -9,6 +9,7 @@ np_js_distribution(list, 30, 0, 1, ax1);
 disp('Nosepoke Post Distribution');
 figure(2); ax2 = gca();
 np_post_distribution(list, 30, 0, 1, ax2);
+
 clrstr = 'rgbkmcyrgbkmcyrgbkmcy';
 
 for i=1:1:length(list)

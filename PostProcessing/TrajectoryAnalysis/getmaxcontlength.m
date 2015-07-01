@@ -40,7 +40,6 @@ if sum(thresh_ind)>1
     catch
         max_cont_len=0;
     end
-    d =[];
 else
     max_cont_len=0;
 end

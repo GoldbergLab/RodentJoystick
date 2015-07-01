@@ -1,5 +1,17 @@
-function [failed, actual_count] = multi_doAllpp(dir_list, varargin) 
-j = 1; actual_count = 0;
+function [failures, actual_count] = multi_doAll(dir_list, varargin) 
+default = {1};
+numvarargs = length(varargin);
+if numvarargs > 1
+    error('too many arguments (> 2), only one required and one optional.');
+end
+[default{1:numvarargs}] = varargin{:};
+[statflag] = default;
+
+others ={};
+combinefail={};
+jstructfail={};
+statsfail={};
+actual_count = 0;
 for i = 1:length(dir_list)
     try
         if dir_list(i).isdir

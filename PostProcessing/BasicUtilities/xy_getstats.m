@@ -1,5 +1,27 @@
 %xy_getstats(jstruct, index) returns a struct containing several fields
 %describing an entire day's (folder's) trajectories.
+%np_count :: nose poke count for the day
+%js_r_count :: number of right joystick touches
+%js_l_count :: number of left joystick touches
+%pellet_count :: number of pellets dispensed fo the day.
+%np_js :: vector of nosepoke to joystick touch onset times
+%np_js_post :: vector of nosepoke to post touch onset times
+%numtraj ::: the number of trajectories that the mouse attempted
+%traj_struct :: struct of trajectories, with each element containing the
+%following fields
+%   traj_x :: vector of x position at each ms
+%   traj_y :: vector of y position at each ms
+%   magtraj :: vector of trajectory magnitude at each ms
+%   js_onset :: joystick onset from start of data collection "bout"
+%   start_p :: start of nosepoke
+%   stop_p :: end of trajectory
+%   rw :: 1/0 flag indicating whether trajectory was rewarded.
+%   rw_onset :: onset time of reward, if delivered at all.
+%   laser :: 1/0 flag indicating whether the laser was on or not.
+%   magatnp :: field indicating trajectory magnitude at start of nose poke
+%   max_value_ind ::
+%   posttouch :: onset of post touch
+%   rw_or_stop :: minimum of trajectory reward time and nosepoke release,
 function jstruct_stats = xy_getstats(jstruct,varargin)
 default = {[0 inf]};
 numvarargs = length(varargin);

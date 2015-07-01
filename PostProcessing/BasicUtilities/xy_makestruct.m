@@ -25,8 +25,12 @@
 %       times of the nose poke sensor. m>0
 %   js_pairs_r :: an m x 2 array containing the pairs of (onset, offset)
 %       times of the joystick touch sensor. m>=0
-%   js_pairs_r :: an m x 2 array containing the pairs of (onset, offset)
+%   js_pairs_l :: an m x 2 array containing the pairs of (onset, offset)
 %       times of the post touch sensor. m>=0
+%   reward_onset :: a vector containingonset times of reward
+%   js_reward :: vector of 1/0 indicating which deflections were
+%       rewarded
+%   np_js_start :: start of trajectory
 function [jstruct] = xy_makestruct(working_dir)
 
 working_dir_1 = strcat(working_dir,'/','comb');

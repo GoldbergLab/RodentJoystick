@@ -86,7 +86,12 @@ function selectdays_Callback(hObject, eventdata, handles)
 % hObject    handle to selectdays (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-tempdirlist = uipickfiles('filter','K:\DataSync\expt_opto_thal_var_2\', 'output', 'struct');
+try
+    startdir = handles.startdir;
+catch
+    startdir = 'K:\DataSync\expt_opto_thal_var_2\';
+end
+tempdirlist = uipickfiles('filter',startdir, 'output', 'struct');
 if ~isempty(tempdirlist)
     [~, ind] = sort({tempdirlist.name});
     handles.dirlist = tempdirlist(ind);
@@ -100,6 +105,9 @@ try
     end
     labeltxt = labeltxt(1:end-2);
     set(handles.daystoplotlabel, 'String', labeltxt);
+    startdir = dirlist(end).name; startdir = strsplit(startdir, '\'); 
+    startdir = startdir(1:end-1); startdir = strjoin(startdir, '\');
+    handles.startdir = startdir;
     
     [statslist, dates] = load_stats(dirlist, 0);
     disp(length(statslist));
@@ -120,6 +128,7 @@ try
         handles = update_console(handles, text);
     end
 catch e
+    disp(getReport(e));
 end
 guidata(hObject, handles);
 end

@@ -14,7 +14,6 @@
 %   None - prints the recommended threshold for the distance
 %   
 function js_touch_dist(stats,targ_time,targ_reward,dist_thresh,all_traj_flag)
-k=0;
 traj_struct=stats.traj_struct;
 start_prev=0;
 
@@ -22,12 +21,11 @@ holdlength=[];
 for i=1:length(traj_struct)
     if (traj_struct(i).start_p == start_prev) && (all_traj_flag==0)
         holdlentemp = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
-        if holdlentemp>holdlength(k)
-            holdlength(k) = holdlentemp;
+        if holdlentemp>holdlength(end)
+            holdlength(end) = holdlentemp;
         end
     else 
-        k=k+1;
-        holdlength(k) = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
+        holdlength(end+1) = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
     end
     start_prev = traj_struct(i).start_p;
 end
