@@ -1,9 +1,6 @@
 function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %[bin_summary, labels, graphgroups] = 
 %   trajectory_analysis(stats, [PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst])
-%   OPTIONAL ARG ORDER:
-%       plot_range,hold_time_range, plot_contingencies, pflag
-%       datestr, sflag, axeslst
 %   plots the trajectory distributions from stats using the (optional)
 %   arguments for a hold time range, contigency lines (constants just below the
 %   function header), whether to actually plot data, string representation

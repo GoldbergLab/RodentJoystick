@@ -7,15 +7,15 @@ function [variationdata, labels] = velocityvar_heat_map(dirlist,varargin)
 %   data :: since the function get_vel_accel_distr is costly, the plotting
 %       routine can take in data directly if it has already been computed
 
-default = {[], []};
+default = {[], [], 1};
 numvarargs = length(varargin);
 if numvarargs > 2
     error('too many arguments (> 3), only 1 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[ax, variationdata] = default{:};
+[ax, variationdata, bin] = default{:};
 if isempty(variationdata)
-    [data] = get_vel_accel_distr(dirlist,varargin);
+    [data] = get_vel_accel_distr(dirlist,bin);
     variationdata = data.velv;
 end
 if length(ax) < 1
@@ -23,6 +23,6 @@ if length(ax) < 1
     ax(1) = gca(); 
 end
 tstr = 'Velocity Variation Distribution';
-labels = draw_heat_map(variationdata, ax,tstr, -100:2:100, 1, [5 75]);
+labels = draw_heat_map(variationdata, ax,tstr, 1, [5 75]);
 
 end

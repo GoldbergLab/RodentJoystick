@@ -1,4 +1,4 @@
-function [labels] = draw_heat_map(data, ax, type, scale, varargin)
+function [labels] = draw_heat_map(data, ax, type, varargin)
 %Creates a two dimensional heat map, representing activity
 %distributions. Allows for logarithmic scaling and selecting color
 %percentiles for which to plot. Returns the X, Y labels used as well as the
@@ -10,7 +10,7 @@ if numvarargs > 2
 end
 [default{1:numvarargs}] = varargin{:};
 [logmapping, colorperc] = default{:};
-scalesize = length(scale);
+scalesize = size(data, 1);
 if logmapping == 1
     data = log(data);
     traj_pdf = reshape(data, scalesize*scalesize, 1);
@@ -32,6 +32,8 @@ pcolorval1 = traj_pdf(pcv1_ind);
 axes(ax(1));
 hold on; title(tstr); 
 xlabel(xlab); ylabel(ylab);
+scale = -100:(floor(201/scalesize)):100;
+scale = scale(1:scalesize);
 pcolor(ax, scale, scale, data); shading interp; axis square;
 set(ax, 'XTick', [-100 -50 0 50 100]);
 set(ax, 'YTick', [-100 -50 0 50 100]);

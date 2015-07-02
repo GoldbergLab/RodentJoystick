@@ -24,7 +24,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [tmp] = default{:};
 
-SIZE = 101;
+SIZE = 201;
 velocities = cell(SIZE, SIZE);
 median = zeros(SIZE, SIZE);
 variation = zeros(SIZE, SIZE);
@@ -143,6 +143,7 @@ end
 
 %necessary transposition occurs here too - but it doesn't eliminate
 function [indx, indy] = trajectorypos_to_index(x, y)
+    SIZE = 201;
     x = round(x); y = round(y);
     x = max(x, -100); x = min(x, 100);
     y = max(y, -100); y = min(y, 100);
@@ -150,6 +151,6 @@ function [indx, indy] = trajectorypos_to_index(x, y)
     indy= x + 101;
     indx = y + 101;
     %now bin in 2 so that we have same bin size as activity map
-    indx = max(min(round(indx./2), 101), 1);
-    indy = max(min(round(indy./2), 101), 1);
+    indx = max(min(round(indx), SIZE), 1);
+    indy = max(min(round(indy), SIZE), 1);
 end

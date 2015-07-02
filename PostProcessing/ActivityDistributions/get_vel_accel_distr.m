@@ -22,13 +22,13 @@ if numvarargs > 1
     error('too many arguments (> 1), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[tmp] = default{:};
+[bin] = default{:};
 
-SIZE = 101;
-velocities = cell(SIZE, SIZE);
-accelerations = cell(SIZE, SIZE);
-accelerations_norm = cell(SIZE, SIZE);
-accelerations_ang = cell(SIZE, SIZE);
+ORIGINAL_SIZE = 201;
+velocities = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelerations = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelerations_norm = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelerations_ang = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
 
 
 if length(dirlist) == 1
@@ -46,8 +46,8 @@ else
 %% Entire section below combines data and reprocesses    
 for i = 1:length(dirlist);
     load([dirlist(i).name, '\velaccelraw.mat']);
-    for ind_x = 1:SIZE;
-        for ind_y = 1:SIZE;
+    for ind_x = 1:ORIGINAL_SIZE;
+        for ind_y = 1:ORIGINAL_SIZE;
             velocities{ind_x, ind_y} = [velocities{ind_x, ind_y}, velaccelraw.vel{ind_x, ind_y}];
             accelerations{ind_x, ind_y} = [accelerations{ind_x, ind_y}, velaccelraw.accel{ind_x, ind_y}];
             accelerations_norm{ind_x, ind_y} = [accelerations_norm{ind_x, ind_y}, velaccelraw.accel_norm{ind_x, ind_y}];
@@ -55,19 +55,51 @@ for i = 1:length(dirlist);
         end
     end
 end
-
-
-median = zeros(SIZE, SIZE);
-variation = zeros(SIZE, SIZE);
-accel = zeros(SIZE, SIZE);
-accelv = zeros(SIZE, SIZE);
-accel_norm = zeros(SIZE, SIZE);
-accelv_norm = zeros(SIZE, SIZE);
-accel_ang = zeros(SIZE, SIZE);
-accelv_ang = zeros(SIZE, SIZE);
+tic;
+SIZE = floor(ORIGINAL_SIZE/bin);
+disp(bin);
+disp(SIZE);
+median = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+variation = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accel = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelv = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accel_norm = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelv_norm = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accel_ang = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+accelv_ang = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
 
 for indx = 1:SIZE
-    for indy = 1:SIZE
+    for indy = 1:SIZE;
+        v = []; a = []; a_normal = []; a_ang = [];
+        for binind = 0:(bin-1)
+        for binindy = 0:(bin-1)
+            origindx = binind+bin*(indx-1)+1;
+            origindy = binindy+bin*(indy-1)+1;
+            if origindx>ORIGINAL_SIZE || origindy > ORIGINAL_SIZE; break; end;
+            v = [v, velocities{origindx, origindy}];
+            a = [a, accelerations{origindx, origindy}];
+            a_normal = [a_normal, accelerations_norm{origindx, origindy}];
+            a_ang = [a_ang, accelerations_ang{origindx, origindy}];
+        end
+        end
+        for binind = 0:(bin-1);
+        for binindy = 0:(bin-1);
+            origindx = binind+bin*(indx-1)+1;
+            origindy = binindy+bin*(indy-1)+1;
+            if origindx>ORIGINAL_SIZE || origindy > ORIGINAL_SIZE; break; end;
+            velocities{origindx, origindy} = v;
+            accelerations{origindx, origindy} = a;
+            accelerations_norm{origindx, origindy} = a_normal;
+            accelerations_ang{origindx, origindy} = a_ang;
+        end
+        end
+    end
+end
+toc;
+tic;
+for indx = 1:ORIGINAL_SIZE
+    for indy = 1:ORIGINAL_SIZE;
+
         v = velocities{indx, indy};
         quartiles = [0, 0, 0];
         if ~isempty(v)
@@ -101,6 +133,7 @@ for indx = 1:SIZE
         accelv_ang(indx, indy) = quartilesan(3)-quartilesan(1);
     end
 end
+toc;
 data.vel = median;
 data.velv = variation;
 data.accel = accel;

@@ -23,5 +23,5 @@ if logmapping == 1
     colorperc = [0 99];
 end
 data = stats.traj_pdf_jstrial;
-labels = draw_heat_map(data, ax, 'Activity Distribution', -98:2:100, logmapping, colorperc);
+labels = draw_heat_map(data, ax, 'Activity Distribution', logmapping, colorperc);
 

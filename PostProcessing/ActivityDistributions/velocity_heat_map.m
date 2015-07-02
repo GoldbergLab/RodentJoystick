@@ -7,15 +7,15 @@ function [mediandata, labels] = velocity_heat_map(dirlist,varargin)
 %   data :: since the function get_vel_accel_distr is costly, the plotting
 %       routine can take in data directly if it has already been computed
 
-default = {[], []};
+default = {[], [], 1};
 numvarargs = length(varargin);
 if numvarargs > 3
     error('too many arguments (> 4), only one required and three optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[ax, mediandata] = default{:};
+[ax, mediandata,bin] = default{:};
 if isempty(mediandata)
-    [data] = get_vel_accel_distr(dirlist,varargin);
+    [data] = get_vel_accel_distr(dirlist,bin);
     mediandata = data.vel;
 end
 if length(ax) < 1
@@ -23,6 +23,6 @@ if length(ax) < 1
     ax(1) = gca(); 
 end
 tstr = 'Velocity Distribution';
-labels = draw_heat_map(mediandata, ax,tstr, -100:2:100, 1, [5 80]);
+labels = draw_heat_map(mediandata, ax,tstr, 1, [5 80]);
 
 end
