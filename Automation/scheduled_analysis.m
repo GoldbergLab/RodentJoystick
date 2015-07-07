@@ -1,38 +1,35 @@
 function scheduled_analysis( )
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%Function to be called by a MATLAB timer object at a fixed rate to ensure
+%that analysis is scheduled and executed regularly
 
 %put the main directory containing experiment data here.
-toprocesslist = directories_to_do('K:\DataSync');
-time = now;
+experiment_directory = 'C:\Users\GolderbergLab\Documents\MATLAB\RodentJoystick\SampleData\0002';
 %recipients of reports:
-recipients={'nitinshyamk@gmail.com', 'glab.cornell@gmail.com'};
+recipients={'nitinshyamk@gmail.com', ...
+            'glab.cornell@gmail.com', ...
+            };%add new recipients of daily reports here
+%log directory
+logsdirloc = 'C:\Users\GolderbergLab\Documents\RodentProjectAutomatedLogs';
 
-report = {'Analysis attempted on the following directories:'};
-failurereport = multi_doAll(toprocesslist);
-for i = 1:length(toprocesslist)
-    report{end+1} = toprocesslist(i).name;
-end
 
-report{end+1} = 'Analysis on the following directories failed:';
-report{end+1} = 'Combining .dat files failures:';
-for i = 1:length(failurereport.CombiningDat)
-    report{end+1} = failurereport.CombiningDat{i};
+time = now;
+toprocesslist = directories_to_do(experiment_directory);
+title = {'Analysis attempted on the following directories:','', ''};
+%attempt all analysis here
+failure = multi_doAll(toprocesslist, 2);
+pp_report = [title; failure];
+
+title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
+logname = [logsdirloc,'\',title,'.txt'];
+fileID = fopen(logname,'w');
+for i = 1:size(failure, 1)
+    formatspec = '%s %s %s\n';
+    fprintf(fileID, formatspec, pp_report{i, :});
 end
-report{end+1} = 'Making jstruct files failures:';
-for i = 1:length(failurereport.MakingJstruct)
-    report{end+1} = failurereport.MakingJstruct{i};
-end
-report{end+1} = 'Computing Statistics failures:';
-for i = 1:length(failurereport.ComputingStats)
-    report{end+1} = failurereport.ComputingStats{i};
-end
-report{end+1} = 'Failure source unknown:';
-for i = 1:length(failurereport.SourceUnknown)
-    report{end+1} = failurereport.SourceUnknown{i};
-end
-title = ['Analysis Report', datestr(now)];
-matlabmail(recipients, report, title);
+fclose(fileID);
+
+matlabmail(recipients, pp_report, title);
+
 
 
 end
