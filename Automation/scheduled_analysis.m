@@ -3,13 +3,13 @@ function pp_report = scheduled_analysis( )
 %that analysis is scheduled and executed regularly
 
 %put the main directory containing experiment data here.
-experiment_directory = 'C:\Users\GolderbergLab\Documents\MATLAB\RodentJoystick\SampleData\0002';
+experiment_directory = 'K:\automationtest\0009';
 %recipients of reports:
 recipients={'nitin.shyamkumar@gmail.com', ...
             'glab.cornell@gmail.com', ...
             };%add new recipients of daily reports here
 %log directory
-logsdirloc = 'C:\Users\GolderbergLab\Documents\RodentProjectAutomatedLogs';
+logsdirloc = 'J:\Users\GLab\Documents\RodentProjectAutomatedLogs';
 
 
 time = now;
@@ -19,6 +19,7 @@ title = {'Analysis attempted on the following directories:','', ''};
 [failure, actual, succeed] = multi_doAll(toprocesslist, 2);
 pp_report = [title; failure];
 
+try
 title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
 logname = [logsdirloc,'\',title,'.txt'];
 fileID = fopen(logname,'w');
@@ -27,12 +28,17 @@ for i = 1:size(pp_report, 1)
     fprintf(fileID, formatspec, pp_report{i, [1, 3]});
 end
 fclose(fileID);
-
+catch
+    disp('failed log write');
+end
 pp_summary = ['Attempted processing on ', num2str(actual),...
                 ' directories, succeeded on ', num2str(succeed),' of them.', ...
                 ' Full report is attached.'];
-
-matlabmail(recipients, pp_summary, title, logname);
+try
+    matlabmail(recipients, pp_summary, title, logname);
+catch
+    disp('failed mail log');
+end
 
 
 

@@ -8,6 +8,7 @@
 %   3 - failure to generate jstruct
 %   4 - failure to do post processing statistics, if attempted.
 function [failedflag, err] = doAllpp(working_dir, varargin) 
+disp(['Processing: ', working_dir]);
 default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1
