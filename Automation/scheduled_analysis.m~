@@ -1,0 +1,20 @@
+function scheduled_analysis( )
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+
+%put the main directory containing experiment data here.
+toprocesslist = directories_to_do('K:\DataSync');
+
+report = {'Analysis attempted on the following directories:'};
+failurereport = multi_doAll(toprocesslist);
+for i = 1:length(toprocesslist)
+    report{end+1} = toprocesslist(i).name;
+end
+report{end+1} = 'Analysis on the following directories failed:';
+report{end+1} = 'Combining .dat files failure';
+for i = 1:length(failurereport.CombiningDat)
+    
+end
+
+end
+
