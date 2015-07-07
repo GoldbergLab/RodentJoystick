@@ -12,13 +12,12 @@
 %   1 - runs just basic jstruct creation and .dat combination
 %   0 - runs only statistics/further post processing computation (requires
 %       jstruct to be saved to directory
-%Fields:
-%   CombiningDat - indicates that the procedure failed to combine .dat
-%       files sucessfully
-%   MakingJstruct - failure to make jstruct
-%   ComputingStats - failure to compute all statistics/processed data
-%   SourceUnknown - error with unknown source.
-function [failures, actual_count] = multi_doAll(dir_list, varargin) 
+%Outputs
+%   report - n x 3 cell array. third column is status (failure type,
+%       success), second column is error message, if it exists, and first
+%       column is directory name.
+
+function [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
 default = {2};
 numvarargs = length(varargin);
 if numvarargs > 1
@@ -27,11 +26,12 @@ end
 [default{1:numvarargs}] = varargin{:};
 [computeflag] = default{:};
 
-others ={}; combinefail={}; jstructfail={}; statsfail={};
+report = cell(length(dir_list), 3);
 actual_count = 0;
 succeed = 0;
 for i = 1:length(dir_list)
     wdir = dir_list(i).name;
+    report{i, 1} = wdir; 
     try
         %if it's actually a directory, process it, otherwise ignore
         if dir_list(i).isdir
@@ -42,29 +42,30 @@ for i = 1:length(dir_list)
             end
        
             %update appropriate record of failures
+            report{i, 2} = errormsg;
             if fail == 2
-                combinefail{end+1} = [wdir,': ', errormsg];
+                report{i, 3} = 'Combining .dat failure';
             elseif fail==3
-                jstructfail{end+1} = [wdir,': ', errormsg];
+                report{i, 3} = 'Generating jstruct.mat failure';
             elseif fail==4
-                statsfail{end+1} = [wdir,': ', errormsg];
+                report{i, 3} = 'Computing stats failure';
             elseif fail
-                others{end+1} = [wdir,': ', errormsg];
+                report{i, 3} = 'Cause of failure unknown';
             else
-                succeed=succeed+1;
+                succeed = succeed+1;
+                report{i, 3} = 'Succeeded';
             end
+        else
+            report{i, 2} = '';
+            report{i, 3} = 'Not a directory';
         end
     catch e
         errormsg = getReport(e);
-        others{end+1} = [wdir, ': ', errormsg];
+        report{i, 2} = errormsg;
+        report{i, 3} = 'Cause of failure unknown';
     end
 end
 
-failures.CombiningDat = combinefail;
-failures.MakingJstruct = jstructfail;
-failures.ComputingStats = statsfail;
-failures.SourceUnknown = others;
-
 disp([num2str(actual_count), ' entries out of the input list were actually']);
 disp(['directories. doAllpp processed ', num2str(succeed),'/',num2str(actual_count), ' of those directories.']);
-disp('See failures struct for information on which days failed.');
+disp('See report struct for information on which days failed.');
