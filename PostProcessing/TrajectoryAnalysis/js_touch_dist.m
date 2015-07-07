@@ -11,9 +11,9 @@
 %       trajectories within the nosepoke - otherwise, function only
 %       examines the trajectory with the longest hold time.
 % OUTPUT:
-%   None - prints the recommended threshold for the distance
+%   dist - the recommended threshold for the distance
 %   
-function js_touch_dist(stats,targ_time,targ_reward,dist_thresh,all_traj_flag)
+function set_dist = js_touch_dist(stats,targ_time,targ_reward,dist_thresh,all_traj_flag)
 traj_struct=stats.traj_struct;
 start_prev=0;
 
@@ -68,11 +68,6 @@ success_prob = cumsum(c)/sum(c);
 median_dist = median(dist_distri);
 median_time = median(holdlength);
 targ_dist = find(success_prob>(targ_reward/time_success));
-%figure(1); hist_int = 5; hold on;
-%c = histc(dist_distri,0:hist_int:100);
-%xlabel('Joystick Distance');
-%ylabel('Count');
-%stairs(0:hist_int:100, c);
 if numel(targ_dist)>0
     set_dist = targ_dist(1);
 else

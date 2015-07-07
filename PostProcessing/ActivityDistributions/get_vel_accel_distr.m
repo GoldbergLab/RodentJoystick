@@ -16,7 +16,7 @@ function [data] = get_vel_accel_distr(dirlist,varargin)
 %       each point in trajectory
 
 
-default = {1};
+default = {5};
 numvarargs = length(varargin);
 if numvarargs > 1
     error('too many arguments (> 1), only one required and 1 optional.');
@@ -31,7 +31,7 @@ accelerations_norm = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
 accelerations_ang = cell(ORIGINAL_SIZE, ORIGINAL_SIZE);
 
 
-if length(dirlist) == 1
+if length(dirlist) == 1 && bin == 1
     load([dirlist(1).name, '\velaccel.mat']);
     data.vel = velaccel.vel;
     data.velv = velaccel.velv;
@@ -55,18 +55,15 @@ for i = 1:length(dirlist);
         end
     end
 end
-tic;
 SIZE = floor(ORIGINAL_SIZE/bin);
-disp(bin);
-disp(SIZE);
-median = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-variation = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accel = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accelv = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accel_norm = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accelv_norm = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accel_ang = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
-accelv_ang = zeros(ORIGINAL_SIZE, ORIGINAL_SIZE);
+median = zeros(SIZE, SIZE);
+variation = zeros(SIZE, SIZE);
+accel = zeros(SIZE, SIZE);
+accelv = zeros(SIZE, SIZE);
+accel_norm = zeros(SIZE, SIZE);
+accelv_norm = zeros(SIZE, SIZE);
+accel_ang = zeros(SIZE, SIZE);
+accelv_ang = zeros(SIZE, SIZE);
 
 for indx = 1:SIZE
     for indy = 1:SIZE;
@@ -82,25 +79,6 @@ for indx = 1:SIZE
             a_ang = [a_ang, accelerations_ang{origindx, origindy}];
         end
         end
-        for binind = 0:(bin-1);
-        for binindy = 0:(bin-1);
-            origindx = binind+bin*(indx-1)+1;
-            origindy = binindy+bin*(indy-1)+1;
-            if origindx>ORIGINAL_SIZE || origindy > ORIGINAL_SIZE; break; end;
-            velocities{origindx, origindy} = v;
-            accelerations{origindx, origindy} = a;
-            accelerations_norm{origindx, origindy} = a_normal;
-            accelerations_ang{origindx, origindy} = a_ang;
-        end
-        end
-    end
-end
-toc;
-tic;
-for indx = 1:ORIGINAL_SIZE
-    for indy = 1:ORIGINAL_SIZE;
-
-        v = velocities{indx, indy};
         quartiles = [0, 0, 0];
         if ~isempty(v)
             quartiles = prctile(v,[25 50 75]);
@@ -108,7 +86,6 @@ for indx = 1:ORIGINAL_SIZE
         median(indx, indy) = quartiles(2);
         variation(indx, indy) = quartiles(3) - quartiles(1);
         
-        a = accelerations{indx, indy};
         quartilesa = [0, 0, 0];
         if ~isempty(a)
             quartilesa = prctile(a,[25 50 75]);
@@ -116,24 +93,23 @@ for indx = 1:ORIGINAL_SIZE
         accel(indx, indy) = quartilesa(2);
         accelv(indx, indy) = quartilesa(3) - quartilesa(1);
         
-        a_normal = accelerations_norm{indx, indy};
         quartilesat = [0, 0, 0];
-        if ~isempty(a)
+        if ~isempty(a_normal)
             quartilesat = prctile(a_normal,[25 50 75]);
         end
         accel_norm(indx, indy) = quartilesat(2);
         accelv_norm(indx, indy) = quartilesat(3) - quartilesat(1);
         
-        a_ang = accelerations_ang{indx, indy};
         quartilesan = [0,0,0];
-        if ~isempty(a)
+        if ~isempty(a_ang)
             quartilesan = prctile(a_ang, [25 50 75]);
         end
         accel_ang(indx, indy) = quartilesan(2);
         accelv_ang(indx, indy) = quartilesan(3)-quartilesan(1);
+        
     end
 end
-toc;
+
 data.vel = median;
 data.velv = variation;
 data.accel = accel;
