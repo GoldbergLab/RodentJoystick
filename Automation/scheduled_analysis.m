@@ -1,15 +1,20 @@
-function pp_report = scheduled_analysis( )
+function pp_report = scheduled_analysis(varargin)
+disp('Performing scheduled post processing analysis');
 %Function to be called by a MATLAB timer object at a fixed rate to ensure
 %that analysis is scheduled and executed regularly
-
+default = {'K:\automationtest\0008','J:\Users\GLab\Documents\RodentProjectAutomatedLog'};
+numvarargs = length(varargin);
+if numvarargs > 2
+    error('too many arguments (> 2), only two optional.');
+end
+[default{1:numvarargs}] = varargin{:};
+[experiment_directory, logsdirloc] = default{:};
 %put the main directory containing experiment data here.
-experiment_directory = 'K:\automationtest\0009';
 %recipients of reports:
 recipients={'nitin.shyamkumar@gmail.com', ...
             'glab.cornell@gmail.com', ...
             };%add new recipients of daily reports here
-%log directory
-logsdirloc = 'J:\Users\GLab\Documents\RodentProjectAutomatedLogs';
+
 %normal pellet count - anything outside of this range is specificalyl
 %highlighted in the mail notification
 normal_pellets = [110 300];
@@ -22,7 +27,7 @@ title = {'Analysis attempted on the following directories:','', ''};
 pp_report = [title; failure];
 [bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
 
-try
+try %attempting write of log report
     title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
     logname = [logsdirloc,'\',title,'.txt'];
     fileID = fopen(logname,'w');
