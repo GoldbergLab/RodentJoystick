@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 24-Jun-2015 18:03:56
+% Last Modified by GUIDE v2.5 08-Jul-2015 13:21:04
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -135,7 +135,9 @@ try
     dirlist = handles.dirlist;
     for i = 1:length(dirlist)
         namestr = dirlist(i).name;
-        labeltxt = [labeltxt, namestr(end-15:end), ','];
+        namestr = strsplit(namestr, '\');
+        newname = [namestr{end-1},' - ',namestr{end}];
+        labeltxt = [labeltxt, newname, ','];
     end
     labeltxt = labeltxt(1:end-2);
     set(handles.daystoplotlabel, 'String', labeltxt);
@@ -801,7 +803,7 @@ handles = plot_all_days(handles, 6);
 guidata(hObject, handles);
 end
 
-
+%% Useful utilities for saving and running automated analysis
 % --- Executes on button press in saveplotspush.
 function saveplotspush_Callback(hObject, eventdata, handles)
 % hObject    handle to saveplotspush (see GCBO)
@@ -876,6 +878,60 @@ function console_CreateFcn(hObject, eventdata, handles)
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+
+
+% --- Executes on button press in setautodir.
+function setautodir_Callback(hObject, eventdata, handles)
+% hObject    handle to setautodir (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+autodir = uipickfiles('output', 'char', 'numFiles', 1);
+starttime = get(handles.autoanalysistime, 'String');
+try
+    starttime = strsplit(starttime, ':');
+    hours = str2num(starttime{1});
+    min = str2num(starttime{2}); %#ok<*ST2NM>
+    if length(starttime) ~= 2; error('bad'); end;
+catch
+    msgbox('Bad time format in automated analysis start time box. Must be HH:MM (24 hr format)',...
+            'Error','error');
+    hours = 01; min = 00;
+end
+if ~isempty(autodir)
+    set(handles.automateddir, 'String', autodir);
+    try
+        oldtimer = handles.automated_analysis_timer;
+        stop(oldtimer);
+        delete(oldtimer);
+    catch    
+    end;
+    handles.automated_analysis_timer = init_automated_analysis(autodir, [hours min]);
+end
+guidata(hObject, handles);
+end
+
+
+function autoanalysistime_Callback(hObject, eventdata, handles)
+% hObject    handle to autoanalysistime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of autoanalysistime as text
+%        str2double(get(hObject,'String')) returns contents of autoanalysistime as a double
+end
+
+% --- Executes during object creation, after setting all properties.
+function autoanalysistime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to autoanalysistime (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

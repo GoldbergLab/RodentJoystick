@@ -13,7 +13,6 @@ function [variationdata, labels] = velocityvar_heat_map(dirlist,varargin)
 
 default = {[], [], 4};
 numvarargs = length(varargin);
-numvarargs = length(varargin);
 if numvarargs > 3
     error('too many arguments (> 4), only 1 required and 3 optional.');
 end
