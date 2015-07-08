@@ -96,13 +96,17 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
-    velocity_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    velocity_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Velocity Variation Heat Map')
-    velocityvar_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    velocityvar_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Heat Map')
-    accel_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    accel_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
-    accelvar_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    accelvar_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg1label = 'Rew Rate'; %Desired reward rate
 %     arg2label = 'Thresh'; %Histogram interval (ms)

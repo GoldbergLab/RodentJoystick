@@ -69,9 +69,17 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg2 = '0';
     arg2label = 'Normalize';
 elseif strcmp(plotname, 'Activity Heat Map')
+    arg1 = '2'; 
+    arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Velocity Heat Map')
+    arg1 = '2'; 
+    arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Acceleration Heat Map')
+    arg1 = '2'; 
+    arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
+    arg1 = '2'; 
+    arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
     arg1 = '25'; 
     arg1label = 'Rew Rate'; %Desired reward rate
