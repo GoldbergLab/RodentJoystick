@@ -15,13 +15,13 @@ recipients={'nitin.shyamkumar@gmail.com', ...
             'glab.cornell@gmail.com', ...
             };%add new recipients of daily reports here
 
-%normal pellet count - anything outside of this range is specificalyl
+%normal pellet count - anything outside of this range is specifically
 %highlighted in the mail notification
 normal_pellets = [110 300];
 
 time = now;
 toprocesslist = directories_to_do(experiment_directory);
-title = {'Analysis attempted on the following directories:','', ''};
+title = {'Analysis attempted on the following directories within ','', [experiment_directory, ':']};
 %attempt all analysis here
 [failure, actual, succeed] = multi_doAll(toprocesslist, 2);
 pp_report = [title; failure];
@@ -44,7 +44,8 @@ catch
     disp('failed log write');
 end
 pp_summary = ['Attempted processing on ', num2str(actual),...
-                ' directories, succeeded on ', num2str(succeed),' of them.', ...
+                ' directories within ', experiment_directory,...
+                ' and succeeded on ', num2str(succeed),' of them.', ...
                 ' Full report is attached.'];
 summary = [pp_summary, bhvr_summary];
 try

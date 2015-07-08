@@ -2,7 +2,7 @@
 %workspace after it's done.
 
 %% MODIFY THESE PARAMETERS TO SCHEDULE ANALYSIS
-start_time = [09 49]; %time is currently set to 9AM (24 hour time)
+start_time = [10 08]; %time is currently set to 9AM (24 hour time)
 period = 24*60; %minutes
 expt_dir = 'K:\automationtest\0009';
 logs_dir = 'J:\Users\GLab\Documents\RodentProjectAutomatedLogs';
