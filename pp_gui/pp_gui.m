@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 08-Jul-2015 13:21:04
+% Last Modified by GUIDE v2.5 09-Jul-2015 10:51:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -45,7 +45,7 @@ end
 end
 
 % --- Executes just before pp_gui is made visible.
-function pp_gui_OpeningFcn(hObject, eventdata, handles, varargin)
+function pp_gui_OpeningFcn(hObject, eventdata, handles, varargin) %#ok<*INUSL>
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -139,7 +139,7 @@ try
         newname = [namestr{end-1},' - ',namestr{end}];
         labeltxt = [labeltxt, newname, ','];
     end
-    labeltxt = labeltxt(1:end-2);
+    labeltxt = labeltxt(1:end-1);
     set(handles.daystoplotlabel, 'String', labeltxt);
     startdir = dirlist(end).name; startdir = strsplit(startdir, '\'); 
     startdir = startdir(1:end-1); startdir = strjoin(startdir, '\');
@@ -171,7 +171,7 @@ end
 end
 
 % --- Executes on button press in combinedays.
-function combinedays_Callback(hObject, eventdata, handles)
+function combinedays_Callback(hObject, eventdata, handles) %#ok<*INUSD>
 % hObject    handle to combinedays (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
