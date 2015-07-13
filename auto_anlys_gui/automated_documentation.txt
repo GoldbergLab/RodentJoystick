@@ -10,9 +10,6 @@ Panel 2: Control Automated Contingency Selection
 
 Up to 8 boxes - so 8 panels
 Panel 3: Current Contigency Information:
-    Joystick Touch Override: (checkbox)
-    Touch Override: (checkbox)
-    Touch before NP Override (checkbox)
     Threshold (static text):
     Hold Time (static text):
     Center Hold Threshold (static text):
@@ -29,13 +26,12 @@ Panel 3-8
 Panel 4
 Update Contingency Information:
 Reward Percentage: 25
-Panel 4-1
-Joystick Touch Override: checkbox
-Touch override: checkbox
-Touch->NP override: checkbox
-Threshold (edittext): Default
-Hold Time (edittext):
+Each panel 4-i
+Either threshold/hold time altered by analysis
+Threshold (edittext): Previous Day
+Hold Time (edittext): Previous Day
 Sector Convert from 0->360 to -180-180;
+Panel 4-1
 ...
 Panel 4-8
 
