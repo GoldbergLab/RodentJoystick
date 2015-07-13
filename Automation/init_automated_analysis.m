@@ -15,7 +15,6 @@ end
 [default{1:numvarargs}] = varargin{:};
 [start_time, period, logs_dir] = default{:};
 
-
 %% UNNECESSARY TO CHANGE ON A REGULAR BASIS
 time = now;
 desired_seconds = start_time(1)*60*60 + start_time(2)*60;
