@@ -1,0 +1,47 @@
+General Automated GUI Documentation
+
+Set Directory with Experiment Data (static text box)
+Panel 1: Control Automated Post Processing Analysis
+    Scheduling Time (text box (editable))
+    Start/Stop buttons
+Panel 2: Control Automated Contingency Selection
+    Enable/Disable
+    Select which to pick - Threshold/Hold Time
+
+Up to 8 boxes - so 8 panels
+Panel 3: Current Contigency Information:
+    Joystick Touch Override: (checkbox)
+    Touch Override: (checkbox)
+    Touch before NP Override (checkbox)
+    Threshold (static text):
+    Hold Time (static text):
+    Center Hold Threshold (static text):
+    Sector: Convert from -180 -> 180 to 0 -> 360
+Panel 3-1
+Panel 3-2
+Panel 3-3
+Panel 3-4
+Panel 3-5
+Panel 3-6
+Panel 3-7
+Panel 3-8
+
+Panel 4
+Update Contingency Information:
+Reward Percentage: 25
+Panel 4-1
+Joystick Touch Override: checkbox
+Touch override: checkbox
+Touch->NP override: checkbox
+Threshold (edittext): Default
+Hold Time (edittext):
+Sector Convert from 0->360 to -180-180;
+...
+Panel 4-8
+
+
+
+
+
+
+
