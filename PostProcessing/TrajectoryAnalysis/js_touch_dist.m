@@ -13,7 +13,19 @@
 % OUTPUT:
 %   dist - the recommended threshold for the distance
 %   
-function set_dist = js_touch_dist(stats,targ_time,targ_reward,dist_thresh,all_traj_flag)
+function [set_dist, med_time] = js_touch_dist(stats, varargin)
+default = {300, 0.25, 50, 0, [], 'r'};
+numvarargs = length(varargin);
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
+end
+[default{1:numvarargs}] = varargin{:};
+[targ_time, targ_reward, dist_thresh, all_traj_flag, ax, color] = default{:};
+if length(ax)<1;
+    figure;
+    ax = gca();
+end
+
 traj_struct=stats.traj_struct;
 start_prev=0;
 
@@ -59,18 +71,21 @@ end
 dist_distri=dist_distri(dist_distri>0);
 dist_time_hld = 0:20:600;
 holddist_vect = histc(holdlength,dist_time_hld);
-%figure
-stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),'k','LineWidth',2);
+axes(ax);
+hold on;
+stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),color,'LineWidth',2);
+xlabel('Hold Time');
+ylabel('Proportion');
+title('JS Touch Hold Time Distr');
+hold off;
 
 time_success = length(dist_distri)/k;
 c = histc(dist_distri,1:1:100);
 success_prob = cumsum(c)/sum(c);
-median_dist = median(dist_distri);
-median_time = median(holdlength);
+med_time = median(holdlength);
 targ_dist = find(success_prob>(targ_reward/time_success));
 if numel(targ_dist)>0
     set_dist = targ_dist(1);
 else
     set_dist = 100;
 end
-disp(strcat('set_threshold:', num2str(set_dist),{' '},'median_time:',num2str(median_time)));

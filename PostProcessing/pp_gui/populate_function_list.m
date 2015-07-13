@@ -12,6 +12,7 @@ function_list = {'Nosepoke Joystick Onset Distribution';
                     'Reward Rate by Hold Time Distribution';
                     'Joystick Onset to Reward Distribution';
                     'Nosepoke/Reward Activity Distribution';
+                    'JS Touch Dist';
                     'Activity Heat Map';
                     'Velocity Heat Map';
                     'Velocity Variation Heat Map';
