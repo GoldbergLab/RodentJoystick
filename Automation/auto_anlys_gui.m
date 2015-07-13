@@ -22,7 +22,7 @@ function varargout = auto_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help auto_anlys_gui
 
-% Last Modified by GUIDE v2.5 13-Jul-2015 12:31:22
+% Last Modified by GUIDE v2.5 13-Jul-2015 16:37:40
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -78,17 +78,23 @@ function setexptdir_Callback(hObject, eventdata, handles)
 % hObject    handle to setexptdir (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-
+exptdir = uipickfiles('output', 'char', 'numFiles', 1);
+if ~isempty(exptdir)
+    set(handles.exptdirlabel, 'String', exptdir);
+    try
+        oldtimer = handles.automated_ppanalysis_timer;
+        stop(oldtimer);
+        delete(oldtimer);
+        oldtimer = [];
+    catch
+    end;
+end
+guidata(hObject, handles);
 
 function ppschedtime_Callback(hObject, eventdata, handles)
 % hObject    handle to ppschedtime (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of ppschedtime as text
-%        str2double(get(hObject,'String')) returns contents of ppschedtime as a double
-
 
 % --- Executes during object creation, after setting all properties.
 function ppschedtime_CreateFcn(hObject, eventdata, handles)
@@ -109,12 +115,110 @@ function ppstartstop_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+onoff = get(hObject, 'String');
+if strcmp(onoff, 'Start')
+    starttime = get(handles.ppschedtime, 'String');
+    try
+        starttime = strsplit(starttime, ':');
+        hours = str2num(starttime{1});
+        min = str2num(starttime{2}); %#ok<*ST2NM>
+        if length(starttime) ~= 2; 
+            error('Bad Time format'); 
+        end;
+    catch e
+        msgbox(getReport(e));
+        msgbox('Bad time format in automated analysis start time box. Must be HH:MM (24 hr format)',...
+            'Error','error');
+        hours = 01; min = 00;
+    end
+    
+    exptdir = get(handles.exptdirlabel, 'String');
+    if length(exptdir)<3
+        msgbox(['Select an experiment data directory before attempting to ',...
+                'start automated analysis.'], 'Error', 'error');
+        error('No experiment directory selected.');
+    else
+        handles.automated_ppanalysis_timer = init_automated_analysis(exptdir, [hours min]);  
+        set(hObject, 'String', 'Stop');
+    end
+
+elseif strcmp(onoff, 'Stop')
+    oldtimer = handles.automated_ppanalysis_timer;
+    stop(oldtimer);
+    delete(oldtimer);
+    handles.automated_ppanalysis_timer = [];
+    set(hObject, 'String', 'Start');
+
+else
+    error('timer nonexistent, despite having started');
+end
+guidata(hObject, handles);
+
+%helper to be called for each base directory name
+function handles = update_box(handles, boxnum)
+exptdir = get(handles.exptdirlabel, 'String');
+basepath = [exptdir, '\Box_', num2str(boxnum)];
+today = floor(now);
+dayscompare = [];
+for i = 1:14
+    day = rdir([basepath,'\',datestr(today-i, 'mm_dd_yyyy'),'*']);
+    if length(day)>0
+        dayscompare = [dayscompare; day];
+    end
+    if length(dayscompare) >= 1; break; end;
+end
+if length(dayscompare)<1
+    error(['Not enough days recently to update contigency automatically',...
+            '- must be done manually']);
+end
+
+%deal with old contigency info (get right boxes);
+thresholds = [handles.oldthresh1, handles.oldthresh2, handles.oldthresh3, ...
+                handles.oldthresh4, handles.oldthresh5, handles.oldthresh6,...
+                handles.oldthresh7, handles.oldthresh8];
+holdtimes = [handles.oldht1, handles.oldht2, handles.oldht3, handles.oldht4, ...
+                handles.oldht5, handles.oldht6, handles.oldht7, handles.oldht8];
+holdthresh = [handles.oldholdthresh1, handles.oldholdthresh2, handles.oldholdthresh3, ...
+                handles.oldholdthresh4, handles.oldholdthresh5, ...
+                handles.oldholdthresh6, handles.oldholdthresh7, handles.oldholdthresh8];
+minangle = [handles.oldminangle1, handles.oldminangle2, handles.oldminangle3, ...
+                handles.oldminangle4, handles.oldminangle5, handles.oldminangle6, ...
+                handles.oldminangle7, handles.oldminangle8];
+maxangle = [handles.oldmaxangle1, handles.oldmaxangle2, handles.oldmaxangle3, ...
+                handles.oldmaxangle4, handles.oldmaxangle5, handles.oldmaxangle6, ...
+                handles.oldmaxangle7, handles.oldmaxangle8];
+pelletcounts = [handles.pelletcount1, handles.pelletcount2, handles.pelletcount3,...
+                    handles.pelletcount4, handles.pelletcount5, handles.pelletcount6, ...
+                    handles.pelletcount7, handles.pelletcount8];
+srates = [handles.successrate1, handles.successrate2, handles.successrate3,...
+            handles.successrate4, handles.successrate5, handles.successrate6,...
+            handles.successrate7, handles.successrate8];
+npokes = [handles.nosepokecount1, handles.nosepokecount2, handles.nosepokecount3, ...
+            handles.nosepokecount4, handles.nosepokecount5, handles.nosepokecount6, ...
+            handles.nosepokecount7, handles.nosepokecount8];
+trialcount = [handles.trialcount1, handles.trialcount2, handles.trialcount3, ...
+                handles.trialcount4, handles.trialcount5, handles.trialcount6, ...
+                handles.trialcount7, handles.trialcount8];
+            
+stats = load_stats(dayscompare, 1);
+set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count));
+set(srates(boxnum), 'String', num2str(stats.srate));
+set(npokes(boxnum), 'String', num2str(stats.np_count));
+set(trialcount(boxnum), 'String', num2str(stats.trialnum));
+
+
 
 % --- Executes on button press in contstartstop.
 function contstartstop_Callback(hObject, eventdata, handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+try; handles = update_box(handles, 1); end
+try; handles = update_box(handles, 2); end
+try; handles = update_box(handles, 3); end
+try; handles = update_box(handles, 4); end
+guidata(hObject, handles);
+
 
 
 
@@ -140,19 +244,59 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
+% --- Executes on button press in contautoenable.
+function contautoenable_Callback(hObject, eventdata, handles)
+% hObject    handle to contautoenable (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% Hint: get(hObject,'Value') returns toggle state of contautoenable
+if get(hObject, 'Value')
+   set(handles.updatecont, 'Visible', 'off');
+   set(handles.text4, 'Visible', 'on');
+   set(handles.contigencyschedtime, 'Visible', 'on');
+   set(handles.contstartstop, 'String', 'Start');
+else
+   set(handles.updatecont, 'Visible', 'on');
+   set(handles.text4, 'Visible', 'off');
+   set(handles.contigencyschedtime, 'Visible', 'off');
+   set(handles.contstartstop, 'String', 'Recommend');
+end
 
-function edit2_Callback(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+
+% --- Executes on selection change in contdayselect.
+function contdayselect_Callback(hObject, eventdata, handles)
+% hObject    handle to contdayselect (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of edit2 as text
-%        str2double(get(hObject,'String')) returns contents of edit2 as a double
+% Hints: contents = cellstr(get(hObject,'String')) returns contdayselect contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from contdayselect
 
 
 % --- Executes during object creation, after setting all properties.
-function edit2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to edit2 (see GCBO)
+function contdayselect_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to contdayselect (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function rewardrate_Callback(hObject, eventdata, handles)
+% hObject    handle to rewardrate (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rewardrate as text
+%        str2double(get(hObject,'String')) returns contents of rewardrate as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function rewardrate_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rewardrate (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -163,19 +307,30 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
-function newthresh2_Callback(hObject, eventdata, handles)
-% hObject    handle to newthresh2 (see GCBO)
+% --- Executes on button press in updatecont.
+function updatecont_Callback(hObject, eventdata, handles)
+% hObject    handle to updatecont (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of newthresh2 as text
-%        str2double(get(hObject,'String')) returns contents of newthresh2 as a double
+% --- Executes on button press in helpbutton.
+function helpbutton_Callback(hObject, eventdata, handles)
+% hObject    handle to helpbutton (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+function newthresh1_Callback(hObject, eventdata, handles)
+% hObject    handle to newthresh1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of newthresh1 as text
+%        str2double(get(hObject,'String')) returns contents of newthresh1 as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function newthresh2_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to newthresh2 (see GCBO)
+function newthresh1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to newthresh1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -184,8 +339,6 @@ function newthresh2_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
 
 function newht1_Callback(hObject, eventdata, handles)
 % hObject    handle to newht1 (see GCBO)
@@ -278,16 +431,26 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-% --- Executes on button press in contautoenable.
-function contautoenable_Callback(hObject, eventdata, handles)
-% hObject    handle to contautoenable (see GCBO)
+function newthresh2_Callback(hObject, eventdata, handles)
+% hObject    handle to newthresh2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hint: get(hObject,'Value') returns toggle state of contautoenable
+% Hints: get(hObject,'String') returns contents of newthresh2 as text
+%        str2double(get(hObject,'String')) returns contents of newthresh2 as a double
 
 
+% --- Executes during object creation, after setting all properties.
+function newthresh2_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to newthresh2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
 
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
 
 function newht2_Callback(hObject, eventdata, handles)
@@ -1024,35 +1187,12 @@ function newmaxangle8_Callback(hObject, eventdata, handles)
 
 
 % --- Executes during object creation, after setting all properties.
-function newmaxangle8_CreateFcn(hObject, eventdata, handles)
+function newmaxangle8_CreateFcn(hObject, eventdata, handles) %#ok<*INUSD>
 % hObject    handle to newmaxangle8 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
 % Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on selection change in popupmenu1.
-function popupmenu1_Callback(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns popupmenu1 contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from popupmenu1
-
-
-% --- Executes during object creation, after setting all properties.
-function popupmenu1_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to popupmenu1 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

@@ -2,7 +2,7 @@ function pp_report = scheduled_analysis(varargin)
 disp('Performing scheduled post processing analysis');
 %Function to be called by a MATLAB timer object at a fixed rate to ensure
 %that analysis is scheduled and executed regularly
-default = {'K:\automationtest\0008','J:\Users\GLab\Documents\RodentProjectAutomatedLog'};
+default = {'K:\automationtest\0009','J:\Users\GLab\Documents\RodentProjectAutomatedLog'};
 numvarargs = length(varargin);
 if numvarargs > 2
     error('too many arguments (> 2), only two optional.');
