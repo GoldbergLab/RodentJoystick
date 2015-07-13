@@ -148,15 +148,17 @@ try
     [statslist, dates] = load_stats(dirlist, 0);
     disp(length(statslist));
     pellets = 0; trialnum = 0;
+    text = {};
     for i = 1:length(statslist);
         stats = statslist(i);
         pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
         sr = [dates{i},' success rate: ', num2str(stats.srate)];
-        text = {pc; sr};
+        tmptext = {pc; sr};
+        text = [text; tmptext];
         pellets = pellets + stats.pellet_count;
         trialnum = trialnum + stats.trialnum;
-        handles = update_console(handles, text);
     end
+    handles = update_console(handles, text);
     if length(statslist) > 1
         pc = ['Total pellets: ', num2str(pellets)];
         sr = ['Overall success rate: ', num2str(pellets/trialnum)];

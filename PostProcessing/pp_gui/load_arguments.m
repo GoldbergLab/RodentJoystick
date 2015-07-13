@@ -68,6 +68,13 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1label = 'Interv'; %Histogram interval (min)
     arg2 = '0';
     arg2label = 'Normalize';
+elseif strcmp(plotname, 'JS Touch Dist')
+    arg1 = '0.25';
+    arg1label = 'Rew Rate';
+    arg2 = '200';
+    arg2label = 'Targ HT';
+    arg3 = '50';
+    arg3label = 'Thresh';
 elseif strcmp(plotname, 'Activity Heat Map')
     arg1 = '2'; 
     arg1label = 'Bin'; %Bin Size (min)
