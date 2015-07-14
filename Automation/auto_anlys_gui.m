@@ -22,7 +22,7 @@ function varargout = auto_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help auto_anlys_gui
 
-% Last Modified by GUIDE v2.5 13-Jul-2015 16:37:40
+% Last Modified by GUIDE v2.5 14-Jul-2015 14:15:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -163,7 +163,7 @@ basepath = [exptdir, '\Box_', num2str(boxnum)];
 today = floor(now);
 dayscompare = [];
 for i = 1:60 %how far we're willing to look back for contingency information
-    day = rdir([basepath,'\',datestr(today-i, 'mm_dd_yyyy'),'*']);
+    day = rdir([basepath,'\*\',datestr(today-i, 'mm_dd_yyyy'),'*']);
     if length(day)>0
         dayscompare = [dayscompare; day];
     end
@@ -223,31 +223,167 @@ set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count));
 set(srates(boxnum), 'String', num2str(stats.srate));
 set(npokes(boxnum), 'String', num2str(stats.np_count));
 set(trialcount(boxnum), 'String', num2str(stats.trialnum));
-[dist, holdtime, centerhold, sector] = recommend_contigencies(handles, dayscompare);
-set(thresholdsrec(boxnum), 'String', num2str(dist));
+[thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, boxnum);
+
+set(thresholds(boxnum), 'String', num2str(oldcont.thresh));
+set(holdtimes(boxnum), 'String', num2str(oldcont.holdtime));
+set(holdthresh(boxnum), 'String', num2str(oldcont.centerhold));
+set(minangle(boxnum), 'String', num2str(oldcont.sector(1)));
+set(maxangle(boxnum), 'String', num2str(oldcont.sector(2)));
+
+set(thresholdsrec(boxnum), 'String', num2str(thresh));
 set(holdtimesrec(boxnum), 'String', num2str(holdtime));
 set(holdthreshrec(boxnum), 'String', num2str(centerhold));
 set(minanglerec(boxnum), 'String', num2str(sector(1)));
 set(maxanglerec(boxnum), 'String', num2str(sector(2)));
 
+%write out contingency of (boxnum)
+%involves moving oldfile to new archived directory
+function write_out_contingency(exptdir, boxnum, manual)
+oldcontingency = [exptdir,'\Box_', num2str(boxnum),'\contingency.txt'];
+disp(oldcontingency);
+newfname = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\',...
+            'contingency_',datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt.'];
+movefile(oldcontingency, newfname);
+%make cell array:
+thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
+                    handles.newthresh4, handles.newthresh5, handles.newthresh6,...
+                    handles.newthresh7, handles.newthresh8];
+holdtimesrec = [handles.newht1, handles.newht2, handles.newht3, handles.newht4, ...
+                    handles.newht5, handles.newht6, handles.newht7,...
+                    handles.newht8];
+holdthreshrec = [handles.newholdthresh1, handles.newholdthresh2,...
+                    handles.newholdthresh3, handles.newholdthresh4,...
+                    handles.newholdthresh5, handles.newholdthresh6,...
+                    handles.newholdthresh7, handles.newholdthresh8];
+minanglerec = [handles.newminangle1, handles.newminangle2, handles.newminangle3,...
+                handles.newminangle4, handles.newminangle5, handles.newminangle6,...
+                handles.newminangle7, handles.newminangle8];
+maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,...
+                handles.newmaxangle4, handles.newmaxangle5, handles.newmaxangle6,...
+                handles.newmaxangle7, handles.newmaxangle8];
+try
+    thresh = num2str(str2num(get(thresholdrec(boxnum), 'String')));
+    thresh = max(min(thresh, 100), 0);
+    ht = num2str(str2num(get(holdtimesrec(boxnum), 'String')));
+    ht = max(ht, 0);
+    holdthresh = num2str(str2num(get(holdthreshrec(boxnum), 'String')));
+    holdthresh = max(min(holdthresh, 100), 0);
+    minangle = num2str(str2num(get(minanglerec(boxnum), 'String')));
+    minangle = max(min(minangle, 180), -180);
+    maxangle = num2str(str2num(get(maxanglerec(boxnum), 'String')));
+    maxangle = max(min(maxangle, 180), -180);
 
+towrite = ...
+    {'Out Threshold', thresh; ...
+     'Hold Duration', ht; ...
+     'Hold Threshold', holdthresh;...
+     'Min Angle', minangle;...
+     'Max Angle', maxangle};
+catch
+    movefile(newfname, oldcontingency);
+    if manual
+        msgbox(['Failed to write out the contingencies specified for', ...
+        'Box ', num2str(boxnum), '. Check that the spaces are not empty and', ...
+        'valid numbers']);
+    end
+end
+
+fid = fopen(oldcontingency,'w');
+%THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT
+for i = 1:5
+    fprintf(fid, '%s %f\r\n', towrite{i, :});
+end
+fclose(fid);
+
+function write_out_all_contingencies(exptdir, manual)
+try
+    write_out_contingency(exptdir, 1, manual)
+catch
+    disp('Failed to write out contingency information for Box 1');
+end
+try
+    write_out_contingency(exptdir, 2, manual)
+catch
+    disp('Failed to write out contingency information for Box 2');
+end
+try
+    write_out_contingency(exptdir, 3, manual)
+catch
+    disp('Failed to write out contingency information for Box 3');
+end
+try
+    write_out_contingency(exptdir, 4, manual)
+catch
+    disp('Failed to write out contingency information for Box 4');
+end
+try
+    write_out_contingency(exptdir, 5, manual)
+catch
+    disp('Failed to write out contingency information for Box 5');
+end
+try
+    write_out_contingency(exptdir, 6, manual)
+catch
+    disp('Failed to write out contingency information for Box 6');
+end
+try
+    write_out_contingency(exptdir, 7, manual)
+catch
+    disp('Failed to write out contingency information for Box 7');
+end
+try
+    write_out_contingency(exptdir, 8, manual)
+catch
+    disp('Failed to write out contingency information for Box 8');
+end
 
 % --- Executes on button press in contstartstop.
 function contstartstop_Callback(hObject, eventdata, handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try; handles = update_box(handles, 1); 
-catch e
-    disp(getReport(e))
+try
+    handles = update_box(handles, 1); 
+catch
+    disp('Failed to find contingency info for Box 1');
 end
-try; handles = update_box(handles, 2); 
+try
+    handles = update_box(handles, 2); 
 catch e
-    disp(getReport(e))
+    disp(getReport(e));
+    disp('Failed to find contingency info for Box 2');
 end
-try; handles = update_box(handles, 3); end
-try; handles = update_box(handles, 4); end
-try; handles = update_box(handles, 5); end
+try
+    handles = update_box(handles, 3);
+catch
+    disp('Failed to find contingency info for Box 3');
+end
+try
+    handles = update_box(handles, 4);
+catch
+    disp('Failed to find contingency info for Box 4');
+end
+try
+    handles = update_box(handles, 5);
+catch
+    disp('Failed to find contingency info for Box 5');
+end
+try
+    handles = update_box(handles, 6);
+catch
+    disp('Failed to find contingency info for Box 6');
+end
+try
+    handles = update_box(handles, 7);
+catch
+    disp('Failed to find contingency info for Box 7');
+end
+try
+    handles = update_box(handles, 8);
+catch
+    disp('Failed to find contingency info for Box 8');
+end
 guidata(hObject, handles);
 
 
@@ -291,6 +427,7 @@ else
    set(handles.text4, 'Visible', 'off');
    set(handles.contigencyschedtime, 'Visible', 'off');
    set(handles.contstartstop, 'String', 'Recommend');
+   %try to stop automatic contingency updates
 end
 
 
@@ -343,12 +480,22 @@ function updatecont_Callback(hObject, eventdata, handles)
 % hObject    handle to updatecont (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+exptdir = get(handles.exptdirlabel, 'String');
+write_out_all_contingencies(exptdir, 1)
 
 % --- Executes on button press in helpbutton.
 function helpbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to helpbutton (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% --- Executes on button press in pcoverride.
+function pcoverride_Callback(hObject, eventdata, handles)
+% hObject    handle to pcoverride (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of pcoverride
 
 function newthresh1_Callback(hObject, eventdata, handles)
 % hObject    handle to newthresh1 (see GCBO)

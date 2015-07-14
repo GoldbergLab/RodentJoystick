@@ -35,6 +35,37 @@ Panel 4-1
 ...
 Panel 4-8
 
+Issues that have come up:
+Where does it make sense to store contingency information - only in the jstruct?
+    Probably not - need it in stats structure as well.
+    Jstruct can have contingency information all the time too 
+    Store stats info:
+How to decide number of days for contingency selection - 1 day in advance
+
+Contingency Format for any Arbitrary Box:
+Location - old contingency:
+expt_dir\Box_i\Archived\contingency_mm_dd_yyyy_HH_MM.txt
+Location - current:
+expt_dir\Box_i\contingency.txt
+Format
+-----------------------------------
+Threshold\tValue
+Hold Duration\tValue
+Center Hold Threshold\tValue
+Min Angle\tValue
+Max Angle\tValue
+------------------------------------
+Note that Center Threshold doesn't change- it's there to ensure mouse isn't
+starting trial with joystick very far out.
+Labview - GUI:
+Threshold - Threshold
+Hold Duration - Hold Time
+Center Hold Threshold - Hold Threshold
+Min Angle - Min Angle
+Max Angle - Max Angle
+
+
+
 
 
 
