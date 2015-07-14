@@ -154,7 +154,10 @@ else
 end
 guidata(hObject, handles);
 
-%helper to be called for each base directory name
+%helper to be called for each base directory name - updates all current
+%contingency information as well as updating statistics information
+%including things like pellet count, nosepokes, and trial counts. Also
+%issues recommendations as necessary.
 function handles = update_box(handles, boxnum)
 contents = get(handles.contdayselect, 'String');
 NumDaysCompare = str2num(contents{get(handles.contdayselect, 'Value')});
@@ -164,7 +167,7 @@ today = floor(now);
 dayscompare = [];
 for i = 1:60 %how far we're willing to look back for contingency information
     day = rdir([basepath,'\*\',datestr(today-i, 'mm_dd_yyyy'),'*']);
-    if length(day)>0
+    if ~isempty(day)
         dayscompare = [dayscompare; day];
     end
     if length(dayscompare) >= NumDaysCompare; break; end;
@@ -239,12 +242,7 @@ set(maxanglerec(boxnum), 'String', num2str(sector(2)));
 
 %write out contingency of (boxnum)
 %involves moving oldfile to new archived directory
-function write_out_contingency(exptdir, boxnum, manual)
-oldcontingency = [exptdir,'\Box_', num2str(boxnum),'\contingency.txt'];
-disp(oldcontingency);
-newfname = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\',...
-            'contingency_',datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt.'];
-movefile(oldcontingency, newfname);
+function write_out_contingency(exptdir, boxnum, manual, handles)
 %make cell array:
 thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
                     handles.newthresh4, handles.newthresh5, handles.newthresh6,...
@@ -263,15 +261,15 @@ maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,
                 handles.newmaxangle4, handles.newmaxangle5, handles.newmaxangle6,...
                 handles.newmaxangle7, handles.newmaxangle8];
 try
-    thresh = num2str(str2num(get(thresholdrec(boxnum), 'String')));
+    thresh = str2num(get(thresholdsrec(boxnum), 'String'));
     thresh = max(min(thresh, 100), 0);
-    ht = num2str(str2num(get(holdtimesrec(boxnum), 'String')));
+    ht = str2num(get(holdtimesrec(boxnum), 'String'));
     ht = max(ht, 0);
-    holdthresh = num2str(str2num(get(holdthreshrec(boxnum), 'String')));
+    holdthresh = str2num(get(holdthreshrec(boxnum), 'String'));
     holdthresh = max(min(holdthresh, 100), 0);
-    minangle = num2str(str2num(get(minanglerec(boxnum), 'String')));
+    minangle = str2num(get(minanglerec(boxnum), 'String'));
     minangle = max(min(minangle, 180), -180);
-    maxangle = num2str(str2num(get(maxanglerec(boxnum), 'String')));
+    maxangle = str2num(get(maxanglerec(boxnum), 'String'));
     maxangle = max(min(maxangle, 180), -180);
 
 towrite = ...
@@ -280,8 +278,8 @@ towrite = ...
      'Hold Threshold', holdthresh;...
      'Min Angle', minangle;...
      'Max Angle', maxangle};
+disp([thresh, ht, holdthresh, minangle, maxangle]);
 catch
-    movefile(newfname, oldcontingency);
     if manual
         msgbox(['Failed to write out the contingencies specified for', ...
         'Box ', num2str(boxnum), '. Check that the spaces are not empty and', ...
@@ -289,57 +287,82 @@ catch
     end
 end
 
-fid = fopen(oldcontingency,'w');
-%THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT
+oldcontingency = [exptdir,'\Box_', num2str(boxnum),'\contingency*.txt'];
+tmplist = rdir(oldcontingency); oldcontingency = tmplist.name;
+archivename = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\',...
+            'contingency_',datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt'];
+
+fid = fopen(oldcontingency);
+info = textscan(fid,'%s %s %f',5);
+towritearchive = ...
+    {'Out Threshold', info{3}(1); ...
+     'Hold Duration', info{3}(2); ...
+     'Hold Threshold', info{3}(3);...
+     'Min Angle', info{3}(4);...
+     'Max Angle', info{3}(5)};
+    
+%THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT - writing old one, then
+%new one:
+newcontname = [exptdir, '\Box_', num2str(boxnum),'\contingency.txt'];
+fid = fopen(newcontname,'w');
+fidarchive = fopen(archivename, 'w');
 for i = 1:5
     fprintf(fid, '%s %f\r\n', towrite{i, :});
+    fprintf(fidarchive, '%s %f\r\n', towritearchive{i, :});
 end
-fclose(fid);
+fclose(fid); 
+fclose(fidarchive);
 
-function write_out_all_contingencies(exptdir, manual)
+
+function handles = write_out_all_contingencies(handles, manual)
+exptdir = get(handles.exptdirlabel, 'String');
 try
-    write_out_contingency(exptdir, 1, manual)
+    write_out_contingency(exptdir, 1, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 1');
 end
 try
-    write_out_contingency(exptdir, 2, manual)
-catch
+    write_out_contingency(exptdir, 2, manual, handles)
+catch e
     disp('Failed to write out contingency information for Box 2');
+    disp(getReport(e));
 end
 try
-    write_out_contingency(exptdir, 3, manual)
+    write_out_contingency(exptdir, 3, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 3');
 end
 try
-    write_out_contingency(exptdir, 4, manual)
+    write_out_contingency(exptdir, 4, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 4');
 end
 try
-    write_out_contingency(exptdir, 5, manual)
+    write_out_contingency(exptdir, 5, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 5');
 end
 try
-    write_out_contingency(exptdir, 6, manual)
+    write_out_contingency(exptdir, 6, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 6');
 end
 try
-    write_out_contingency(exptdir, 7, manual)
+    write_out_contingency(exptdir, 7, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 7');
 end
 try
-    write_out_contingency(exptdir, 8, manual)
+    write_out_contingency(exptdir, 8, manual, handles)
 catch
     disp('Failed to write out contingency information for Box 8');
 end
 
-% --- Executes on button press in contstartstop.
-function contstartstop_Callback(hObject, eventdata, handles)
+
+% Does all error handling as well, and intended to be called by a timer as
+% well when necessary. Simple wrapper, nothing more than what's done in
+% update_box, but for all 8 boxes.
+function handles = update_all_boxes(handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -384,9 +407,31 @@ try
 catch
     disp('Failed to find contingency info for Box 8');
 end
+
+function regular_contingency_update(handles)
+    update_all_boxes(handles);
+    write_out_all_contingencies(handles, 0);
+
+% --- Executes on button press in contstartstop. Does all error handling as
+% well, and intended to be called by a timer as well when necessary.
+function contstartstop_Callback(hObject, eventdata, handles)
+% hObject    handle to contstartstop (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+if strcmp(contstartstop, 'Recommend')
+    handles = update_all_boxes(handles);
+elseif strcmp(constartstop, 'Start')
+    regular_contingency_update(handles)
+else
+    try
+        timer = handles.automated_contingency_timer;
+        stop(timer);
+        delete(timer);
+    catch e
+        disp(getReport(e));
+    end
+end
 guidata(hObject, handles);
-
-
 
 
 function contigencyschedtime_Callback(hObject, eventdata, handles)
@@ -480,8 +525,7 @@ function updatecont_Callback(hObject, eventdata, handles)
 % hObject    handle to updatecont (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-exptdir = get(handles.exptdirlabel, 'String');
-write_out_all_contingencies(exptdir, 1)
+write_out_all_contingencies(handles, 1)
 
 % --- Executes on button press in helpbutton.
 function helpbutton_Callback(hObject, eventdata, handles)
