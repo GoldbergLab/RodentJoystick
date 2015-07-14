@@ -1,0 +1,5 @@
+Out Threshold 1
+Hold Duration 50
+Hold Threshold 100
+Min Angle -180
+Max Angle 180
