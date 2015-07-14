@@ -22,7 +22,7 @@ actual_seconds = (time - floor(time))*24*60*60;
 delay = round(desired_seconds-actual_seconds);
 if delay<0; delay = delay+24*60*60; end;
 automated_analysis_timer = timer('StartDelay', delay, 'Period', 60*period, 'ExecutionMode', 'fixedRate');
-automated_analysis_timer.StartFcn = @(~,~)disp(['Beginning automated analysis every ', num2str(period),' minutes.']);
+automated_analysis_timer.StartFcn = @(~,~)disp(['Beginning automated analysis every ', num2str(period/60),' hours.']);
 automated_analysis_timer.TimerFcn = @(~,~)scheduled_analysis(expt_dir, logs_dir);
 automated_analysis_timer.StopFcn = @(~,~)disp('Automated analysis stopped.');
 start(automated_analysis_timer);
