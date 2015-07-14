@@ -156,16 +156,18 @@ guidata(hObject, handles);
 
 %helper to be called for each base directory name
 function handles = update_box(handles, boxnum)
+contents = get(handles.contdayselect, 'String');
+NumDaysCompare = str2num(contents{get(handles.contdayselect, 'Value')});
 exptdir = get(handles.exptdirlabel, 'String');
 basepath = [exptdir, '\Box_', num2str(boxnum)];
 today = floor(now);
 dayscompare = [];
-for i = 1:14
+for i = 1:30 %how far we're willing to look back for contingency information
     day = rdir([basepath,'\',datestr(today-i, 'mm_dd_yyyy'),'*']);
     if length(day)>0
         dayscompare = [dayscompare; day];
     end
-    if length(dayscompare) >= 1; break; end;
+    if length(dayscompare) >= NumDaysCompare; break; end;
 end
 if length(dayscompare)<1
     error(['Not enough days recently to update contigency automatically',...
@@ -199,12 +201,34 @@ npokes = [handles.nosepokecount1, handles.nosepokecount2, handles.nosepokecount3
 trialcount = [handles.trialcount1, handles.trialcount2, handles.trialcount3, ...
                 handles.trialcount4, handles.trialcount5, handles.trialcount6, ...
                 handles.trialcount7, handles.trialcount8];
+thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
+                    handles.newthresh4, handles.newthresh5, handles.newthresh6,...
+                    handles.newthresh7, handles.newthresh8];
+holdtimesrec = [handles.newht1, handles.newht2, handles.newht3, handles.newht4, ...
+                    handles.newht5, handles.newht6, handles.newht7,...
+                    handles.newht8];
+holdthreshrec = [handles.newholdthresh1, handles.newholdthresh2,...
+                    handles.newholdthresh3, handles.newholdthresh4,...
+                    handles.newholdthresh5, handles.newholdthresh6,...
+                    handles.newholdthresh7, handles.newholdthresh8];
+minanglerec = [handles.newminangle1, handles.newminangle2, handles.newminangle3,...
+                handles.newminangle4, handles.newminangle5, handles.newminangle6,...
+                handles.newminangle7, handles.newminangle8];
+maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,...
+                handles.newmaxangle4, handles.newmaxangle5, handles.newmaxangle6,...
+                handles.newmaxangle7, handles.newmaxangle8];
             
 stats = load_stats(dayscompare, 1);
 set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count));
 set(srates(boxnum), 'String', num2str(stats.srate));
 set(npokes(boxnum), 'String', num2str(stats.np_count));
 set(trialcount(boxnum), 'String', num2str(stats.trialnum));
+[dist, holdtime, centerhold, sector] = recommend_contigencies(handles, dayscompare);
+set(thresholdsrec(boxnum), 'String', num2str(dist));
+set(holdtimesrec(boxnum), 'String', num2str(holdtime));
+set(holdthreshrec(boxnum), 'String', num2str(centerhold));
+set(minanglerec(boxnum), 'String', num2str(sector(1)));
+set(maxanglerec(boxnum), 'String', num2str(sector(2)));
 
 
 
@@ -213,9 +237,16 @@ function contstartstop_Callback(hObject, eventdata, handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try; handles = update_box(handles, 1); end
-try; handles = update_box(handles, 2); end
+try; handles = update_box(handles, 1); 
+catch e
+    disp(getReport(e))
+end
+try; handles = update_box(handles, 2); 
+catch e
+    disp(getReport(e))
+end
 try; handles = update_box(handles, 3); end
+try; handles = update_box(handles, 4); end
 try; handles = update_box(handles, 4); end
 guidata(hObject, handles);
 
