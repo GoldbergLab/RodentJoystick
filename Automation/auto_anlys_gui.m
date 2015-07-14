@@ -162,7 +162,7 @@ exptdir = get(handles.exptdirlabel, 'String');
 basepath = [exptdir, '\Box_', num2str(boxnum)];
 today = floor(now);
 dayscompare = [];
-for i = 1:30 %how far we're willing to look back for contingency information
+for i = 1:60 %how far we're willing to look back for contingency information
     day = rdir([basepath,'\',datestr(today-i, 'mm_dd_yyyy'),'*']);
     if length(day)>0
         dayscompare = [dayscompare; day];
@@ -247,7 +247,7 @@ catch e
 end
 try; handles = update_box(handles, 3); end
 try; handles = update_box(handles, 4); end
-try; handles = update_box(handles, 4); end
+try; handles = update_box(handles, 5); end
 guidata(hObject, handles);
 
 
