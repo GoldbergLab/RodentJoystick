@@ -7,4 +7,4 @@ automated_analysis_timer = timer('StartDelay', 30, 'Period', 60*period, 'Executi
 automated_analysis_timer.StartFcn = @(~,~)disp(['Beginning automated analysis every ', num2str(period),' minutes.']);
 automated_analysis_timer.TimerFcn = @(~,~)scheduled_analysis;
 start(automated_analysis_timer);
-clear period;
+g
