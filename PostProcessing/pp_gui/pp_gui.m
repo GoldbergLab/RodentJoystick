@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 24-Jun-2015 18:03:56
+% Last Modified by GUIDE v2.5 09-Jul-2015 10:51:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -45,7 +45,7 @@ end
 end
 
 % --- Executes just before pp_gui is made visible.
-function pp_gui_OpeningFcn(hObject, eventdata, handles, varargin)
+function pp_gui_OpeningFcn(hObject, eventdata, handles, varargin) %#ok<*INUSL>
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -135,9 +135,11 @@ try
     dirlist = handles.dirlist;
     for i = 1:length(dirlist)
         namestr = dirlist(i).name;
-        labeltxt = [labeltxt, namestr(end-15:end), ','];
+        namestr = strsplit(namestr, '\');
+        newname = [namestr{end-1},' - ',namestr{end}];
+        labeltxt = [labeltxt, newname, ','];
     end
-    labeltxt = labeltxt(1:end-2);
+    labeltxt = labeltxt(1:end-1);
     set(handles.daystoplotlabel, 'String', labeltxt);
     startdir = dirlist(end).name; startdir = strsplit(startdir, '\'); 
     startdir = startdir(1:end-1); startdir = strjoin(startdir, '\');
@@ -146,15 +148,17 @@ try
     [statslist, dates] = load_stats(dirlist, 0);
     disp(length(statslist));
     pellets = 0; trialnum = 0;
+    text = {};
     for i = 1:length(statslist);
         stats = statslist(i);
         pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
         sr = [dates{i},' success rate: ', num2str(stats.srate)];
-        text = {pc; sr};
+        tmptext = {pc; sr};
+        text = [text; tmptext];
         pellets = pellets + stats.pellet_count;
         trialnum = trialnum + stats.trialnum;
-        handles = update_console(handles, text);
     end
+    handles = update_console(handles, text);
     if length(statslist) > 1
         pc = ['Total pellets: ', num2str(pellets)];
         sr = ['Overall success rate: ', num2str(pellets/trialnum)];
@@ -169,7 +173,7 @@ end
 end
 
 % --- Executes on button press in combinedays.
-function combinedays_Callback(hObject, eventdata, handles)
+function combinedays_Callback(hObject, eventdata, handles) %#ok<*INUSD>
 % hObject    handle to combinedays (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -801,7 +805,7 @@ handles = plot_all_days(handles, 6);
 guidata(hObject, handles);
 end
 
-
+%% Useful utilities for saving and running automated analysis
 % --- Executes on button press in saveplotspush.
 function saveplotspush_Callback(hObject, eventdata, handles)
 % hObject    handle to saveplotspush (see GCBO)

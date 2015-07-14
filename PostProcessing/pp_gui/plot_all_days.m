@@ -93,16 +93,28 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
     multi_time_distr(dirlist, arg1, 'single', combineflag, arg2, inf, axes(axnum));
+elseif strcmp(plotname, 'JS Touch Dist')
+    rewrate = str2num(arg1);
+    holdtime = str2num(arg2);
+    thresh = str2num(arg3);
+    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, axes(axnum));
+    setdiststr = ['JS Touch Dist', setdiststr];
+    setdiststr = setdiststr';
+    handles = update_console(handles, setdiststr);
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
-    velocity_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    velocity_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Velocity Variation Heat Map')
-    velocityvar_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    velocityvar_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Heat Map')
-    accel_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    accel_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
-    accelvar_heat_map(dirlist, axes(axnum));
+    arg1 = str2num(arg1);
+    accelvar_heat_map(dirlist, axes(axnum), [], arg1);
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg1label = 'Rew Rate'; %Desired reward rate
 %     arg2label = 'Thresh'; %Histogram interval (ms)
