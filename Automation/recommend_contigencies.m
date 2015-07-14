@@ -59,6 +59,4 @@ function [threshold, holdtime, centerhold, sector] = load_contingencies(exptdir,
     info = textscan(fid,'%s %s %f',5);
     threshold = info{3}(1); holdtime = info{3}(2); centerhold = info{3}(3); 
     sector = [info{3}(4) info{3}(5)];
-    
-    
 end
