@@ -1,3 +1,11 @@
+
+%[thresh, holdtime, centerhold, sector, oldcont] 
+%   = recommend_contigencies(handles, exptdir, dirlist, boxnum)
+% takes in an experiment director, the list of directories for which to
+% generate its analysis, and a box number as an identifier. 
+% handles is a set of handles for an instance of a valid automated analysis
+%   The functions below should be edited if you want to change how new
+%   contingencies are automatically updated.
 function [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dirlist, boxnum)
 %Automatically recommends a set of contigencies based on data from dirlist
 %   (implicitly assumes all entries in dirlist are from the same day)
@@ -6,14 +14,15 @@ function [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencie
 %will not change
 pellet_count_threshold = 100;
 
-%set defaults to current values (implemented later, temp for now)
 stats = load_stats(dirlist, 1);
 
 [thresh, holdtime, centerhold, sector] = load_contingencies(exptdir, boxnum);
 oldcont.thresh = thresh; oldcont.holdtime = holdtime;
 oldcont.centerhold = centerhold; oldcont.sector = sector;
 
-%daily pellet count is acceptable
+%Is average daily pellet count acceptable? (Also looks at Pellet Count
+%Override, which ignores the threshold)
+stats = load_stats(dirlist, 1);
 pc_acceptable = ((stats.pellet_count)/length(dirlist) >= pellet_count_threshold) ...
                     || get(handles.pcoverride, 'Value');
 rewardrate = str2num(get(handles.rewardrate, 'String'));
@@ -43,9 +52,7 @@ end
 function centerhold = recommend_centerhold(dirlist, rewardrate, oldht, oldcenterhold)
     %LOWEST POSSIBLE VALUE FOR CENTERHOLD
     MIN_CH = 20;
-    disp('executing this block');
-    disp(dirlist(1).name);
-    [set_dists] = multi_js_touch_dist(dirlist, rewardrate, 80, 200, 0, 0);
+    [set_dists] = multi_js_touch_dist(dirlist, rewardrate, oldcenterhold, oldht, 0, 0);
     centerhold = prctile(set_dists, 50);
     centerhold = max(centerhold, MIN_CH);
 end

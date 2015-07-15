@@ -1,3 +1,64 @@
+%auto_anlys_gui is a GUI used to run all our automated analysis. It can
+%handle both automated post processing analysis and the automated
+%contingency updates separately. Both these analyses are run every 24
+%hours. While the times can be anything, it probably makes the most sense
+%to have contingency updates run shortly after post processing so that
+%contingency updates will not lag too far behind processed data of rodent
+%behavior.
+%
+%GENERAL DESIGN
+%Most functions in auto_anlys_gui are a few lines long, and all are
+%under 30 lines. All intensive GUI interaction as well as contingency
+%computation are handled by helper functions.
+%
+% matlabmail :: (not matlabmailcpy, check documentation) is necessary to
+%       allow mail notifications
+% 
+% Post Processing Analysis
+%   
+%   init_automated_analysis :: sets up an automatic timer that will
+%       conduct post processing analysis on all unprocessed files in
+%       the experiment directory.
+%   scheduled_analysis :: this is the function that runs on timer
+%       callback - it calls our standard multi day processing scripts
+%       (mult_doAll) edit this function to modify general post 
+%       processing analysis procedure (how logging, mail notifications,
+%       reports, etc. are handled. specific analysis changes
+%       should be called in multi_doAll or doAllpp (i.e. adding in
+%       a function that saves velocity distributions would be done
+%       in doAllpp).
+%   directories_to_do :: simple utility that returns a standard
+%       directory list of which directories need to be post
+%       processed.
+%   behavior_report :: generates a cell array (n x 1) summary of
+%       mouse behavior
+% 
+% Automated Contingency Updates
+%
+%   init_auto_contingency_update :: like init_automated_analysis, sets
+%       up an automatic timer that on callbacks calls a helper function
+%       (in the same file) that handles contingency updates through the
+%       GUI. Unlike init_automated_analysis, this function will not
+%       work independently of the GUI.
+%   update_all_boxes_anlys_gui :: a helper function that attempts
+%       to find contingency/stats information for all boxes, and
+%       updates the GUI to display these
+%   write_out_all_contingencies_anlys_gui :: a helper function that
+%       writes out the contingency information, and also archives the
+%       old contingency.
+%   recommend_contingencies :: called by update_all_boxes_anlys_gui to
+%       output recommendations for new contingencies. THIS file is the
+%       one that should be edited if you want to make changes to the
+%       computation of new contingencies. In order to avoid making this
+%       too large, avoid putting long intensive computations in this
+%       file. (See how center hold threshold is computed by calling
+%       multi_js_touch_dist);
+% 
+% Design Details:
+% Most of the GUI is various text boxes, some uneditable to just display
+% information about current contingencies, others are editable because they
+% change future contingencies. 
+
 function varargout = auto_anlys_gui(varargin)
 % AUTO_ANLYS_GUI MATLAB code for auto_anlys_gui.fig
 %      AUTO_ANLYS_GUI, by itself, creates a new AUTO_ANLYS_GUI or raises the existing

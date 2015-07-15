@@ -1,8 +1,13 @@
-%This function writes out all the contingency information from the
+%[handles, failures, attachments] 
+%= write_out_all_contingencies_anlys_gui(handles, manual) 
+%writes out all the contingency information from the
 %automation analysis gui wherever possible (i.e. if a box has information
-%available). If it cannot do so for a box, it will display a failed
-%indicator, but it will not crash and prevent the other boxes from writing
-%out. Also returns a list of failures and attachments to send. 
+%available). If it cannot do so for a box, it will display a failure
+%message to the MATLAB console, but it does not crash which would 
+%prevent the other boxes from writing out. 
+%Also returns a list of failure strings and attachments containing
+%contingency files (archived, and new one) when contingency successfully
+%updates.
 function [handles, failures, attachments] = write_out_all_contingencies_anlys_gui(handles, manual)
 failures = {};
 attachments = {};
@@ -10,7 +15,7 @@ failstr = 'Failed to write out contingency information for Box ';
 for i = 1:8
     try
         contingencies = write_out_contingency(i, manual, handles);
-        attachments = {attachments; contingencies};
+        attachments = [attachments; contingencies];
     catch
         tmp = [failstr, num2str(i)];
         failures = [failures; tmp];
@@ -19,11 +24,15 @@ for i = 1:8
 end
 
 end
-%write out contingency of (boxnum)
-%involves moving oldfile to new archived directory
+
+%contingencyfiles = write_out_contingency(boxnum, manual, handles) takes a
+%box identified by its number, the handles to a valid auto_anlys_gui, and
+%writes out the contingency information specified by the edit text box
+%wherever posssible. May fail if the contingency is not specified properly.
+%   manual is a 1/0 flag that tells whether to create error msg boxes to
+%   the user (assuming manual contingency updates).
 function contingencyfiles = write_out_contingency(boxnum, manual, handles)
 %make cell array:
-contingencyfiles = {};
 exptdir = get(handles.exptdirlabel, 'String');
 thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
                     handles.newthresh4, handles.newthresh5, handles.newthresh6,...
@@ -62,9 +71,11 @@ try
      'Max Angle', maxangle};
 catch
     if manual
-        msgbox(['Failed to write out the contingencies specified for', ...
+        errstr = ['Failed to write out the contingencies specified for', ...
         'Box ', num2str(boxnum), '. Check that the spaces are not empty and', ...
-        'valid numbers']);
+        'valid numbers'];
+        msgbox(errstr);
+        error(errstr);
     end
 end
 
@@ -90,7 +101,7 @@ towritearchive = ...
 %THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT - writing old one, then
 %new one:
 newcontname = [exptdir, '\Box_', num2str(boxnum),'\contingency.txt'];
-contingencyfiles = {contingencyfiles; newcontname};
+contingencyfiles = [contingencyfiles; newcontname];
 fid = fopen(newcontname,'w');
 fidarchive = fopen(archivename, 'w');
 for i = 1:6
