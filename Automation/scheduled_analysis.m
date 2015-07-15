@@ -2,13 +2,13 @@ function pp_report = scheduled_analysis(varargin)
 disp('Performing scheduled post processing analysis');
 %Function to be called by a MATLAB timer object at a fixed rate to ensure
 %that analysis is scheduled and executed regularly
-default = {'K:\automationtest\0009','J:\Users\GLab\Documents\RodentProjectAutomatedLog'};
+default = {'K:\automationtest'};
 numvarargs = length(varargin);
 if numvarargs > 2
-    error('too many arguments (> 2), only two optional.');
+    error('too many arguments (> 1), only one optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[experiment_directory, logsdirloc] = default{:};
+[experiment_directory] = default{:};
 %put the main directory containing experiment data here.
 %recipients of reports:
 recipients={'nitin.shyamkumar@gmail.com', ...
@@ -29,7 +29,11 @@ pp_report = [title; failure];
 
 try %attempting write of log report
     title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
-    logname = [logsdirloc,'\',title,'.txt'];
+    logdir = [experiment_directory, '\AutomatedLogs'];
+    if exist(logdir, 'dir') == 0
+        mkdir(logdir);
+    end
+    logname = [logdir, '\', title, '.txt'];
     fileID = fopen(logname,'w');
     for i = 1:size(pp_report, 1)
         formatspec = '%s\r\n %s\r\n\r\n';

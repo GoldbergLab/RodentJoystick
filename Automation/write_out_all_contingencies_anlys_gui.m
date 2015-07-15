@@ -7,60 +7,23 @@ function [handles, failures, attachments] = write_out_all_contingencies_anlys_gu
 failures = {};
 attachments = {};
 failstr = 'Failed to write out contingency information for Box ';
-try
-    write_out_contingency(1, manual, handles)
-catch
-    failures = [failures; [failstr, '1']];
-    disp([failstr, '1']);
-end
-try
-    write_out_contingency(2, manual, handles)
-catch e
-    failures = [failures; [failstr, '2']];
-    disp([failstr, '2']);
-    disp(getReport(e));
-end
-try
-    write_out_contingency(3, manual, handles)
-catch
-    failures = [failures; [failstr, '3']];
-    disp([failstr, '3']);
-end
-try
-    write_out_contingency(4, manual, handles)
-catch
-    failures = [failures; [failstr, '4']];
-    disp([failstr, '4']);
-end
-try
-    write_out_contingency(5, manual, handles)
-catch
-    failures = [failures; [failstr, '5']];
-    disp([failstr, '5']);
-end
-try
-    write_out_contingency(6, manual, handles)
-catch
-    failures = [failures; [failstr, '6']];
-    disp([failstr, '6']);
-end
-try
-    write_out_contingency(7, manual, handles)
-catch
-    failures = [failures; [failstr, '7']];
-    disp([failstr, '7']);
-end
-try
-    write_out_contingency(8, manual, handles)
-catch
-    failures = [failures; [failstr, '8']];
-    disp([failstr, '8']);
+for i = 1:8
+    try
+        contingencies = write_out_contingency(i, manual, handles);
+        attachments = {attachments; contingencies};
+    catch
+        tmp = [failstr, num2str(i)];
+        failures = [failures; tmp];
+        disp([failstr, num2str(i)]);
+    end
 end
 
+end
 %write out contingency of (boxnum)
 %involves moving oldfile to new archived directory
-function write_out_contingency(boxnum, manual, handles)
+function contingencyfiles = write_out_contingency(boxnum, manual, handles)
 %make cell array:
+contingencyfiles = {};
 exptdir = get(handles.exptdirlabel, 'String');
 thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
                     handles.newthresh4, handles.newthresh5, handles.newthresh6,...
@@ -90,13 +53,13 @@ try
     maxangle = str2num(get(maxanglerec(boxnum), 'String'));
     maxangle = max(min(maxangle, 180), -180);
 
-towrite = ...
-    {'Out Threshold', thresh; ...
+    towrite = ...
+    {'Box Num', boxnum; ...
+     'Out Threshold', thresh; ...
      'Hold Duration', ht; ...
      'Hold Threshold', holdthresh;...
      'Min Angle', minangle;...
      'Max Angle', maxangle};
-disp([thresh, ht, holdthresh, minangle, maxangle]);
 catch
     if manual
         msgbox(['Failed to write out the contingencies specified for', ...
@@ -107,9 +70,13 @@ end
 
 oldcontingency = [exptdir,'\Box_', num2str(boxnum),'\contingency*.txt'];
 tmplist = rdir(oldcontingency); oldcontingency = tmplist.name;
-archivename = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\',...
-            'contingency_',datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt'];
-
+archivefoldername = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\'];
+if exist(archivefoldername, 'dir')~=7
+    mkdir(archivefoldername);
+end
+archivename = [archivefoldername, 'contingency_',...
+                    datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt'];
+contingencyfiles = {archivename};
 fid = fopen(oldcontingency);
 info = textscan(fid,'%s %s %f',6);
 towritearchive = ...
@@ -123,11 +90,17 @@ towritearchive = ...
 %THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT - writing old one, then
 %new one:
 newcontname = [exptdir, '\Box_', num2str(boxnum),'\contingency.txt'];
+contingencyfiles = {contingencyfiles; newcontname};
 fid = fopen(newcontname,'w');
 fidarchive = fopen(archivename, 'w');
 for i = 1:6
     fprintf(fid, '%s %f\r\n', towrite{i, :});
     fprintf(fidarchive, '%s %f\r\n', towritearchive{i, :});
+    try
+        disp(towrite{i, :});
+        disp(towritearchive{i, :});
+    end
 end
 fclose(fid); 
 fclose(fidarchive);
+end

@@ -19,11 +19,11 @@ pc_acceptable = ((stats.pellet_count)/length(dirlist) >= pellet_count_threshold)
 rewardrate = str2num(get(handles.rewardrate, 'String'));
 
 if pc_acceptable && get(handles.thresholdselect, 'Value')
-    thresh = recommend_threshold(dirlist, rewardrate, holdtime, centerhold);
+    thresh = recommend_threshold(dirlist, rewardrate);
 elseif pc_acceptable && get(handles.holdtimeselect, 'Value')
     holdtime = recommend_holdtime(dirlist, rewardrate);
 elseif pc_acceptable && get(handles.centerthresholdselect, 'Value')
-    centerhold = recommend_centerhold(dirlist, rewardrate);
+    centerhold = recommend_centerhold(dirlist, rewardrate, holdtime, centerhold);
 elseif pc_acceptable && get(handles.sectorselect, 'Value')
     sector = recommend_sector(dirlist, rewardrate);
 end
@@ -45,7 +45,7 @@ function centerhold = recommend_centerhold(dirlist, rewardrate, oldht, oldcenter
     MIN_CH = 20;
     disp('executing this block');
     disp(dirlist(1).name);
-    [set_dists] = multi_js_touch_dist(dirlist, rewardrate, 80, 200, 0);
+    [set_dists] = multi_js_touch_dist(dirlist, rewardrate, 80, 200, 0, 0);
     centerhold = prctile(set_dists, 50);
     centerhold = max(centerhold, MIN_CH);
 end
