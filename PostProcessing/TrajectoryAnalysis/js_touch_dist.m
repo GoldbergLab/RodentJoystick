@@ -14,14 +14,14 @@
 %   dist - the recommended threshold for the distance
 %   
 function [set_dist, med_time] = js_touch_dist(stats, varargin)
-default = {300, 0.25, 50, 0, [], 'r'};
+default = {300, 0.25, 50, 0, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 6
     error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[targ_time, targ_reward, dist_thresh, all_traj_flag, ax, color] = default{:};
-if length(ax)<1;
+[targ_time, targ_reward, dist_thresh, all_traj_flag, plotflag, ax, color] = default{:};
+if plotflag>0 && length(ax)<1;
     figure;
     ax = gca();
 end
@@ -71,13 +71,15 @@ end
 dist_distri=dist_distri(dist_distri>0);
 dist_time_hld = 0:20:600;
 holddist_vect = histc(holdlength,dist_time_hld);
-axes(ax);
-hold on;
-stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),color,'LineWidth',2);
-xlabel('Hold Time');
-ylabel('Proportion');
-title('JS Touch Hold Time Distr');
-hold off;
+if plotflag
+    axes(ax);
+    hold on;
+    stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),color,'LineWidth',1);
+    xlabel('Hold Time');
+    ylabel('Proportion');
+    title('JS Touch Hold Time Distr');
+    hold off;
+end
 
 time_success = length(dist_distri)/k;
 c = histc(dist_distri,1:1:100);

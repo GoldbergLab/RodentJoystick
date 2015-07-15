@@ -4,46 +4,12 @@ function handles = update_all_boxes_anlys_gui(handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-try
-    handles = update_box(handles, 1); 
-catch
-    disp('Failed to find contingency info for Box 1');
-end
-try
-    handles = update_box(handles, 2); 
-catch e
-    disp(getReport(e));
-    disp('Failed to find contingency info for Box 2');
-end
-try
-    handles = update_box(handles, 3);
-catch
-    disp('Failed to find contingency info for Box 3');
-end
-try
-    handles = update_box(handles, 4);
-catch
-    disp('Failed to find contingency info for Box 4');
-end
-try
-    handles = update_box(handles, 5);
-catch
-    disp('Failed to find contingency info for Box 5');
-end
-try
-    handles = update_box(handles, 6);
-catch
-    disp('Failed to find contingency info for Box 6');
-end
-try
-    handles = update_box(handles, 7);
-catch
-    disp('Failed to find contingency info for Box 7');
-end
-try
-    handles = update_box(handles, 8);
-catch
-    disp('Failed to find contingency info for Box 8');
+for i = 1:8
+    try
+        handles = update_box(handles, i); 
+    catch
+        disp(['Failed to find contingency info for Box ', num2str(i)]);
+    end
 end
 
 %helper to be called for each base directory name - updates all current
@@ -114,10 +80,11 @@ maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,
                 handles.newmaxangle7, handles.newmaxangle8];
             
 stats = load_stats(dayscompare, 1);
-set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count));
+sz = length(dayscompare);
+set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));
 set(srates(boxnum), 'String', num2str(stats.srate));
-set(npokes(boxnum), 'String', num2str(stats.np_count));
-set(trialcount(boxnum), 'String', num2str(stats.trialnum));
+set(npokes(boxnum), 'String', num2str(stats.np_count/sz));
+set(trialcount(boxnum), 'String', num2str(stats.trialnum/sz));
 [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, boxnum);
 
 set(thresholds(boxnum), 'String', num2str(oldcont.thresh));

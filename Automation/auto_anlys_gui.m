@@ -22,7 +22,7 @@ function varargout = auto_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help auto_anlys_gui
 
-% Last Modified by GUIDE v2.5 14-Jul-2015 14:15:32
+% Last Modified by GUIDE v2.5 15-Jul-2015 00:17:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -85,7 +85,14 @@ if ~isempty(exptdir)
         oldtimer = handles.automated_ppanalysis_timer;
         stop(oldtimer);
         delete(oldtimer);
-        oldtimer = [];
+        handles.automated_ppanalysis_timer = [];
+    catch
+    end
+    try
+        othertimer = handles.automated_contingency_timer;
+        stop(othertimer);
+        delete(othertimer);
+        handles.automated_contingency_timer = [];
     catch
     end;
 end
@@ -108,6 +115,22 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+function [hours, min] = get_time(textbox)
+starttime = get(textbox, 'String');
+try
+    starttime = strsplit(starttime, ':');
+    hours = str2num(starttime{1});
+    min = str2num(starttime{2}); %#ok<*ST2NM>
+    if length(starttime) ~= 2; 
+        error('Bad Time format'); 
+    end;
+catch e
+    disp(getReport(e));
+    msgbox('Bad time format in automated analysis start time box. Must be HH:MM (24 hr format)',...
+        'Error','error');
+    hours = 01; min = 00;
+end
+
 
 % --- Executes on button press in ppstartstop.
 function ppstartstop_Callback(hObject, eventdata, handles)
@@ -117,21 +140,7 @@ function ppstartstop_Callback(hObject, eventdata, handles)
 
 onoff = get(hObject, 'String');
 if strcmp(onoff, 'Start')
-    starttime = get(handles.ppschedtime, 'String');
-    try
-        starttime = strsplit(starttime, ':');
-        hours = str2num(starttime{1});
-        min = str2num(starttime{2}); %#ok<*ST2NM>
-        if length(starttime) ~= 2; 
-            error('Bad Time format'); 
-        end;
-    catch e
-        msgbox(getReport(e));
-        msgbox('Bad time format in automated analysis start time box. Must be HH:MM (24 hr format)',...
-            'Error','error');
-        hours = 01; min = 00;
-    end
-    
+    [hours, min] = get_time(handles.ppschedtime);    
     exptdir = get(handles.exptdirlabel, 'String');
     if length(exptdir)<3
         msgbox(['Select an experiment data directory before attempting to ',...
@@ -141,7 +150,6 @@ if strcmp(onoff, 'Start')
         handles.automated_ppanalysis_timer = init_automated_analysis(exptdir, [hours min]);  
         set(hObject, 'String', 'Stop');
     end
-
 elseif strcmp(onoff, 'Stop')
     oldtimer = handles.automated_ppanalysis_timer;
     stop(oldtimer);
@@ -160,25 +168,41 @@ function contstartstop_Callback(hObject, eventdata, handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if strcmp(contstartstop, 'Recommend')
+state = get(handles.contstartstop, 'String');
+exptdir = get(handles.exptdirlabel, 'String');
+if strcmp(state, 'Recommend')
     handles = update_all_boxes_anlys_gui(handles);
-elseif strcmp(constartstop, 'Start')
+elseif strcmp(state, 'Start')    
+    if length(exptdir)<3
+        msgbox(['Select an experiment data directory before attempting to ',...
+                'start automated analysis.'], 'Error', 'error');
+        error('No experiment directory selected.');
+    end
+    [hours, min] = get_time(handles.contingencyschedtime);
+    handles.automated_contingency_timer = ...
+        init_auto_contingency_update(handles, [hours min]);
+    set(hObject, 'String', 'Stop');
+elseif strcmp(state, 'Stop')
+    oldtimer = handles.automated_contingency_timer;
+    stop(oldtimer); delete(oldtimer);
+    handles.automated_contingency_timer;
+    set(hObject, 'String', 'Start');
 end
 guidata(hObject, handles);
 
 
-function contigencyschedtime_Callback(hObject, eventdata, handles)
-% hObject    handle to contigencyschedtime (see GCBO)
+function contingencyschedtime_Callback(hObject, eventdata, handles)
+% hObject    handle to contingencyschedtime (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-% Hints: get(hObject,'String') returns contents of contigencyschedtime as text
-%        str2double(get(hObject,'String')) returns contents of contigencyschedtime as a double
+% Hints: get(hObject,'String') returns contents of contingencyschedtime as text
+%        str2double(get(hObject,'String')) returns contents of contingencyschedtime as a double
 
 
 % --- Executes during object creation, after setting all properties.
-function contigencyschedtime_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to contigencyschedtime (see GCBO)
+function contingencyschedtime_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to contingencyschedtime (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
@@ -198,14 +222,19 @@ function contautoenable_Callback(hObject, eventdata, handles)
 if get(hObject, 'Value')
    set(handles.updatecont, 'Visible', 'off');
    set(handles.text4, 'Visible', 'on');
-   set(handles.contigencyschedtime, 'Visible', 'on');
+   set(handles.contingencyschedtime, 'Visible', 'on');
    set(handles.contstartstop, 'String', 'Start');
 else
    set(handles.updatecont, 'Visible', 'on');
    set(handles.text4, 'Visible', 'off');
-   set(handles.contigencyschedtime, 'Visible', 'off');
+   set(handles.contingencyschedtime, 'Visible', 'off');
    set(handles.contstartstop, 'String', 'Recommend');
-   %try to stop automatic contingency updates
+   try
+       oldtimer = handles.automated_contingency_timer;
+       stop(oldtimer); delete(oldtimer);
+       handles.automated_contingency_timer;
+   catch
+   end
 end
 
 
@@ -238,6 +267,14 @@ function rewardrate_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of rewardrate as text
 %        str2double(get(hObject,'String')) returns contents of rewardrate as a double
+rewrate = get(hObject, 'String');
+rewrate = str2num(rewrate);
+if rewrate<=0 || rewrate>1.0
+    msgbox('Invalid range for reward rate. Enter a new value.');
+    set(hObject, 'String', '0.25');
+    guidata(hObject, handles);
+end
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -258,7 +295,8 @@ function updatecont_Callback(hObject, eventdata, handles)
 % hObject    handle to updatecont (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-    write_out_all_contingencies_anlys_gui(handles, manual)
+write_out_all_contingencies_anlys_gui(handles, 1);
+
 % --- Executes on button press in helpbutton.
 function helpbutton_Callback(hObject, eventdata, handles)
 % hObject    handle to helpbutton (see GCBO)
