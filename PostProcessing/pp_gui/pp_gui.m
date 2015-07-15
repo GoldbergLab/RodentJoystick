@@ -136,7 +136,7 @@ try
     for i = 1:length(dirlist)
         namestr = dirlist(i).name;
         namestr = strsplit(namestr, '\');
-        newname = [namestr{end-1},' - ',namestr{end}];
+        newname = [namestr{end-2},' - ',namestr{end}];
         labeltxt = [labeltxt, newname, ','];
     end
     labeltxt = labeltxt(1:end-1);

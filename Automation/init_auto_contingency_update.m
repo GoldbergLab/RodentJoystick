@@ -33,6 +33,7 @@ clear period; clear start_time; clear desired_seconds; clear actual_seconds; cle
 end
 
 function regular_contingency_updates(handles, recipients)
+    disp('Beginning scheduled contingency update');
     exptdir = get(handles.exptdirlabel, 'String');
     update_all_boxes_anlys_gui(handles);
     [~, failures, attachments] = write_out_all_contingencies_anlys_gui(handles, 0);
