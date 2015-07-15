@@ -1,6 +1,6 @@
-Box Num 2
+Box Num 2.000000
 Out Threshold 1.000000
 Hold Duration 50.000000
-Hold Threshold 26.000000
+Hold Threshold 100.000000
 Min Angle -180.000000
 Max Angle 180.000000

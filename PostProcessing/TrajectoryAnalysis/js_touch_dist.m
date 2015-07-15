@@ -16,8 +16,8 @@
 function [set_dist, med_time] = js_touch_dist(stats, varargin)
 default = {300, 0.25, 50, 0, 1, [], 'r'};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('too many arguments (> 7), only 1 required and 6 optional.');
+if numvarargs > 7
+    error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [targ_time, targ_reward, dist_thresh, all_traj_flag, plotflag, ax, color] = default{:};

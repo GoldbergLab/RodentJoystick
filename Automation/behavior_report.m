@@ -10,14 +10,14 @@ try
         stats = statslist(i);
         split_up = strsplit(dirlist(i).name, '\');
         j = 2*i - 1; k = 2*i;
-        report{j, 1} = split_up{end-1}; 
+        report{j, 1} = split_up{end-2}; 
         report{j, 2} = [split_up{end}, ' pellets:'];
         report{j, 3} = num2str(stats.pellet_count);
-        report{k, 1} = split_up{end-1};
+        report{k, 1} = split_up{end-2};
         report{k, 2} = [split_up{end}, ' success rate: '];
         report{k, 3} = num2str(stats.srate);
         if stats.pellet_count < pelletmin || stats.pellet_count > pelletmax
-            special{end+1} = [split_up{end-1}, ' received ', num2str(stats.pellet_count),...
+            special{end+1} = [split_up{end-2}, ' received ', num2str(stats.pellet_count),...
                                 ' pellets on ', split_up{end}];
         end
     end
