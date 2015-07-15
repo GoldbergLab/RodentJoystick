@@ -1,6 +1,17 @@
+%autotimer = init_auto_contingency_update(handles, [start_time, period]);
+%This function returns a timer that handles automatically updating the
+%automated contingency update feature on the GUI. The GUI must be running
+%for this function to work (note the handles argument). This function has a
+%subfunction that contains a list of items to do - it updates the GUI based
+%on desired targets, then writes out the contingency information.
+%ARGUMENTS
+%   handles :: valid set of handles from auto_anlys_gui
+%   start_time :: initially scheduled time for running automated
+%       contingency updates (format: [hours min], 24 hour time);
+%       DEFAULT  - [01 00] (1 AM)
+%   period :: period (interval between) scheduled analysis in minutes
+%       DEFAULT: 1440 minutes (24 hours)
 function auto_contingency_timer = init_auto_contingency_update(handles, varargin)
-%calling this script sets up the automated analysis timer - cleans
-%workspace after it's done.
 
 %% MODIFY THESE DEFAULT PARAMETERS TO SCHEDULE ANALYSIS
 start_time = [01 00]; %time is currently set to 1AM (24 hour time)
@@ -32,6 +43,7 @@ start(auto_contingency_timer);
 clear period; clear start_time; clear desired_seconds; clear actual_seconds; clear delay; clear time;
 end
 
+%% If you want to make changes to how scheduled analysis is done, edit here.
 function regular_contingency_updates(handles, recipients)
     disp('Beginning scheduled contingency update');
     exptdir = get(handles.exptdirlabel, 'String');
@@ -42,15 +54,12 @@ function regular_contingency_updates(handles, recipients)
     if exist(logdir, 'dir') == 0
         mkdir(logdir);
     end
-    title = ['AutomaticContingencyUpdate_', datestr(now, 'mm_dd_yyyy_HH_MM')];
+    title = ['AutoContingencyUpdate_', datestr(now, 'mm_dd_yyyy_HH_MM')];
     logname = [logdir,'\', title, '.txt'];
 
     fid = fopen(logname, 'w');
-    whos 'failures';
-    tmp = failures{1};
-    whos 'tmp';
     for i = 1:size(failures, 1)
-         fprintf(fid, '%s', failures{i});
+         fprintf(fid, '%s\n', failures{i});
     end
     fclose(fid);
     matlabmail(recipients, failures, title, attachments);

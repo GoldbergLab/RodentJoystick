@@ -1,5 +1,7 @@
-% updates all slots for the GUI and computes new recommended training
-% parameters based on current contingency and recent data in directory.
+% updates all information for all boxes in the GUI, including basic
+% statistics and current contingency information.
+% update_all_boxes_anlys_gui(handles) also puts recommendations based on
+%   post processing analysis scripts for new contingency changes.
 function handles = update_all_boxes_anlys_gui(handles)
 % hObject    handle to contstartstop (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -7,7 +9,10 @@ function handles = update_all_boxes_anlys_gui(handles)
 for i = 1:8
     try
         handles = update_box(handles, i); 
-    catch
+    catch e
+        if i == 2
+            disp(getReport(e))
+        end
         disp(['Failed to find contingency info for Box ', num2str(i)]);
     end
 end
@@ -24,8 +29,10 @@ basepath = [exptdir, '\Box_', num2str(boxnum)];
 today = floor(now);
 dayscompare = [];
 for i = 1:60 %how far we're willing to look back for contingency information
-    day = rdir([basepath,'\*\',datestr(today-i, 'mm_dd_yyyy'),'*']);
-    if ~isempty(day)
+    daypath = [basepath,'\*\',datestr(today-i, 'mm_dd_yyyy')];
+    day = rdir([daypath,'*']);
+    js = rdir([daypath, '\jstruct.mat']);
+    if ~isempty(day)  && ~isempty(js)
         dayscompare = [dayscompare; day];
     end
     if length(dayscompare) >= NumDaysCompare; break; end;
