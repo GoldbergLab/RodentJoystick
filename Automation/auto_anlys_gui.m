@@ -83,7 +83,7 @@ function varargout = auto_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help auto_anlys_gui
 
-% Last Modified by GUIDE v2.5 15-Jul-2015 00:17:37
+% Last Modified by GUIDE v2.5 21-Jul-2015 11:44:09
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -1257,3 +1257,29 @@ function oldthresh1_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to oldthresh1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on slider movement.
+function scrollbar_Callback(hObject, eventdata, handles)
+% hObject    handle to scrollbar (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'Value') returns position of slider
+%        get(hObject,'Min') and get(hObject,'Max') to determine range of slider
+percent = get(hObject, 'Value');
+pos = get(handles.scrollpanel, 'Position');
+pos(2) = percent*1060*(-1);
+set(handles.scrollpanel, 'Position', pos);
+
+% --- Executes during object creation, after setting all properties.
+function scrollbar_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to scrollbar (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: slider controls usually have a light gray background.
+if isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor',[.9 .9 .9]);
+    set(hObject, 'Value', 1);
+end
