@@ -16,7 +16,7 @@ for i = 1:8
     try
         contingencies = write_out_contingency(i, manual, handles);
         attachments = [attachments; contingencies];
-    catch
+    catch e
         tmp = [failstr, num2str(i)];
         failures = [failures; tmp];
         disp([failstr, num2str(i)]);
@@ -33,6 +33,7 @@ end
 %   the user (assuming manual contingency updates).
 function contingencyfiles = write_out_contingency(boxnum, manual, handles)
 %make cell array:
+contingencyfiles = {};
 exptdir = get(handles.exptdirlabel, 'String');
 thresholdsrec = [handles.newthresh1, handles.newthresh2, handles.newthresh3,...
                     handles.newthresh4, handles.newthresh5, handles.newthresh6,...
@@ -79,37 +80,37 @@ catch
     end
 end
 
-oldcontingency = [exptdir,'\Box_', num2str(boxnum),'\contingency*.txt'];
-tmplist = rdir(oldcontingency); oldcontingency = tmplist.name;
-archivefoldername = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\'];
-if exist(archivefoldername, 'dir')~=7
-    mkdir(archivefoldername);
-end
-archivename = [archivefoldername, 'contingency_',...
+oldcontingency = [exptdir,'\Box_', num2str(boxnum),'*\contingency*.txt'];
+tmplist = rdir(oldcontingency); 
+if ~isempty(tmplist)
+    oldcontingency = tmplist.name;
+    archivefoldername = [exptdir, '\Box_', num2str(boxnum),'\ArchivedContingencies\'];
+    if exist(archivefoldername, 'dir')~=7
+        mkdir(archivefoldername);
+    end
+    archivename = [archivefoldername, 'contingency_',...
                     datestr(now, 'mm_dd_yyyy_HH_MM'),'.txt'];
-contingencyfiles = {archivename};
-fid = fopen(oldcontingency);
-info = textscan(fid,'%s %s %f',6);
-towritearchive = ...
-    {'Box Num', boxnum; ...
-     'Out Threshold', info{3}(2); ...
-     'Hold Duration', info{3}(3); ...
-     'Hold Threshold', info{3}(4);...
-     'Min Angle', info{3}(5);...
-     'Max Angle', info{3}(6)};
-    
+    contingencyfiles = {archivename};
+    fid = fopen(oldcontingency);
+    info = textscan(fid,'%s %s %f',6);
+    towritearchive = ...
+        {'Box Num', boxnum; ...
+        'Out Threshold', info{3}(2); ...
+        'Hold Duration', info{3}(3); ...
+        'Hold Threshold', info{3}(4);...
+        'Min Angle', info{3}(5);...
+        'Max Angle', info{3}(6)};
+end
 %THIS IS SPECIFIC TO THE CURRENT CONTINGENCY FORMAT - writing old one, then
 %new one:
 newcontname = [exptdir, '\Box_', num2str(boxnum),'\contingency.txt'];
 contingencyfiles = [contingencyfiles; newcontname];
 fid = fopen(newcontname,'w');
-fidarchive = fopen(archivename, 'w');
+if ~isempty(tmplist); fidarchive = fopen(archivename, 'w'); end;
 for i = 1:6
     fprintf(fid, '%s %f\r\n', towrite{i, :});
-    fprintf(fidarchive, '%s %f\r\n', towritearchive{i, :});
-    try
-        disp(towrite{i, :});
-        disp(towritearchive{i, :});
+    if ~isempty(tmplist)
+        fprintf(fidarchive, '%s %f\r\n', towritearchive{i, :});
     end
 end
 fclose(fid); 
