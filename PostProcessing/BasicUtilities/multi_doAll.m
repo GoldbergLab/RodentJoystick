@@ -11,7 +11,7 @@
 %   2 - runs all
 %   1 - runs just basic jstruct creation and .dat combination
 %   0 - runs only statistics/further post processing computation (requires
-%       jstruct to be saved to directory
+%       jstruct to be saved to directory)
 %Outputs
 %   report - n x 3 cell array. third column is status (failure type,
 %       success), second column is error message, if it exists, and first
@@ -49,6 +49,8 @@ for i = 1:length(dir_list)
                 report{i, 3} = 'Generating jstruct.mat failure';
             elseif fail==4
                 report{i, 3} = 'Computing stats failure';
+            elseif fail==5
+                report{i, 3} = 'Combining contingency failure';
             elseif fail
                 report{i, 3} = 'Cause of failure unknown';
             else

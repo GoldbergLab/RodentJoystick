@@ -1,25 +1,18 @@
-function [success, newloc] = combine_contingencies(dir)
+function [newloc] = combine_contingencies(dir)
 
 % assumption here that dir is in format:
-% expt_dir\Box_<i>_<mouse id>\<date>_<contingency>
-
+% expt_dir\Box_<i>_<mouse id>\<date>_<contingency>\*.dat
 entries = strsplit(dir, '\');
 datecontingency = entries{end};
 basepath = strjoin(entries(1:end-1), '\');
-disp(basepath);
-
 datecontingency = strsplit(datecontingency, '_');
 contingency = strjoin(datecontingency(2:end), '_');
-disp(contingency)
 date = datecontingency{1};
-disp(date);
 m = date(1:2); d = date(3:4); y = date(5:6);
 dirday = datenum(str2num(y)+2000, str2num(m), str2num(d));
-disp(datestr(dirday));
 
 if dirday == floor(now); 
-    success = 0; 
-    error('Combining contigencies attempted on todays data.');
+    disp('Attempted combining contingencies on data that is still being collected');
 end
 
 %Find earliest day before directory entry
@@ -48,16 +41,26 @@ if existingdir
 end
 
 try
-if existingdir
-    movefile(dir, [match, '\', date], 'f');
-    newloc = [match, '\', date];
-else
-    mkdir(dir,date);
-    movefile([dir,'\*'], [dir, '\', date, '\'], 'f');
-    newloc = [dir, '\', date];
-end
+    if exist([dir, '\comb'], 'file')==7; combexist = 1; end;
+    if existingdir
+        newloc = [match, '\', date];
+        movefile(dir, newloc, 'f');
+    else
+        mkdir(dir,date);
+        newloc = [dir, '\', date];
+        movefile([dir,'\*'], [newloc,'\'], 'f');
+    end
 catch e
-    success = 0;
+    if combexist
+        try
+            movefile([dir, '\comb'], newloc);
+        catch e
+            disp(getReport(e));
+        end
+    end
     disp(getReport(e));
-    error('Failed to move files');
+    %for some reason, MATLAB will move the files successfully, but throw an
+    %error regardless - for that reason the catch block is here instead of
+    %passing the error to doAllpp
 end
+
