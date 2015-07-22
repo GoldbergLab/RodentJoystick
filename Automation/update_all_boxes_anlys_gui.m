@@ -25,14 +25,15 @@ function handles = update_box(handles, boxnum)
 contents = get(handles.contdayselect, 'String');
 NumDaysCompare = str2num(contents{get(handles.contdayselect, 'Value')});
 exptdir = get(handles.exptdirlabel, 'String');
-basepath = [exptdir, '\Box_', num2str(boxnum)];
+basepath = [exptdir, '\Box_', num2str(boxnum),'_*'];
 today = floor(now);
 dayscompare = [];
 for i = 1:60 %how far we're willing to look back for contingency information
-    daypath = [basepath,'\*\',datestr(today-i, 'mm_dd_yyyy')];
+            %currently set to 60 days
+    daypath = [basepath,'\*\',datestr(today-i, 'mmddyy')];
     day = rdir([daypath,'*']);
     js = rdir([daypath, '\jstruct.mat']);
-    if ~isempty(day)  && ~isempty(js)
+    if ~isempty(day)  && ~isempty(js) %has been postprocessed
         dayscompare = [dayscompare; day];
     end
     if length(dayscompare) >= NumDaysCompare; break; end;

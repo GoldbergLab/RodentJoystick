@@ -10,11 +10,11 @@ function [failure, err] = doAllstats(wdir)
 failure = 0; err = '';
 list = rdir([wdir,'\jstruct.mat']);
 if length(list)>1
-    failure = 1;
-    error('Multiple jstructs in a single folder');
+    failure = 4;
+    err = 'Multiple jstructs in a single folder';
 elseif length(list)<1
-    failure = 1;
-    error(['No jstructs found in ',wdir]);
+    failure = 4;
+    err = ['No jstructs found in ',wdir];
 end
 try
     load(list(1).name);
@@ -25,5 +25,5 @@ try
     save(strcat(wdir,'\velaccel.mat'), 'velaccel');
     save(strcat(wdir,'\velaccelraw.mat'), 'velaccelraw');
 catch e
-    failure = 1; err = getReport(e);
+    failure = 4; err = getReport(e);
 end
