@@ -25,19 +25,20 @@ function handles = update_box(handles, boxnum)
 contents = get(handles.contdayselect, 'String');
 NumDaysCompare = str2num(contents{get(handles.contdayselect, 'Value')});
 exptdir = get(handles.exptdirlabel, 'String');
-basepath = [exptdir, '\Box_', num2str(boxnum),'_*'];
+basepath = [exptdir, '\Box_', num2str(boxnum),'*'];
 today = floor(now);
-dayscompare = [];
+dayscompare = []; duplicates = 0;
 for i = 1:60 %how far we're willing to look back for contingency information
-            %currently set to 60 days
     daypath = [basepath,'\*\',datestr(today-i, 'mmddyy')];
     day = rdir([daypath,'*']);
+    duplicates = duplicates + length(day)- ~(~length(day));
     js = rdir([daypath, '\jstruct.mat']);
-    if ~isempty(day)  && ~isempty(js) %has been postprocessed
+    if ~isempty(day)  && ~isempty(js)
         dayscompare = [dayscompare; day];
     end
-    if length(dayscompare) >= NumDaysCompare; break; end;
+    if length(dayscompare)-duplicates>= NumDaysCompare; break; end;
 end
+disp(length(dayscompare));
 if length(dayscompare)<1
     error(['Not enough days recently to update contigency automatically',...
             '- must be done manually']);
@@ -93,7 +94,7 @@ set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));
 set(srates(boxnum), 'String', num2str(stats.srate));
 set(npokes(boxnum), 'String', num2str(stats.np_count/sz));
 set(trialcount(boxnum), 'String', num2str(stats.trialnum/sz));
-[thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, boxnum);
+[thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, duplicates);
 
 set(thresholds(boxnum), 'String', num2str(oldcont.thresh));
 set(holdtimes(boxnum), 'String', num2str(oldcont.holdtime));
