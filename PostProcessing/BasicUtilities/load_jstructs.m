@@ -1,9 +1,31 @@
 function [jstructlist, dates, days] = load_jstructs(dirlist, combineflag)
-%jstructlist is a cell array of jstructs - not structs containing filenames
-%jstructlist{2} is an actual jstruct
-%dates is a cell array of strings corresponding to the date in the format
-%mm/dd/yy - days is the same information, but in the number format
-%if combineflag == 1, then dates is the string indicating the time range
+%[jstructlist, dates, days] = load_jstructs(dirlist, combineflag) attempts
+%   to load the jstructs from the directories in dirlist.
+%
+% OUTPUTS:
+%
+%   jstructlist :: cell array of jstructs - not structs containing
+%       filenames like it used to be defined:
+%       I.e. jstructlist{2} is an actual jstruct
+%
+%   dates :: a cell array of strings corresponding to the dates of each
+%       jstruct in the format mm/dd/yy
+%
+%   days :: a vector containing MATLAB real number representation of the
+%       day
+%
+% ARGS:
+%   
+%   dirlist :: struct representation of a list of directories (usually
+%       obtained using the utility rdir). All entries in the list must have
+%       been post processed. load_jstructs is not robust - if a single day
+%       fails to load, the function will crash.
+%   
+%   combineflag :: a flag 1/0 that instructs load_jstructs whether or not
+%       to combine all data from all directories into a single day
+%       If combine flag is 1, then load_jstructs combines all data, and
+%       dates becomes a single cell string with the date range in the
+%       format 'mm/dd/yy - mm/dd/yy'
 
 if combineflag==0
 %% GET LIST of individual data
@@ -18,7 +40,7 @@ if combineflag==0
             dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
             days(i) = floor(jstruct(2).real_time);
         catch
-            dates{i} = ''; days(i) = '';
+            dates{i} = ''; days(i) = NaN;
         end
         clear jstruct;
     end
@@ -35,7 +57,7 @@ else
             dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
             days(i) = floor(jstruct(2).real_time);
         catch
-            dates{i} = ''; days(i) = '';
+            dates{i} = ''; days(i) = NaN;
         end
         clear jstruct;
     end
