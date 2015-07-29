@@ -21,14 +21,14 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 
 %% Argument Handling
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-default = {20, 0, 1, [], colors(1)};
+default = {20, 1, 0, 1, [], colors(1)};
 numvarargs = length(varargin);
 if numvarargs > 5
     error(['too many arguments (> 6), only one required ' ... 
             'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, combineflag, plotflag, ax, combinecolor] = default{:};
+[interv, normalize, combineflag, plotflag, ax, combinecolor] = default{:};
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
@@ -49,7 +49,9 @@ labels.legend = dates;
 for i=1:length(statslist)
     stats = statslist(i);
     np_js = histc(stats.np_js,dist_time);
-    np_js = np_js./(sum(np_js));
+    if normalize
+        np_js = np_js./(sum(np_js));
+    end
     data{i} = [dist_time', np_js];
 end
 

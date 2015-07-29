@@ -43,8 +43,9 @@ cla(axes(axnum), 'reset');
 %    sometimes arguments will be '' or '-';
 %
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
-    arg1 = str2num(arg1);
-    np_js_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
+    interv = str2num(arg1);
+    norm = str2num(arg2);
+    np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = str2num(arg1);
     np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
@@ -101,6 +102,12 @@ elseif strcmp(plotname, 'JS Touch Dist')
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
+elseif strcmp(plotname, 'XY Hold Dist')
+    rewrate = str2num(arg1);
+    targcht = str2num(arg2);
+    [~, htstr] = multi_xy_holddist(dirlist, targcht, rewrate, combineflag);
+    htstr = ['XY Hold Dist: ';htstr];
+    handles = update_console(handles, htstr);
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')

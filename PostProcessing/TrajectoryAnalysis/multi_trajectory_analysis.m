@@ -43,7 +43,7 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 [statslist, dates] = load_stats(dirlist, combineflag);
 for i= 1:length(statslist)
     stats = statslist(i);
-    [~, labels, lhandle] = trajectory_analysis(stats, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), 1);
+    [~, labels, lhandle] = trajectory_analysis(stats, 0, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), 1);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));
