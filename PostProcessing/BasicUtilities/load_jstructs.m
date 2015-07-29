@@ -1,6 +1,7 @@
 function [jstructlist, dates, days] = load_jstructs(dirlist, combineflag)
-%[jstructlist, dates, days] = load_jstructs(dirlist, combineflag) attempts
-%   to load the jstructs from the directories in dirlist.
+%[jstructlist, dates, days] = load_jstructs(dirlist, combineflag) 
+%
+%   attempts to load the jstructs from the directories in dirlist.
 %
 % OUTPUTS:
 %

@@ -1,9 +1,24 @@
+% ppscript(working_dir,fileformatspec,numField)
+%
+%   takes all .dat files from the directory working_dir, makes a new
+%   subdirectory called comb, and combines the .dat files into .mat data
+%   files
+%
+% ARGUMENTS:
+%
+%       working_dir :: string representation of directory to be analyzed
+%
+%       fileformatspec :: file format specification as a string (for
+%           reading lines). 
+%           EX: '%f %f %s %s %s %s %s %s
+%           
+%       numField :: number of fields to be read
+%
 function ppscript(working_dir,fileformatspec,numField)
 
 filelist = dir(strcat(working_dir,'/*.dat'));
 filelist = filelist([filelist.bytes]>0); %Remove all empty files from the list
 
-working_buff=[];
 mkdir(strcat(working_dir,'/comb/'));
 open_flag=0;
 
@@ -15,21 +30,10 @@ record_list =[];
 datastruct = textscan(fid,fileformatspec,1000);
 record_list(:,1:2) = [datastruct{1} datastruct{2}];
 for i=3:numField
+    %boolean data is written to .dat file as 'TRUE'/'FALSE' - convert to 1/0
     record_list(:,i) = strcmp(datastruct{:,i},'TRUE');
 end
 fclose(fid);
-
-% for i=1:1000    
-%     [traj] = fscanf(fid,'%f',2);
-%     if numel(traj)~=0
-%         for j=1:4
-%             state_char = fscanf(fid,'%s',1);
-%             states(j)=double(uint8(state_char(1))==84)*j;     
-%         end
-%         record_list(i,:) = [traj' states];
-%     end
-% end
-
 
 working_buff = record_list;
     
@@ -42,18 +46,6 @@ for i = 2:(length(filelist))
     for kk=3:numField
         record_list(:,kk) = strcmp(datastruct{:,kk},'TRUE');
     end
-    
-   
-    %     for m=1:1000
-    %         [traj] = fscanf(fid,'%f',2);
-    %         if numel(traj)~=0
-    %             for n=1:4
-    %                 state_char = fscanf(fid,'%s',1);
-    %                 states(n)=double(uint8(state_char(1))==84)*n;
-    %             end
-    %         end
-    %         record_list(m,:) = [traj' states ];
-    %     end
     
     if ((framenumber_prev+1)==frame_number)
         working_buff= [working_buff;record_list];

@@ -1,11 +1,17 @@
 function activity_summary_heat_maps(dirlist,varargin)
-%activity_summary_heat_maps(dirlist) plots the activity heat map, velocity
-%and acceleration profiles including variation on a single figure
+% activity_summary_heat_maps(dirlist, [bin]) 
+%
+%   plots the activity, velocity, velocity variation, acceleration,
+%   acceleration variation, normal acceleration, and radial acceleration on a
+%   single figure
+%
 % ARGUMENTS:
-%   dirlist :: list of days (directory struct representation)
-%   OPTIONAL:
-%   ax :: at least 6 axes (different) instructing
-%       activity_summary_heat_maps where to plot distributions
+%
+%       dirlist :: list of days (directory struct representation)
+%
+% OPTIONAL:
+%       ax :: at least 6 axes (different) instructing
+%           activity_summary_heat_maps where to plot distributions
 tic;
 default = {5, []};
 numvarargs = length(varargin);
