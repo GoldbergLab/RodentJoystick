@@ -1,21 +1,37 @@
-%multi_doAll is a robust post processing function that can perform exactly
-%what doAllpp does, but for a list of directories. It will not crash on
-%single day failure, instead generating a report of all days that failed.
-%It will also automatically exclude erroneous additions to dir_list,
-%filtering out non directory items.
-%failures is a struct containing error reports categorized by type of
-%error. Each field is a category of error and contains a cell list of
-%entries in dir_list that resulted in failure (possibly empty list).
-%takes an optional argument computeflag that decides what set of post
-%processing scripts to run
-%   2 - runs all
-%   1 - runs just basic jstruct creation and .dat combination
-%   0 - runs only statistics/further post processing computation (requires
-%       jstruct to be saved to directory)
-%Outputs
-%   report - n x 3 cell array. third column is status (failure type,
-%       success), second column is error message, if it exists, and first
-%       column is directory name.
+% [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
+%
+%   a robust post processing function that can perform exactly
+%   what doAllpp does, but for a list of directories. It will not crash on
+%   single day failure, instead generating a log of analysis attempts
+%   Automatically excludes erroneous additions to dir_list, filtering out 
+%   non directory items. 
+%
+% OUTPUTS:
+%
+%       report :: n x 3 cell array. third column is status (failure type,
+%           success), second column is error message, if it exists, and 
+%           first column is directory name.
+%
+%       actual_count :: count of entries in dir_list that were actually
+%           directories
+%   
+%       succeed :: number of entries in dir_list that multi_doAll succeeded
+%           in its analysis
+%
+% ARGUMENTS:
+%       
+%       dir_list :: list of directories (in struct representation) that
+%           need to be analyzed
+%
+% OPTIONAL ARGUMENTS:
+%
+%       computeflag :: flag instructing what post processing analysis to perform
+%           2 - runs all analysis
+%           1 - jstruct creation, .dat combination, contingency folder
+%               combining
+%           0 - statistics/specific post processing (requires
+%               jstruct to be saved to directory)
+
 
 function [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
 default = {2};
