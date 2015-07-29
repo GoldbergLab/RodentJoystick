@@ -70,15 +70,20 @@ rewtimes = rewtimes';
 js2rew = js2rew';
 ht_hist = histc(holdtimes, time);
 rw_or_stop_hist = histc(rw_or_stop, time);
-rew_hist = histc(rewtimes, time);
-js2rew_hist = histc(js2rew, time);
-rewrate_hist = rew_hist./ht_hist;
+if isempty(rewtimes)
+    rew_hist = zeros(length(time), 1);
+    js2rew_hist = zeros(length(time), 1);
+else
+    rew_hist = histc(rewtimes, time);
+    js2rew_hist = histc(js2rew, time);
+end
 
-ht_hist = ht_hist./sum(ht_hist);
-rw_or_stop_hist = rw_or_stop_hist./sum(rw_or_stop_hist);
-rew_hist = rew_hist./sum(rew_hist);
-js2rew_hist = js2rew_hist./sum(js2rew_hist);
+rewrate_hist = (rew_hist./ht_hist);
 
+ht_hist = (ht_hist./sum(ht_hist));
+rw_or_stop_hist = (rw_or_stop_hist./sum(rw_or_stop_hist));
+rew_hist = (rew_hist./sum(rew_hist));
+js2rew_hist = (js2rew_hist./sum(js2rew_hist));
 
 tmpstats.reward = prctile(rewtimes, [25 50 75]);
 tmpstats.reward(4) = mean(rewtimes);

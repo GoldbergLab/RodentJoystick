@@ -1,4 +1,4 @@
-function [hold_time_sug,max_cont_len,hold_len]=xy_holddist(jstruct,holdthresh,pccorrect)
+function [hold_time_sug,max_cont_len]=xy_holddist(jstruct,holdthresh,pccorrect)
 
 rec_len = length(jstruct);
 np_js=0;
