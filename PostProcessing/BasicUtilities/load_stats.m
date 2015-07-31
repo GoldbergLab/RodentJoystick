@@ -1,9 +1,31 @@
 function [statslist, dates, days] = load_stats(dirlist, combineflag)
-%statslist is a list of stats structs - not structs containing filenames - the
-%stats(2) is an actual stats struct
-%dates is a cell array of strings corresponding to the date in the format
-%mm/dd/yy - days is the same information, but in the number format
-%if combineflag == 1, then dates is the string indicating the time range
+%[statslist, dates, days] = load_stats(dirlist, combineflag) attempts
+%   to load the stats structures from the directories in dirlist.
+%
+% OUTPUTS:
+%
+%   statslist :: struct array of stats structures - not structs containing
+%       filenames like used to be defined:
+%       I.e. statslist(2) is an actual stat structure
+%
+%   dates :: a cell array of strings corresponding to the dates of each
+%       stats struct in the format mm/dd/yy
+%
+%   days :: a vector containing MATLAB real number representation of the
+%       day
+%
+% ARGS:
+%   
+%   dirlist :: struct representation of a list of directories (usually
+%       obtained using the utility rdir). All entries in the list must have
+%       been post processed. load_stats is not robust - if a single day
+%       fails to load, the function will crash.
+%   
+%   combineflag :: a flag 1/0 that instructs load_stats whether or not
+%       to combine all data from all directories into a single day
+%       If combine flag is 1, then load_stats combines all data, and
+%       dates becomes a single cell string with the date range in the
+%       format 'mm/dd/yy - mm/dd/yy'
 
 if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data
