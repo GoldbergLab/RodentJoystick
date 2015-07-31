@@ -1,7 +1,25 @@
 function [newloc] = combine_contingencies(dir)
+% [newloc] = combine_contingencies(dir)
+%
+%   takes a directory of raw, unprocessed data, and
+%   moves it to the correct folder based on contingency information.
+%   Recall that raw data is written in the format 
+%       expt_dir\Box_<i>_<mouse id>\<date>_<contingency>\*.dat
+%   Processed data, however, is stored in the following manner:
+%       expt_dir\Box_<i>_<mouse id>\<date>_<contingency>\<date>\*.dat
+%   combine_contingencies executes this step, moving data from one folder
+%   to another. For specifics, see the wiki on the overall file
+%   managment/organization system.
+%
+% OUTPUTS:
+%
+%       newloc :: a string with the new location of the moved data
+%
+% ARGUMENTS: 
+%
+%       dir :: a string representation of the directory with raw data
 
-% assumption here that dir is in format:
-% expt_dir\Box_<i>_<mouse id>\<date>_<contingency>\*.dat
+
 entries = strsplit(dir, '\');
 datecontingency = entries{end};
 basepath = strjoin(entries(1:end-1), '\');

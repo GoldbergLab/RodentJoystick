@@ -1,35 +1,50 @@
-% xy_makestruct(working_dir) takes all the .mat files in working_dir and
-% processes all of them to create a single jstruct that stores a summary of
-% all the data from a single day:
-% the resulting jstruct is a vector where each entry is a structure with
-% numerous fields.
-% So each jstruct(i) for all i has the following fields
+%[jstruct] = xy_makestruct(working_dir) 
+%
+%   xy_makestruct(working_dir) takes all the .mat files in working_dir and
+%   processes all of them to create a single jstruct that stores a summary of
+%   all the data from a single day:
+%   the resulting jstruct is a vector where each entry is a structure with
+%   numerous fields.
+%
+% OUTPUT:
+%
+%   Each jstruct(i) for all i has the following fields
+%
 %   filename :: name of the combined .mat file in the following format: 
 %       [frameno (10)]_Box_[0-9]_[Date (9)] - number in parentheses
 %       indicates number of characters
+%
 %   path :: another structure which is a vector listing the .dat files used
 %       to generate the combined .mat file. Since this usually is not
 %       necessary, further information can be found by looking at the
 %       structure itself
+%
 %   real_time :: the time (in MATLAB standard double representation of
-%   time) of the beginning of the element in the jstruct.
+%       time) of the beginning of the element in the jstruct.
 %       (so subsequent absolute time is with real_time + onset/1000) where
 %       onset is from data below
 %
-%   NOTE: all following information uses milliseconds as a time scale with
+%   NOTE: all following fields use milliseconds as a time scale with
 %   time 0 being the start of the entire block of data.
 %
 %   traj_x :: vector containing the x-trajectory information
+%
 %   traj_y :: vector containing the y-trajectory information
+%
 %   np_pairs :: an m x 2 array containing the pairs of (onset, offset)
 %       times of the nose poke sensor. m>0
+%
 %   js_pairs_r :: an m x 2 array containing the pairs of (onset, offset)
 %       times of the joystick touch sensor. m>=0
+%
 %   js_pairs_l :: an m x 2 array containing the pairs of (onset, offset)
 %       times of the post touch sensor. m>=0
+%
 %   reward_onset :: a vector containingonset times of reward
+%
 %   js_reward :: vector of 1/0 indicating which deflections were
 %       rewarded
+%
 %   np_js_start :: start of trajectory
 function [jstruct] = xy_makestruct(working_dir)
 
