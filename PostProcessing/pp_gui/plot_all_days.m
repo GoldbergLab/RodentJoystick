@@ -91,13 +91,14 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    multi_time_distr(dirlist, arg1, 'single', combineflag, arg2, inf, axes(axnum));
+    norm = str2num(arg2);
+    rewonly = str2num(arg3);
+    multi_time_distr(dirlist, arg1, 'single', combineflag, norm, rewonly, inf, axes(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
     rewrate = str2num(arg1);
     holdtime = str2num(arg2);
     thresh = str2num(arg3);
-    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, axes(axnum));
+    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, 1 , axes(axnum));
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);

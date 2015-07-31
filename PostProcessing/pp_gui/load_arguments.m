@@ -68,6 +68,8 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1label = 'Interv'; %Histogram interval (min)
     arg2 = '0';
     arg2label = 'Normalize';
+    arg3 = '0';
+    arg3label = 'Rew Only';
 elseif strcmp(plotname, 'JS Touch Dist')
     arg1 = '0.25';
     arg1label = 'Rew Rate';

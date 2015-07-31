@@ -11,6 +11,8 @@
 %   interval :: the interval used for generating data/histogram bins (minutes)
 %       PRE: must be greater than 0 (should also be an integer for
 %           meaningful results)
+%   normalize :: flag indicating whether to normalize plots to a
+%   distribution or not.
 %   plotflag:: the flag indicating what generate_time_distr should do
 %       1 - creates a plot on figure (fignum) with title day 
 %       0 - returns data of nose_poke, reward, and times for
@@ -29,14 +31,14 @@
 
       
 function [np_plot, rew_plot, day, times, labels] = generate_time_distr(jstruct, varargin)
-default = {15, 0, 1, [], 'r'};
+default = {15, 0, 1, 0, [], 'r'};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error(['too many arguments (> 6), only one required ' ... 
-            'and five optional.']);
+if numvarargs > 6
+    error(['too many arguments (> 7), only one required ' ... 
+            'and six optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interval, normalize, plotflag, ax, color] = default{:};
+[interval, normalize, plotflag, rewonly, ax, color] = default{:};
 if plotflag == 1 && length(ax) <1; figure; ax(1) = gca(); end
 
 interval = interval*60;
@@ -48,7 +50,7 @@ labels.ylabel = 'Count';
 labels.legend{1} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Nosepoke'); 
 labels.legend{2} = strcat(datestr(floor(day), 'mm/dd/yy'),' - Reward');
 if plotflag == 1
-    line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize);
+    line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize, rewonly);
 end
 labels.line = line;
 end
@@ -141,17 +143,26 @@ end
 %   label :: string labeling the y-axis
 %   day :: an integer representing the MATLAB day
 % and ontimes, the time when the sensor comes on
-function line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize)
+function line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize, rewonly)
     axes(ax);
     hold on;
     xlabel(labels.xlabel);
     title(labels.title);
     if normalize == 1
+        try
+            rew_plot = rew_plot/np_plot;
+        catch
+            rew_plot = zeros(length(np_plot), 1);
+        end
         np_plot = np_plot/sum(np_plot);
-        rew_plot = rew_plot/sum(rew_plot);
     end
-    line = stairs(times, np_plot, color);
-    stairs(times, rew_plot, color, 'LineStyle', ':');
+    if ~rewonly
+        line = stairs(times, np_plot, color);
+        stairs(times, rew_plot, color, 'LineStyle', ':');
+    else
+        line = stairs(times, rew_plot, color);
+        disp(size(line));
+    end
     %legend(labels.legend{1}, labels.legend{2});
     legend('boxoff');
     axis([0, 24, 0, inf]);

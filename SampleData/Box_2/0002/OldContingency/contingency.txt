@@ -1,4 +1,0 @@
-50ms 100% 1
-True
-True
-False

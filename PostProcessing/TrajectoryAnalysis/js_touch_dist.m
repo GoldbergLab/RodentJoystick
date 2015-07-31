@@ -9,12 +9,12 @@
 %   dist_thresh :: the contingency used for the mice training
 %   all_traj_flag :: if all_traj_flag == 1, function looks at all valid
 %       trajectories within the nosepoke - otherwise, function only
-%       examines the trajectory with the longest hold time.
+%       examines the hold time of the first contact.
 % OUTPUT:
 %   dist - the recommended threshold for the distance
 %   
 function [set_dist, med_time] = js_touch_dist(stats, varargin)
-default = {300, 0.25, 50, 0, 1, [], 'r'};
+default = {300, 0.25, 50, 1, 0, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 7
     error('too many arguments (> 8), only 1 required and 7 optional.');
