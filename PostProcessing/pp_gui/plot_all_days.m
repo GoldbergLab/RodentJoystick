@@ -43,8 +43,9 @@ cla(axes(axnum), 'reset');
 %    sometimes arguments will be '' or '-';
 %
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
-    arg1 = str2num(arg1);
-    np_js_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
+    interv = str2num(arg1);
+    norm = str2num(arg2);
+    np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = str2num(arg1);
     np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
@@ -91,17 +92,22 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     arg1 = str2num(arg1);
-    norm = str2num(arg2);
-    rewonly = str2num(arg3);
-    multi_time_distr(dirlist, arg1, 'single', combineflag, norm, rewonly, inf, axes(axnum));
+    arg2 = str2num(arg2);
+    multi_time_distr(dirlist, arg1, 'single', combineflag, arg2, inf, axes(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
     rewrate = str2num(arg1);
     holdtime = str2num(arg2);
     thresh = str2num(arg3);
-    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, 1 , axes(axnum));
+    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, axes(axnum));
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
+elseif strcmp(plotname, 'XY Hold Dist')
+    rewrate = str2num(arg1);
+    targcht = str2num(arg2);
+    [~, htstr] = multi_xy_holddist(dirlist, targcht, rewrate, combineflag);
+    htstr = ['XY Hold Dist: ';htstr];
+    handles = update_console(handles, htstr);
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')

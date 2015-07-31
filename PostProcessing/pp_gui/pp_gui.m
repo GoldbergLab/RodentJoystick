@@ -123,7 +123,7 @@ function selectdays_Callback(hObject, eventdata, handles)
 try
     startdir = handles.startdir;
 catch
-    startdir = 'Z:\expt1\';
+    startdir = 'K:\DataSync\expt_opto_thal_var_2\';
 end
 tempdirlist = uipickfiles('filter',startdir, 'output', 'struct');
 if ~isempty(tempdirlist)
