@@ -148,12 +148,12 @@ function filelist_box_Callback(hObject, eventdata, handles)
  axes(handles.axes1)
  cla
  plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax,traj_x*(6.35/100),'k','LineWidth',2);
- axis(handles.axes1,[xmin xmax -6.5 6.5])
+ axis(handles.axes1,[xmin xmax -7 7])
  
  axes(handles.axes2)
  cla
  plot(handles.axes2,(1/samp_rate):(1/samp_rate):xmax,traj_y*(6.35/100),'k','LineWidth',2);
- axis(handles.axes2,[xmin xmax -6.5 6.5])
+ axis(handles.axes2,[xmin xmax -7 7])
  
  axes(handles.axes3)
  cla
@@ -168,7 +168,7 @@ function filelist_box_Callback(hObject, eventdata, handles)
  axes(handles.axes5)
  cla
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,(((traj_x).^2+(traj_y).^2).^(0.5))*(6.35/100),'LineWidth',2)
- axis(handles.axes5,[xmin xmax  0 7]);
+ axis(handles.axes5,[xmin xmax  0 7.5]);
  hold on
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_r*1.5,'k','LineWidth',2);
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_l*1,'r','LineWidth',2);

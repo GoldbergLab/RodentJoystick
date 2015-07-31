@@ -3,8 +3,8 @@ function [set_distances, set_distances_strings] = multi_js_touch_dist(dirlist,va
 %generates distance distributions and js_touch_dist for multiple days
 default = {0.25, 50, 300, 0, 1, []};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [targ_reward, dist_thresh, targ_time, combineflag, plotflag, ax] = default{:};
