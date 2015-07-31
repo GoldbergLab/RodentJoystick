@@ -1,63 +1,81 @@
 function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %[bin_summary, labels, graphgroups] = 
-%   trajectory_analysis(stats, [PLOT_RANGE,TIME_RANGE, CONTL, pflag, datestr, sflag, axeslst])
-%   plots the trajectory distributions from stats using the (optional)
-%   arguments for a hold time range, contigency lines (constants just below the
-%   function header), whether to actually plot data, string representation
-%   of the date, what group of statistics to plot, and also a list of axes
-%   on which to plot the data
+%   trajectory_analysis(stats, [derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag])
+%
+%   plots trajectory profiles from stats using the (optional)
+%   arguments for a hold time range, contigency lines, whether to actually 
+%   plot data, string representation of the date, what group of statistics
+%   to plot, and also a list of axes on which to plot the data
 %   It returns the bin statistics, labels for the axes to be used in the gui,
 %   and the figure handle, if no axes list was given.
 %   EXAMPLE:  
-%       trajectory_analysis(stats,4)
-%       trajectory_analysis(stats,4,[1000 1600], [400 40 40])
-%   OUTPUTS:
-%       bin_summary :: a struct with the following fields:
-%           lt, geq - bin contains all trajectories with hold times in
-%               the length geq - lt (greater or equal to, and strictly less than)
-%           med - double vector with median at each time point
-%           upperbnd - double vector of 75th percentile at each time point
-%           lowerbnd - double vector of 25th percentile at each time point
-%           mean - double vector of mean at each time point
-%           stdev - double vector of standard deviation at each time point
-%           numbers - double vector containing percentage of trajectories
-%               from bin used at each point. (time 0 will always be 100).
-%       labels :: a struct containing the x, y labels (same for all bins)
-%           and the titles for each plot
+%       trajectory_analysis(stats, 0)
+%       trajectory_analysis(stats, 0, 4,[1000 1600], [400 40 40])
+%
+% OUTPUTS:
+%
+%   bin_summary :: a struct with the following fields:
+%       lt, geq - bin contains all trajectories with hold times in
+%           the length geq - lt (greater or equal to, and strictly less than)
+%       med - double vector with median at each time point
+%       upperbnd - double vector of 75th percentile at each time point
+%       lowerbnd - double vector of 25th percentile at each time point
+%       mean - double vector of mean at each time point
+%       stdev - double vector of standard deviation at each time point
+%       numbers - double vector containing percentage of trajectories
+%           from bin used at each point. (time 0 will always be 100).
 %       lhandle :: the figure handle corresponding to the plot generate when
 %           'plot' flag is used, otherwise empty
-%   ARGUMENTS: 
+%
+% ARGUMENTS:
+%
 %       stats :: the result from xy_getstats(jstruct) for some jstruct
-%       OPTIONAL ARGS:
-%       plot_range :: number representing number of plots. DEFAULT: 4
+%
+% OPTIONAL:
+%       
+%       derivative :: integer in range [0, 2] saying if trajectory analysis
+%           should plot the 0th, 1st, or 2nd derivatives of trajectory 
+%           position (corresponding to position, velocity, acceleration);
+%       
+%       plot_range :: number representing number of plots. 
+%           DEFAULT: 4
+%
 %       hold_time_range :: the time range [A B] (ms) for which trajectories
 %           are included, i.e. any trajectory with a hold time in the range
 %           [A, B] is analyzed
 %           DEFAULT: [400 1400]
+%
 %       plot_contingencies :: [HT T1 T2] this vector tells which lines to
 %           indicate contingencies as a reference - 
 %           HT is the hold time, T1 and T2 are the respective deviations 
 %               EX: [300 30 60]
 %           value of [0 0] or [0 0 0] doesn't plot any lines   
 %           DEFAULT: [0 0 0] - no plotting 
+%
 %       pflag :: 1 if plots are desired, otherwise just returns bin statistics
 %           DEFAULT: 1
+%
 %       axes_lst :: a list of axes handles of where to plot. If specified,
 %           length(axes_lst) >= plot_range
+%           DEFAULT: []
+%
 %       color :: color to plot all data with
+%           DEFAULT: 'r'
+%
 %       multi :: 2 if both quartiles and percents should also be plotted
-%               1 if just both quartiles in addition to median
-%               0 plots just median (useful when multiple days prevents a clear
-%               graph
+%           1 if just both quartiles in addition to median
+%           0 plots just median (useful when multiple days prevents a clear
+%           graph)
+%           DEFAULT: 2
 
 % Argument Manipulation
-default = {4,[400 1400], [0 0 0], 1, [], 'r', 2};
+default = {0, 4,[400 1400], [0 0 0], 1, [], 'r', 2};
 numvarargs = length(varargin);
-if numvarargs > 7
-    error('too many arguments (> 8), only one required and seven optional.');
+if numvarargs > 8
+    error('too many arguments (> 9), only one required and eight optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag] = default{:};
+[derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag] = default{:};
 
 %divide the desired time range into number of bins based on number of plots
 %desired
@@ -67,13 +85,12 @@ tstruct=stats.traj_struct;
 totaltraj = length(tstruct);
 
 %perform processing
-sortedtraj = sort_traj_into_bins(tstruct, bins);
-
+sortedtraj = sort_traj_into_bins(tstruct, derivflag, bins);
 labels.xlabel = 'Time(ms)';
 labels.ylabel = 'Joystick Magnitude (%)';
 
 %if trajectory_analysis is given no axes handles, but expected to plot,
-%generate its own
+%generate its own figure & subplots
 if pflag == 1 && length(axeslst)<1;
     figure('Position', [100, 100, 1440, 900]);
     for i = 1:PLOT_RANGE
@@ -87,6 +104,7 @@ bin_summary = struct;
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
     [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
+    %store computed data
     bin_summary(i).mean = mean; bin_summary(i).md = median;
     bin_summary(i).stdev = stdev;  bin_summary(i).upperbnd = upperbnd;
     bin_summary(i).lowerbnd = lowerbnd; 
@@ -104,9 +122,6 @@ for i = 1:PLOT_RANGE
         axes(axeslst(i));
         ubd = upperbnd; lbd = lowerbnd; md = median; me = mean; stdv = stdev;
         lhandle = plot(time, md, color, 'LineWidth', 1); hold on;
-%       plot(time, me+stdv, color, 'LineStyle', ':', 'Parent', graphgroups); hold on;
-%       plot(time, me, color, 'Parent', graphgroups); 
-%       plot(time, me-stdv, color, 'LineStyle', ':', 'Parent', graphgroups);
         if multiflag
             plot(time, ubd, color, 'LineStyle', ':');
             plot(time, lbd, color, 'LineStyle', ':');
@@ -115,8 +130,12 @@ for i = 1:PLOT_RANGE
             plot( time, numbers, color, 'LineStyle', '--');
         end
         title(axeslst(i), labels.title{i}, 'FontSize', 8); hold on;
-        axis(axeslst(i), [0, bin.lt, 0, 100]);
-        ylabel(axeslst(i), labels.xlabel); xlabel(axeslst(i), labels.ylabel);
+        if derivflag
+            axis(axeslst(i), [0, bin.lt, -5, 5]);
+        else
+            axis(axeslst(i), [0, bin.lt, 0, 100]);
+        end
+        xlabel(axeslst(i), labels.xlabel); ylabel(axeslst(i), labels.ylabel);
         
         if sum(CONTL)>0
             CONTLINE_COLORS = [0.4, 0.4, 0.4];
@@ -145,14 +164,15 @@ end
 function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats(bin)
     for time = 1:(bin.lt-1) 
         time_pos_ind = 0;
+        %iterate through all trajectories in the bin;
         for i = 1:(length(bin.trajectory))
             try 
                 pos = bin.trajectory(i).magtraj(time); 
                 %attempt to access the position of trajectory i at time
             catch
-                pos = -1000; % error signal if trajectory doesn't go that far
+                pos = -10000; % error signal if trajectory doesn't go that far
             end
-            if pos > -1
+            if pos > -10000
                 time_pos_ind = time_pos_ind+1;
                 bin_summary(time).position(time_pos_ind) = pos;
             end
@@ -181,7 +201,15 @@ end
 % will be a vector of structs containing fields for the range
 % each struct has a field for a vector of structs containing
 % trajectories
-function sortedtraj = sort_traj_into_bins(tstruct, bins)
+% sortedtraj is a struct with the following fields:
+%   sortedtraj(i) contains all trajectories with holdtimes in the range
+%   [sortedtraj(i).geq, sortedtraj(i).lt)
+%   there is also a field trajectory, which is another struct containing
+%       multiple trajectories' information - can be velocity, acceleration,
+%       pos.
+function sortedtraj = sort_traj_into_bins(tstruct, derivflag, bins)
+derivflag = min(max(derivflag, 0), 3);
+disp(derivflag);
 for i = 2:length(bins)
    sortedtraj(i-1) = struct('geq', bins(i-1),'lt',bins(i));
 end
@@ -194,7 +222,13 @@ for i = 1:length(tstruct)
     if bin_ind ~= -1
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', tstruct(i).magtraj(1:tstruct(i).rw_or_stop), 'time', tstruct(i).rw_or_stop);
+        data = tstruct(i).magtraj(1:tstruct(i).rw_or_stop);
+        derivative = derivflag;
+        while derivative
+            data = diff(data);
+            derivative = derivative - 1;
+        end
+        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', data, 'time', tstruct(i).rw_or_stop);
     end
 end
 end
