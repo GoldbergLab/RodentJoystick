@@ -58,6 +58,7 @@ if existingdir
     disp(match);
 end
 
+combexist = 0;
 try
     if exist([dir, '\comb'], 'file')==7; combexist = 1; end;
     if existingdir
@@ -69,6 +70,7 @@ try
         movefile([dir,'\*'], [newloc,'\'], 'f');
     end
 catch e
+disp(getReport(e));
     if combexist
         try
             movefile([dir, '\comb'], newloc);
@@ -76,7 +78,6 @@ catch e
             disp(getReport(e));
         end
     end
-    disp(getReport(e));
     %for some reason, MATLAB will move the files successfully, but throw an
     %error regardless - for that reason the catch block is here instead of
     %passing the error to doAllpp
