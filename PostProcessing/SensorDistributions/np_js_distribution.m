@@ -1,34 +1,52 @@
 function [data, labels] = np_js_distribution(dirlist, varargin)
-%np_js_distribution(dirlist, [interv, combineflag, plotflag, ax]) 
+%np_js_distribution(dirlist, [interv, combineflag, plotflag, ax])
+% 
 % plots the nose poke vs joystick touch time distribution
 % for the data from a given day. If multiple days are given, it
 % plots all data on the same axes
+%
 % ARGUMENTS:
-%   dirlist :: list of directory structs (with name field)
-%   interv :: histogram interval (optional, default 20ms)
-%   combineflag :: if multiple jstructs are given, combines all data and
-%       makes a single plot if 1, plots structs individually if 0
-%       (optional, default 0)
-%   plotflag :: whether to plot (1) or just return data (0)
-%       (optional, default 1)
-%   ax :: list of axes handles - plots all data (if multiple jstructs) on
-%       the first element in ax. If no axes are given and plotflag is on,
-%       creates a new figure (optional, default empty)
+%
+%       dirlist :: list of directory structs (with name field)
+%
+% OPTIONAL ARGS:
+%
+%       interv :: histogram interval (ms)
+%           DEFAULT: 20
+%
+%       normalize :: a 1/0 flag instructing whether to normalize the
+%           distribution to a probability distribution, or preserve raw counts.
+%           DEFAULT : 1
+%
+%       combineflag :: if multiple jstructs are given, whether to combine all
+%           data (1) or plot days individually (0)
+%           DEFAULT : 0
+%
+%       plotflag :: whether to plot (1) or just return data (0)
+%           DEFAULT : 1
+%       
+%       ax :: list of axes handles - plots all data (if multiple jstructs) on
+%           the first element in ax. If no axes are given and plotflag is on,
+%           creates a new figure
+%           DEFAULT : []
+%
 % OUTPUTS:
-%   data :: cell array, where each cell is an n x 2 matrix representing the
-%       dist_times and probability data at each bin
-%   labels :: a struct containing the x, y, and title labels for plotting
+%
+%       data :: cell array, where each cell is an n x 2 matrix representing the
+%           dist_times and probability data at each bin
+%
+%       labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-default = {20, 0, 1, [], colors(1)};
+default = {20, 1, 0, 1, [], colors(1)};
 numvarargs = length(varargin);
 if numvarargs > 5
     error(['too many arguments (> 6), only one required ' ... 
             'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, combineflag, plotflag, ax, combinecolor] = default{:};
+[interv, normalize, combineflag, plotflag, ax, combinecolor] = default{:};
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
@@ -49,7 +67,9 @@ labels.legend = dates;
 for i=1:length(statslist)
     stats = statslist(i);
     np_js = histc(stats.np_js,dist_time);
-    np_js = np_js./(sum(np_js));
+    if normalize
+        np_js = np_js./(sum(np_js));
+    end
     data{i} = [dist_time', np_js];
 end
 
