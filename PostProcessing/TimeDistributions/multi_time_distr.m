@@ -1,23 +1,38 @@
 % multi_time_distr(dirlist[, interval, layout, combineflag, lim, ax]) generates 
-% histogram time distributions of nosepokes and rewards for all jstructs 
-% in the list dirlist - only dirlist is a required argument, rest
-% are optional
+%
+%   histogram time distributions of nosepokes and rewards for all jstructs 
+%   in the list dirlist - only dirlist is a required argument, rest
+%   are optional
+%
 % ARGUMENTS:
+%
 %   dirlist :: a list of files referring to saved (and post processed) dir:
 %       Ex: dirlist(1).name = 'K:\expt4\expt_4_0004_16\Box_2\2_18_2015'
-%   OPTIONAL:
+%
+% OPTIONAL:
+%
 %   interval :: interval of time in minutes for histogram bin size 
 %       positive nonzero integer
+%
 %   layout :: flag tells multi_time_distr whether to put all plots on a
 %       single figure or on its own subplot
 %       'single' :: put each plot on the same figure
 %       'col' :: put each plot on a single figure in a column
+%
 %   combineflag :: 
 %       if 'single' is selected, combines data when 1, and plots individually if 1.
 %       otherwise does nothing
+%
+%   normalize :: normalizes to a distribution summing to 1 for each plot
+%       (1), or alternatively leaves as is (0)
+%
+%   rewonly :: flag that enabled plots only reward rate by time (1)
+%
 %   ylim :: changes the y-axis limit for all plots if 'col' is selected.
 %       otherwise does nothing
+%
 %   ax :: axes for what to plot data on.
+%
 % OUTPUTS: None
 
 function [data, labels] = multi_time_distr(dirlist, varargin)
