@@ -7,6 +7,10 @@ axes(fullplot_Axes);
 cla; axis manual;
 hold on;
 
+actual_traj_time = traj_struct(pl_index).js_onset;
+actual_traj_time = (actual_traj_time/1000)/(24*60*60)+handles.start_time;
+set(handles.time_text, 'String', datestr(actual_traj_time, 'HH:MM:SS'));
+
 %attempt getting contingency information from directory;
 try
     working_dir = get(handles.working_dir_text,'String');
@@ -14,7 +18,15 @@ try
     datecont = strsplit(stuff{end-1}, '_');
     thresh2 = str2num(datecont{2})*RADIUS/100;
     thresh = str2num(datecont{4})*RADIUS/100;
+    holdtime = str2num(datecont{3})*RADIUS/100;
+    minangle = str2num(datecont{5});
+    maxangle = str2num(datecont{6});
 catch
+    thresh = 0.5*RADIUS;
+    thresh2 = 0.1*RADIUS;
+    holdtime = 300;
+    minangle = -180;
+    maxangle = 180;
 end
 
 %Plot Inner Thresh
@@ -28,8 +40,8 @@ y = thresh2*sind(0:1:360);
 plot(x,y,'k','LineWidth',2);
 
 %Plot Sector
-rw_fr = str2num(get(handles.rw_zone_fr,'String'));
-rw_to = str2num(get(handles.rw_zone_to,'String'));
+rw_fr = minangle;
+rw_to = maxangle;
 x = cosd(1:1:360); y = sind(1:1:360);
 
 if abs(rw_fr-rw_to) < 360
