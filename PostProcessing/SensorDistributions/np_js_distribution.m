@@ -15,11 +15,11 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %           DEFAULT: 20
 %
 %       normalize :: a 1/0 flag instructing whether to normalize the
-%           distribution to a probability distribution, or preserve raw counts.
+%           distribution to a probability distribution, or keep raw counts.
 %           DEFAULT : 1
 %
-%       combineflag :: if multiple jstructs are given, whether to combine all
-%           data (1) or plot days individually (0)
+%       combineflag :: if multiple directories are given, whether to 
+%           combine all data (1) or plot days individually (0)
 %           DEFAULT : 0
 %
 %       plotflag :: whether to plot (1) or just return data (0)
@@ -39,14 +39,14 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 
 %% Argument Handling
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-default = {20, 1, 0, 1, [], colors(1)};
+default = {20, 1, 0, 1, []};
 numvarargs = length(varargin);
 if numvarargs > 5
     error(['too many arguments (> 6), only one required ' ... 
             'and five optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, normalize, combineflag, plotflag, ax, combinecolor] = default{:};
+[interv, normalize, combineflag, plotflag, ax] = default{:};
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';

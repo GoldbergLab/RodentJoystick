@@ -6,18 +6,31 @@
 % OUTPUT:
 %
 %       stats has the following fields:
+%
 %       np_count :: nose poke count for the day
+%
 %       js_r_count :: number of right joystick touches
+%
 %       js_l_count :: number of left joystick touches
+%
 %       pellet_count :: number of pellets dispensed fo the day.
+%
 %       np_js :: vector of nosepoke to joystick touch onset times
+%
 %       np_js_post :: vector of nosepoke to post touch onset times
+%
 %       numtraj ::: the number of trajectories that the mouse attempted
+%
 %       traj_struct :: struct of trajectories, with each element containing the
 %           following fields
 %           traj_x :: vector of x position at each ms
 %           traj_y :: vector of y position at each ms
 %           magtraj :: vector of trajectory magnitude at each ms
+%           vel_x :: x_velocity in units of % deviation / ms
+%           vel_y :: y_velocity in % deviation/ms units
+%           magvel :: velocity magnitude in % deviation/ms - but in
+%               cartesian coordinates
+%           radvel :: radial velocity in %deviation/ms
 %           js_onset :: joystick onset from start of data collection "bout"
 %           start_p :: start of nosepoke
 %           stop_p :: end of trajectory
@@ -165,8 +178,8 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).vel_x = vel_x;
                     traj_struct(k).vel_y = vel_y;
                     traj_struct(k).magtraj = mag_traj;
-                    traj_struct(k).magtraj = [0, diff(mag_traj)];
-                    traj_struct(k).magvel = sqrt(vel_x.^2 + vel_y.^2);
+                    traj_struct(k).velmag = sqrt(vel_x.^2 + vel_y.^2);
+                    traj_struct(k).radvel = [0, diff(mag_traj)];
                     traj_struct(k).js_onset = js_pairs_r(j,1);
                     traj_struct(k).start_p = start_p;
                     traj_struct(k).stop_p = stop_p;

@@ -37,17 +37,21 @@ if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution
 end
 cla(axes(axnum), 'reset');
 %% PLOTTING ROUTINES - EDIT HERE TO ADD NEW FUNCTIONS
-% The following are available to 
+% The following are available to any function call
+% dirlist - a list of directories to plot/analyze
 % arg1, arg2, arg3 are left as strings from taking from the textboxes
 %    makes it more flexible in case of string args in the future - and
 %    sometimes arguments will be '' or '-';
-%
+% combineflag - 1/0 flag instructing whether to combine all days in dirlist
+%   or leave empty
+% axes(axnum) - axes available for plotting
+%   see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
     norm = str2num(arg2);
     np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
-    arg1 = str2num(arg1);
+    interv = str2num(arg1);
     np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Hold Length Distribution (Max)')
 %   arg1label = 'Interv'; %Histogram interval (ms)

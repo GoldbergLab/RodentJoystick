@@ -1,4 +1,4 @@
-function plot_traj_xy(traj_struct,t_step,onset_index,offset_index,thresh,pl_index,handles)
+function plot_traj_xy(traj_struct,t_step,offset_index,pl_index,handles)
 
 %BOX CIRCLE RADIUS
 RADIUS = 6.35;
@@ -21,10 +21,21 @@ end
 x = thresh*cosd(0:1:360);
 y = thresh*sind(0:1:360);
 plot(x,y,'k','LineWidth',2);
+
+%Plot Outer Thresh
 x = thresh2*cosd(0:1:360);
 y = thresh2*sind(0:1:360);
 plot(x,y,'k','LineWidth',2);
 
+%Plot Sector
+rw_fr = str2num(get(handles.rw_zone_fr,'String'));
+rw_to = str2num(get(handles.rw_zone_to,'String'));
+x = cosd(1:1:360); y = sind(1:1:360);
+
+if abs(rw_fr-rw_to) < 360
+    plot(thresh*x(rw_fr:rw_to),thresh*y(rw_fr:rw_to),'c','LineWidth',2);
+    plot(thresh2*x(rw_fr:rw_to),thresh2*y(rw_fr:rw_to),'c','LineWidth',2);
+end
 
 %Plot Radius
 x = RADIUS*cosd(0:1:360);
@@ -39,8 +50,8 @@ k=pl_index;
 traj_x=traj_struct(k).traj_x;
 traj_y=traj_struct(k).traj_y;
 %Scaling from Percents and smoothing
-t_x = smooth(traj_x*(RADIUS/100), 5);
-t_y = smooth(traj_y*(RADIUS/100), 5);
+t_x = smooth(traj_x*(RADIUS/100), 3);
+t_y = smooth(traj_y*(RADIUS/100), 3);
 
 end_color = hsv2rgb([1 1 1]);
 marker_color = hsv2rgb([0.6 1 1]);
@@ -52,10 +63,8 @@ if numel(traj_x) > 0
    
     switch offset_index
         case 1
-            offset = max_value;
-        case 2
             offset = length(traj_x);
-        case 3
+        case 2
             offset = max_value;
         otherwise
             offset = length(traj_x);
