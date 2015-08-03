@@ -160,13 +160,20 @@ for struct_index=1:length(jstruct)
                     
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
+                    vel_x = [0, diff(traj_x_t)];
+                    vel_y = [0, diff(traj_y_t)];
+                    traj_struct(k).vel_x = vel_x;
+                    traj_struct(k).vel_y = vel_y;
                     traj_struct(k).magtraj = mag_traj;
+                    traj_struct(k).magtraj = [0, diff(mag_traj)];
+                    traj_struct(k).magvel = sqrt(vel_x.^2 + vel_y.^2);
                     traj_struct(k).js_onset = js_pairs_r(j,1);
                     traj_struct(k).start_p = start_p;
                     traj_struct(k).stop_p = stop_p;
                     traj_struct(k).rw = js_reward(j);
-                    traj_struct(k).rw_onset = 0;
                     traj_struct(k).laser = laser;
+                    traj_struct(k).rw_onset = 0;
+                    
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
                         onset_ind = onset_ind + 1;                        

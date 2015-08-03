@@ -94,19 +94,20 @@ function filelist_box_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
  struct_index=get(hObject,'Value');
  jstruct = handles.jstruct;
- stats = xy_getstats(jstruct(struct_index),[0 inf]);
- 
- windowSize = 20;
- 
+ stats = xy_getstats(jstruct(struct_index));
  traj_x = jstruct(struct_index).traj_x;
+ x_vel = diff(traj_x); x_vel = [0, x_vel];
+ x_vel = smooth(x_vel, 5)+2;
+ x_velref = ones(1, length(x_vel))*2;
+ x_accel = diff(x_vel); x_accel = [x_accel; 0];
  traj_y = jstruct(struct_index).traj_y;
  np_pairs = jstruct(struct_index).np_pairs;
  rw_onset = jstruct(struct_index).reward_onset;
  js_pairs_r = jstruct(struct_index).js_pairs_r;
  js_pairs_l = jstruct(struct_index).js_pairs_l;
- js_reward = jstruct(struct_index).js_reward;
  try
     laser_on = jstruct(struct_index).laser_on;
+ catch
  end
    
  samp_rate = 1000; 
@@ -142,17 +143,21 @@ function filelist_box_Callback(hObject, eventdata, handles)
      end
  end
  
- str_ls = 'bgrcmykbgrcmyk';
-
+ RADIUS = 6.35;
+ LIMIT = RADIUS*1.05;
  axes(handles.axes1)
- cla
- plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax,traj_x*(6.35/100),'k','LineWidth',2);
- axis(handles.axes1,[xmin xmax -7 7])
+ cla; hold on;
+ plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax,traj_x*(RADIUS/100),'k','LineWidth',2);
+%  plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax, x_vel *(RADIUS/10),'k','LineWidth',1, 'LineStyle', '--');
+%  plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax, x_velref *(RADIUS/10),'k','LineWidth',1, 'LineStyle', '--');
+
+ hold off;
+
+ axis(handles.axes1,[xmin xmax -LIMIT LIMIT])
  
- axes(handles.axes2)
- cla
- plot(handles.axes2,(1/samp_rate):(1/samp_rate):xmax,traj_y*(6.35/100),'k','LineWidth',2);
- axis(handles.axes2,[xmin xmax -7 7])
+ axes(handles.axes2); cla;
+ plot(handles.axes2,(1/samp_rate):(1/samp_rate):xmax,traj_y*(RADIUS/100),'k','LineWidth',2);
+ axis(handles.axes2,[xmin xmax -LIMIT LIMIT])
  
  axes(handles.axes3)
  cla
@@ -167,21 +172,19 @@ function filelist_box_Callback(hObject, eventdata, handles)
  axes(handles.axes5)
  cla
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,(((traj_x).^2+(traj_y).^2).^(0.5))*(6.35/100),'LineWidth',2)
- axis(handles.axes5,[xmin xmax  0 7.5]);
- hold on
+ axis(handles.axes5,[xmin xmax  0 LIMIT*1.08]); hold on;
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_r*1.5,'k','LineWidth',2);
  plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_l*1,'r','LineWidth',2);
  try
- plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,laser_vect*1,'g','LineWidth',2);
+    plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,laser_vect*1,'g','LineWidth',2);
  end
  
- axes(handles.axes7)
- cla
- plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_r,'k','LineWidth',2);
- hold on
- plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_l/0.8,'r','LineWidth',2);
+axes(handles.axes7); cla; hold on;
+plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_r,'k','LineWidth',2);
+plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_l/0.8,'r','LineWidth',2);
+legend({'JS'; 'Post'});
+legend('boxoff');
  axis(handles.axes7,[xmin xmax ymin 6])
-  
 % set(handles.date_text,'String',datestr(jstruct(struct_index).date_time));
  
  axes(handles.axes6);
@@ -208,15 +211,14 @@ function filelist_box_Callback(hObject, eventdata, handles)
  else
      t_step=0;
  end
- 
- onset_index = get(handles.onset_menu,'Value');
+  onset_index = get(handles.onset_menu,'Value');
  offset_index = get(handles.offset_menu,'Value');
  pl_index = 1;
  handles.pl_index = pl_index;
  if(numel(traj_struct))>0 
- plot_traj_xy(traj_struct,t_step,onset_index,offset_index,thresh,handles.pl_index,handles);
- set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
- set(handles.text_magnp,'String',num2str(length(traj_struct(pl_index).traj_x)));
+    plot_traj_xy(traj_struct,t_step,onset_index,offset_index,thresh,handles.pl_index,handles);
+    set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
+    set(handles.text_magnp,'String',num2str(length(traj_struct(pl_index).traj_x)));
  end
  
 
