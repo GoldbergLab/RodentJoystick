@@ -158,6 +158,7 @@ function line = plot_data(ax, times, np_plot, rew_plot, labels, color, normalize
     end
     if ~rewonly
         line = stairs(times, np_plot, color);
+        disp(size(line));
         stairs(times, rew_plot, color, 'LineStyle', ':');
     else
         line = stairs(times, rew_plot, color);
