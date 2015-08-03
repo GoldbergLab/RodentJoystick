@@ -92,7 +92,6 @@ function filelist_box_Callback(hObject, eventdata, handles)
 % hObject    handle to filelist_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
- contents = cellstr(get(hObject,'String'));
  struct_index=get(hObject,'Value');
  jstruct = handles.jstruct;
  stats = xy_getstats(jstruct(struct_index),[0 inf]);
@@ -107,7 +106,7 @@ function filelist_box_Callback(hObject, eventdata, handles)
  js_pairs_l = jstruct(struct_index).js_pairs_l;
  js_reward = jstruct(struct_index).js_reward;
  try
- laser_on = jstruct(struct_index).laser_on;
+    laser_on = jstruct(struct_index).laser_on;
  end
    
  samp_rate = 1000; 
@@ -139,7 +138,7 @@ function filelist_box_Callback(hObject, eventdata, handles)
  laser_vect = zeros(1,length(traj_x));
  try
      for i=1:size(laser_on,1)
-     laser_vect(laser_on(i,1):laser_on(i,2)) = 5;
+        laser_vect(laser_on(i,1):laser_on(i,2)) = 5;
      end
  end
  
@@ -257,8 +256,8 @@ function selectdir_push_Callback(hObject, eventdata, handles)
  
  handles.jstruct = jstruct;
  
- %filelist = dir(strcat(working_dir,'\*.mat'));
  %populate listbox
+ str_list = cell(size(jstruct, 2), 1);
  for i=1:size(jstruct,2)
      str_list{i} = jstruct(i).filename;
  end

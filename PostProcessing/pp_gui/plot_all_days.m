@@ -99,7 +99,7 @@ elseif strcmp(plotname, 'JS Touch Dist')
     rewrate = str2num(arg1);
     holdtime = str2num(arg2);
     thresh = str2num(arg3);
-    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, axes(axnum));
+    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, 1, axes(axnum));
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
