@@ -52,7 +52,7 @@ if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     interv = str2num(arg1);
-    np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
+    np_post_distribution(dirlist, interv, combineflag, 1, axes(axnum));
 elseif strcmp(plotname, 'Hold Length Distribution (Max)')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'Normalize'; %whether to normalize distributions

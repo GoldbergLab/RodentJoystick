@@ -70,7 +70,6 @@ for i=1:length(filelist)
     %Laser on and off
     if size(working_buff,1)>6
         laser_on = sensor_on_off_times(working_buff(7,:));
-        jstruct(i).laser_on = laser_on;
     end
     if size(working_buff,1)>7
         [lick, maxlick] = sensor_on_off_times(working_buff(8,:));
@@ -109,9 +108,13 @@ for i=1:length(filelist)
     jstruct(i).reward_onset = reward_on;
     jstruct(i).js_reward = js_reward;
     jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
-    jstruct(i).lick_on = lick;
+    try
+        jstruct(i).laser_on = laser_on;
+        jstruct(i).lick_on = lick;
+    catch
+    end
 
-      % Mark nose pokes prior to start of each joystick deflection
+    % Mark nose pokes prior to start of each joystick deflection
     start_p = zeros(size(jstruct(i).js_pairs_r,1),1);
     if numel(jstruct(i).js_pairs_r)>0 && numel(jstruct(i).np_pairs)>0
         for j=1:size(jstruct(i).js_pairs_r,1)
