@@ -79,11 +79,6 @@ elseif strcmp(plotname, 'JS Touch Dist')
     arg2label = 'Targ HT';
     arg3 = '50';
     arg3label = 'Thresh';
-elseif strcmp(plotname, 'XY Hold Dist')
-    arg1 = '0.25';
-    arg1label = 'Rew Rate';
-    arg2 = '20';
-    arg2label = 'Targ. CHT';
 elseif strcmp(plotname, 'Activity Heat Map')
     arg1 = '2'; 
     arg1label = 'Bin'; %Bin Size (min)

@@ -9,7 +9,7 @@
 %   dist_thresh :: the contingency used for the mice training
 %   all_traj_flag :: if all_traj_flag == 1, function looks at all valid
 %       trajectories within the nosepoke - otherwise, function only
-%       examines the hold time of the first contact.
+%       examines the hold time of the max contact.
 % OUTPUT:
 %   dist - the recommended threshold for the distance
 %   
