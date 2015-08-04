@@ -35,7 +35,10 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %       
 %       derivative :: integer in range [0, 2] saying if trajectory analysis
 %           should plot the 0th, 1st, or 2nd derivatives of trajectory 
-%           position (corresponding to position, velocity, acceleration);
+%           deviation (corresponding to position, radial velocity, radial
+%           acceleration) - currently only 0th derivative is supported, but
+%           future edits will change this.
+%           DEFAULT: 1
 %       
 %       plot_range :: number representing number of plots. 
 %           DEFAULT: 4
@@ -85,7 +88,7 @@ tstruct=stats.traj_struct;
 totaltraj = length(tstruct);
 
 %perform processing
-sortedtraj = sort_traj_into_bins(tstruct, derivflag, bins);
+sortedtraj = sort_traj_into_bins(tstruct, bins);
 labels.xlabel = 'Time(ms)';
 labels.ylabel = 'Joystick Magnitude (%)';
 
@@ -103,7 +106,7 @@ bin_summary = struct;
 %plotting, and actual statistics
 for i = 1:PLOT_RANGE
     bin = sortedtraj(i);
-    [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin);
+    [mean, median, stdev, numbers, upperbnd, lowerbnd] = bin_stats(bin, derivflag);
     %store computed data
     bin_summary(i).mean = mean; bin_summary(i).md = median;
     bin_summary(i).stdev = stdev;  bin_summary(i).upperbnd = upperbnd;
@@ -130,20 +133,17 @@ for i = 1:PLOT_RANGE
             plot( time, numbers, color, 'LineStyle', '--');
         end
         title(axeslst(i), labels.title{i}, 'FontSize', 8); hold on;
-        if derivflag
-            axis(axeslst(i), [0, bin.lt, -5, 5]);
-        else
-            axis(axeslst(i), [0, bin.lt, 0, 100]);
-        end
         xlabel(axeslst(i), labels.xlabel); ylabel(axeslst(i), labels.ylabel);
-        
         if sum(CONTL)>0
             CONTLINE_COLORS = [0.4, 0.4, 0.4];
-            line([0 2000], [CONTL(2) CONTL(2)], 'Color', CONTLINE_COLORS);
+            line([0 bin.lt], [CONTL(2) CONTL(2)], 'Color', CONTLINE_COLORS);
             if length(CONTL)>2
-                line([0 2000], [CONTL(3) CONTL(3)], 'Color', CONTLINE_COLORS);
+                line([0 bin.lt], [CONTL(3) CONTL(3)], 'Color', CONTLINE_COLORS);
             end
             line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
+        end
+        if derivflag || ~derivflag
+            axis(axeslst(i), [0, bin.lt, 0, 100]);
         end
     end
 end
@@ -161,13 +161,19 @@ end
 %       time i.
 % mean, median, std are all numbers representing the statistic in a given
 % time. upperbnd, lowerbnd are the 75th and 25th percentiles, respectively
-function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats(bin)
+function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats(bin, derivflag)
     for time = 1:(bin.lt-1) 
         time_pos_ind = 0;
         %iterate through all trajectories in the bin;
         for i = 1:(length(bin.trajectory))
             try 
-                pos = bin.trajectory(i).magtraj(time); 
+                if derivflag == 0
+                    pos = bin.trajectory(i).magtraj(time); 
+                elseif derivflag == 1
+                    pos = bin.trajectory(i).magtraj(time); 
+                elseif derivflag == 2
+                    pos = bin.trajectory(i).magtraj(time); 
+                end
                 %attempt to access the position of trajectory i at time
             catch
                 pos = -10000; % error signal if trajectory doesn't go that far

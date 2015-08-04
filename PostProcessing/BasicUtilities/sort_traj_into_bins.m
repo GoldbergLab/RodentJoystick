@@ -1,15 +1,11 @@
-% will be a vector of structs containing fields for the range
-% each struct has a field for a vector of structs containing
-% trajectories
-% sortedtraj is a struct with the following fields:
+% sortedtraj is a struct that stores a group of trajectories in the field
+% called trajectory
 %   sortedtraj(i) contains all trajectories with holdtimes in the range
 %   [sortedtraj(i).geq, sortedtraj(i).lt)
 %   there is also a field trajectory, which is another struct containing
 %       multiple trajectories' information - can be velocity, acceleration,
 %       pos.
-function sortedtraj = sort_traj_into_bins(tstruct, derivflag, bins)
-derivflag = min(max(derivflag, 0), 3);
-disp(derivflag);
+function sortedtraj = sort_traj_into_bins(tstruct, bins)
 for i = 2:length(bins)
    sortedtraj(i-1) = struct('geq', bins(i-1),'lt',bins(i));
 end
@@ -22,13 +18,7 @@ for i = 1:length(tstruct)
     if bin_ind ~= -1
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        data = tstruct(i).magtraj(1:tstruct(i).rw_or_stop);
-        derivative = derivflag;
-        while derivative
-            data = diff(data);
-            derivative = derivative - 1;
-        end
-        sortedtraj(bin_ind).trajectory(traj_ind)= struct('magtraj', data, 'time', tstruct(i).rw_or_stop);
+        sortedtraj(bin_ind).trajectory(traj_ind)= tstruct(i);
     end
 end
 end

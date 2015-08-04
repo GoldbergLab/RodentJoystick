@@ -44,12 +44,13 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
 [statslist, dates] = load_stats(dirlist, combineflag);
-groupings = zeros(length(statslist));
 %statflag - plot only medians if more than four days to be plotted
-statflag = ~(length(statslist) > 4;
+statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
+    [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
-    [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), statflag);
+    [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
+        TIME_RANGE, [ht outthresh innerthresh], 1, axeslst, colors(i), statflag);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));

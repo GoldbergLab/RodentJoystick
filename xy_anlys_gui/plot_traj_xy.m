@@ -13,7 +13,7 @@ set(handles.time_text, 'String', datestr(actual_traj_time, 'HH:MM:SS'));
 set(handles.jsonset,'String', ...
             num2str(traj_struct(pl_index).js_onset));
         set(handles.actualht,'String', ...
-            num2str(traj_struct(pl_index).rw_or_stop));
+            num2str(length(traj_struct(pl_index).traj_x)));
 if traj_struct(pl_index).rw
     rwinfo = 'Yes';
 else
@@ -28,7 +28,7 @@ try
     datecont = strsplit(stuff{end-1}, '_');
     thresh2 = str2num(datecont{2})*RADIUS/100;
     thresh = str2num(datecont{4})*RADIUS/100;
-    holdtime = str2num(datecont{3});
+    holdtime = str2num(datecont{3});holddist_vect
     minangle = str2num(datecont{5});
     maxangle = str2num(datecont{6});
 catch
@@ -86,8 +86,6 @@ end_color = hsv2rgb([1 1 1]);
 marker_color = hsv2rgb([0.6 1 1]);
 step_color = (end_color - marker_color)/(floor(length(traj_x)/t_step)+1);
 if numel(traj_x) > 0
-    start_p = traj_struct(k).start_p ;
-    js_reward=traj_struct(k).rw;
     max_value_ind = traj_struct(k).max_value_ind;
    
     switch offset_index

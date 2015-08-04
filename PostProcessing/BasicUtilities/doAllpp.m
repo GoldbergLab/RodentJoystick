@@ -33,14 +33,14 @@
 %       analysisflag :: instructs where in analysis pipeline to begin
 %           combine_contingencies (1) -> ppscript (2) -> make jstruct (3)
 %           -> generate stats (4)
-%           DEFAULT - 1
+%           DEFAULT - 2
 %       
 function [failedflag, err] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
 disp(['Processing: ', working_dir]);
-default = {1};
+default = {2};
 numvarargs = length(varargin);
 if numvarargs > 1
     error('too many arguments (> 2), only one required and one optional.');
@@ -89,7 +89,7 @@ end
 %% doAllstats: additional post processing
 if ~failedflag && analysisflag < 5
     try
-        failedflag = doAllstats(working_dir);
+        [failedflag, err] = doAllstats(working_dir);
     catch e
         failedflag = 4; err = getReport(e);
     end

@@ -124,7 +124,7 @@ end
 function plot_analog(handles, ax, analogind, xmax, smoothval)
     data = handles.plotdata;
     if analogind == 2;
-        data = data(6, :)*handles.RADIUS;
+        data = data(6, :);
     elseif analogind == 3
         data = data(7, :);
     elseif analogind == 4

@@ -53,23 +53,7 @@ if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     interv = str2num(arg1);
     np_post_distribution(dirlist, interv, combineflag, 1, axes(axnum));
-elseif strcmp(plotname, 'Hold Length Distribution (Max)')
-%   arg1label = 'Interv'; %Histogram interval (ms)
-%   arg2label = 'Normalize'; %whether to normalize distributions
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    arg2 = ~(~arg2);
-    holdtime_firstcontact_distribution(dirlist, 150, arg1, combineflag, arg2, 1, axes(axnum));  
-elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
-%   arg1label = 'Interv'; %Histogram interval (ms)
-%   arg2label = 'Normalize'; %whether to normalize distributions
-%   arg3label = 'Thresh'; %Distance threshold
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    arg3 = str2num(arg3);
-    arg2 = ~(~arg2);
-    holdtime_firstcontact_distribution(dirlist, arg3, arg1, combineflag, arg2, 1, axes(axnum)); 
-elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
+elseif strcmp(plotname, 'Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
@@ -107,12 +91,6 @@ elseif strcmp(plotname, 'JS Touch Dist')
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
-elseif strcmp(plotname, 'XY Hold Dist')
-    rewrate = str2num(arg1);
-    targcht = str2num(arg2);
-    [~, htstr] = multi_xy_holddist(dirlist, targcht, rewrate, combineflag);
-    htstr = ['XY Hold Dist: ';htstr];
-    handles = update_console(handles, htstr);
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
@@ -149,7 +127,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
+        multi_trajectory_analysis(dirlist, 0, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;

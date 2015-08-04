@@ -26,15 +26,14 @@
 % OPTIONAL ARGUMENTS:
 %
 %       computeflag :: flag instructing what post processing analysis to perform
-%           2 - runs all analysis
-%           1 - jstruct creation, .dat combination, contingency folder
-%               combining
-%           0 - statistics/specific post processing (requires
-%               jstruct to be saved to directory)
+%           1 - contingency combining
+%           2 - combine .dat files
+%           3 - create jstruct (and save into folder)
+%           4 - create stats (and save into folder)
 
 
 function [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
-default = {2};
+default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1
     error('too many arguments (> 2), only one required and one optional.');
@@ -52,11 +51,9 @@ for i = 1:length(dir_list)
         %if it's actually a directory, process it, otherwise ignore
         if dir_list(i).isdir
             actual_count = actual_count+ 1;
-            if computeflag==2; [fail, errormsg] = doAllpp(wdir, 1);
-            elseif computeflag == 1; [fail, errormsg] = doAllpp(wdir, 0);
-            elseif computeflag == 0; [fail, errormsg] = doAllstats(wdir);
-            end
-       
+            errormsg = ''; fail = 0;
+            [fail, errormsg] = doAllpp(wdir, computeflag);
+            
             %update appropriate record of failures
             report{i, 2} = errormsg;
             if fail == 2
