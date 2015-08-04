@@ -88,7 +88,6 @@ tstruct=stats.traj_struct;
 totaltraj = length(tstruct);
 
 %perform processing
-<<<<<<< HEAD
 sortedtraj = sort_traj_into_bins(tstruct, bins);
 labels.xlabel = 'Time(ms)';
 labels.ylabel = 'Joystick Magnitude (%)';
