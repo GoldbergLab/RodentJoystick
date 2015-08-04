@@ -5,7 +5,8 @@ function [ output_args ] = start_to_target_distribution(stats, varargin)
 %   start to its end point. start_to_target_distribution takes a stats 
 %   structure (typically representing an entire contingency's data) and 
 %   bins by hold time.
-
+%
+%
 
 end
 
