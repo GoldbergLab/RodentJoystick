@@ -10,6 +10,16 @@ hold on;
 actual_traj_time = traj_struct(pl_index).js_onset;
 actual_traj_time = (actual_traj_time/1000)/(24*60*60)+handles.start_time;
 set(handles.time_text, 'String', datestr(actual_traj_time, 'HH:MM:SS'));
+set(handles.jsonset,'String', ...
+            num2str(traj_struct(pl_index).js_onset));
+        set(handles.actualht,'String', ...
+            num2str(traj_struct(pl_index).rw_or_stop));
+if traj_struct(pl_index).rw
+    rwinfo = 'Yes';
+else
+    rwinfo = 'No';
+end
+set(handles.rewardinfo,'String', rwinfo);
 
 %attempt getting contingency information from directory;
 try
@@ -18,26 +28,33 @@ try
     datecont = strsplit(stuff{end-1}, '_');
     thresh2 = str2num(datecont{2})*RADIUS/100;
     thresh = str2num(datecont{4})*RADIUS/100;
-    holdtime = str2num(datecont{3})*RADIUS/100;
+    holdtime = str2num(datecont{3});
     minangle = str2num(datecont{5});
     maxangle = str2num(datecont{6});
 catch
     thresh = 0.5*RADIUS;
-    thresh2 = 0.1*RADIUS;
+    thresh2 = 0.01*RADIUS;
     holdtime = 300;
     minangle = -180;
     maxangle = 180;
+end
+if pl_index == 1
+    set(handles.innerthresh, 'String', num2str(thresh));
+    set(handles.ht, 'String', num2str(holdtime));
+    set(handles.outerthresh, 'String', num2str(thresh2));
+    set(handles.minangle, 'String', num2str(minangle));
+    set(handles.maxangle, 'String', num2str(maxangle));
 end
 
 %Plot Inner Thresh
 x = thresh*cosd(0:1:360);
 y = thresh*sind(0:1:360);
-plot(x,y,'k','LineWidth',2);
+plot(x,y,'Color', [0.2 0.2 0.2],'LineWidth',2);
 
 %Plot Outer Thresh
 x = thresh2*cosd(0:1:360);
 y = thresh2*sind(0:1:360);
-plot(x,y,'k','LineWidth',2);
+plot(x,y,'Color', [0 0 0],'LineWidth',2);
 
 %Plot Sector
 rw_fr = minangle;
@@ -71,13 +88,13 @@ step_color = (end_color - marker_color)/(floor(length(traj_x)/t_step)+1);
 if numel(traj_x) > 0
     start_p = traj_struct(k).start_p ;
     js_reward=traj_struct(k).rw;
-    max_value = traj_struct(k).max_value;
+    max_value_ind = traj_struct(k).max_value_ind;
    
     switch offset_index
         case 1
             offset = length(traj_x);
         case 2
-            offset = max_value;
+            offset = max_value_ind;
         otherwise
             offset = length(traj_x);
     end
