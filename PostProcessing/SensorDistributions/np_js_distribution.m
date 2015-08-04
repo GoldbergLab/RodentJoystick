@@ -47,6 +47,7 @@ if numvarargs > 5
 end
 [default{1:numvarargs}] = varargin{:};
 [interv, normalize, combineflag, plotflag, ax] = default{:};
+
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
