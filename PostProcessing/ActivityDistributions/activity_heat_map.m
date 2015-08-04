@@ -1,15 +1,24 @@
 function [data, labels] = activity_heat_map(stats, varargin)
-%activity_heat_map(stats [ax, logmapping, colorperc ]) plots the probability distribution given
-%by stats.traj_pdf_jstrial onto the axes handle ax if available (otherwise
-%it simply generates a new figure)
+% [data, labels] = activity_heat_map(stats [ax, logmapping, colorperc])
+%   
+%   plots the probability distribution given by stats.traj_pdf_jstrial onto
+%   the axes handle ax if available (otherwise it simply generates a new figure)
+%
 % ARGUMENTS:
-%   stats :: single stats structure
-%   logmappping :: a flag indicating whether the function should plot using
-%       a logarithmic scale, or standard scale (1 or 0)
-%   colorperc :: [lower upper] - colorperc defines the color percentiles
-%       for the color mapping when logarithmic mapping is turned off
-%   ax :: an axes handle (can be empty) for where activity_color_map should
-%       plot 
+%
+%       stats :: single stats structure
+%
+% OPTIONAL ARGS:
+%
+%       logmappping :: a flag indicating whether the function should plot using
+%           a logarithmic scale, or standard scale (1 or 0)
+%
+%       colorperc :: [lower upper] - colorperc defines the color percentiles
+%           for the color mapping when logarithmic mapping is turned off
+%
+%       ax :: an axes handle (can be empty) for where activity_color_map should
+%           plot
+%
 
 default = {1, [25 75], []};
 numvarargs = length(varargin);

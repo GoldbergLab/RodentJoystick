@@ -1,20 +1,50 @@
 function [data, rawdata] = compute_vel_accel_distr(stats,varargin)
-%[median, variation, accel, accelv] = get_vel_accel_distr(stats) returns
-%the relative velocity and acceleration distributions (their medians, and
-%the differences between their 75th and 25th percentiles
-% ARGUMENTS:
-%   stats :: single stats structure
+%[median, variation, accel, accelv] = get_vel_accel_distr(stats) 
+%   returns the relative velocity and acceleration distributions 
+%   (their medians, and the differences between their 75th and 25th
+%   percentiles)
+%
 % OUTPUTS: all structures are 201x201 doubles corresponding to cells
 % representing blocks in the x-y coordinate space -100:1:100 x -100:1:100
-%   median :: median of the velocity profiles for each cell
-%   variation :: difference between the 75th and 25th percentiles of the
-%       velocity profile for each cell
-%   accel :: median of the acceleration profiles for each cell
-%   accelv :: difference between the 75th and 25th percentiles of the
-%       acceleration profile for each cell
-%   TODO :: decompose acceleration into tangential and normal components at
-%       each point in trajectory
-
+%
+%   data :: struct with a 201x201 double array for each field corresponding
+%       to cells representing blocks in the x-y coordinate space 
+%       -100:1:100 x -100:1:100. has the following fields
+%
+%       vel :: median of the velocity profiles for each cell
+%
+%       velv :: difference between the 75th and 25th percentiles of the
+%           velocity profile for each cell
+%
+%       accel :: median of the acceleration profiles for each cell
+%
+%       accelv :: difference between the 75th and 25th percentiles of the
+%           acceleration profile for each cell
+%       
+%       accel_norm :: median of the normal component of the acceleration
+%           profile for each cell
+%
+%       accelv_norm :: difference in the 75th and 25th percentiles of the
+%           acceleration profile for each cell
+%
+%       accel_ang :: median of the angular acceleration profile for each
+%           cell
+%
+%       accelv_ang :: difference between the 75th and 25th percentiles for
+%           the angular acceleration profile for each cell
+%       
+%   rawdata :: struct with 201x201 cell arrays corresponding to cells
+%       representing blocks in the x-y coordinate space -100:1:100 x
+%       -100:1:100. Each cell contains a double vector 
+    
+data.accel_ang = accel_ang;
+data.accelv_ang
+%       TODO :: decompose acceleration into tangential and normal components at
+%           each point in trajectory
+%
+% ARGUMENTS:
+%
+%       stats :: single stats structure
 
 default = {'1'};
 numvarargs = length(varargin);
