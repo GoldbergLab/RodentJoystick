@@ -80,18 +80,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag] = default{:};
 
-%divide the desired time range into number of bins based on number of plots
-%desired
-bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
-bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
-tstruct=stats.traj_struct; 
-totaltraj = length(tstruct);
-
-%perform processing
-sortedtraj = sort_traj_into_bins(tstruct, bins);
-labels.xlabel = 'Time(ms)';
-labels.ylabel = 'Joystick Magnitude (%)';
-
+%% GENERATE AXES LIST
 %if trajectory_analysis is given no axes handles, but expected to plot,
 %generate its own figure & subplots
 if pflag == 1 && length(axeslst)<1;
@@ -102,6 +91,21 @@ if pflag == 1 && length(axeslst)<1;
 elseif pflag == 1 && (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
+
+%% BIN TRAJECTORIES
+%divide the desired time range into number of bins based on number of plots
+%desired
+bin_length = (TIME_RANGE(2) - TIME_RANGE(1))/PLOT_RANGE;
+bins=TIME_RANGE(1):bin_length:TIME_RANGE(2);
+tstruct=stats.traj_struct; 
+totaltraj = length(tstruct);
+%perform processing
+sortedtraj = sort_traj_into_bins(tstruct, bins);
+labels.xlabel = 'Time(ms)';
+labels.ylabel = 'Joystick Magnitude (%)';
+
+
+%% ITERATE OVER BINS, STATS AND PLOTTING
 bin_summary = struct;
 %plotting, and actual statistics
 for i = 1:PLOT_RANGE
@@ -150,7 +154,8 @@ end
 end
 
 %bin_summary is a struct with length bin.lt 
-%   bin_summary has the following fields (for each time i)(different from the outputs!!!): 
+%   bin_summary has the following fields (for each time i)
+%       (different from the outputs!!!): 
 %       position := a vector of magnitudes corresponding to the various trajectories at time i.
 %       avg := single value corresponding to the average position at that
 %           time
@@ -161,18 +166,19 @@ end
 %       time i.
 % mean, median, std are all numbers representing the statistic in a given
 % time. upperbnd, lowerbnd are the 75th and 25th percentiles, respectively
-function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats(bin, derivflag)
+function [avg, med, stdev, numbers, ...
+    upperbnd, lowerbnd, bin_summary] = bin_stats(bin, derivflag)
     for time = 1:(bin.lt-1) 
         time_pos_ind = 0;
         %iterate through all trajectories in the bin;
-        for i = 1:(length(bin.trajectory))
+        for i = 1:(length(bin.traj_struct))
             try 
                 if derivflag == 0
-                    pos = bin.trajectory(i).magtraj(time); 
+                    pos = bin.traj_struct(i).magtraj(time); 
                 elseif derivflag == 1
-                    pos = bin.trajectory(i).magtraj(time); 
+                    pos = bin.traj_struct(i).magtraj(time); 
                 elseif derivflag == 2
-                    pos = bin.trajectory(i).magtraj(time); 
+                    pos = bin.traj_struct(i).magtraj(time); 
                 end
                 %attempt to access the position of trajectory i at time
             catch
@@ -199,7 +205,8 @@ function [avg, med, stdev, numbers, upperbnd, lowerbnd, bin_summary] = bin_stats
             upperbnd(time) = bin_summary(time).upperbnd;
             lowerbnd(time) = bin_summary(time).lowerbnd;
         catch
-            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0; upperbnd(time)=0;lowerbnd(time)=0; 
+            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0; 
+            upperbnd(time)=0;lowerbnd(time)=0; 
         end
     end
 end

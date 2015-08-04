@@ -46,8 +46,8 @@ function sortedtraj = sort_traj_into_bins(tstruct, bins, varargin)
 %% Argument Manipulation
 default = {0, 0};
 numvarargs = length(varargin);
-if numvarargs > 1
-    error('too many arguments (> 3), only two required and one optional.');
+if numvarargs > 2
+    error('too many arguments (> 4), only 2 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [rwfilter, ht_definition] = default{:};
@@ -76,7 +76,7 @@ for i = 1:length(tstruct)
     if bin_ind ~= -1 && (tstruct(i).rw || ~rwfilter)
         traj_ind = bin_traj_indices(bin_ind);
         bin_traj_indices(bin_ind) = bin_traj_indices(bin_ind) + 1;
-        sortedtraj(bin_ind).trajectory(traj_ind)= tstruct(i);
+        sortedtraj(bin_ind).traj_struct(traj_ind)= tstruct(i);
     end
 end
 end
