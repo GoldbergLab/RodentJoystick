@@ -117,9 +117,11 @@ handles.start_time = jstruct(struct_index).real_time;
  
 RADIUS = 6.35;
 handles.RADIUS = RADIUS;
-traj_x = (jstruct(struct_index).traj_x)*(RADIUS/100);
-traj_y = (jstruct(struct_index).traj_y)*(RADIUS/100);
-magtraj =(((traj_x).^2+(traj_y).^2).^(0.5))*(RADIUS/100);
+raw_x = (jstruct(struct_index).traj_x);
+raw_y = (jstruct(struct_index).traj_y);
+traj_x = raw_x*(RADIUS/100);
+traj_y = raw_y*(RADIUS/100);
+magtraj =sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
 
 %raw sensor information
 np_pairs = jstruct(struct_index).np_pairs;

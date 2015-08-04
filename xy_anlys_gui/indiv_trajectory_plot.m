@@ -34,11 +34,11 @@ else
     data = data*handles.RADIUS*10;
     LIMIT = handles.RADIUS*10*2;
 end
-plot(handles.axes7, 1:1:length(data), data);
+plot(handles.axes7, 0:1:(length(data)-1), data);
 if sum(zerocenter == plottype)
-    axis(handles.axes7, [0 trajectory.rw_or_stop -LIMIT LIMIT]);
+    axis(handles.axes7, [0 (length(data)-1) -LIMIT LIMIT]);
 else
-    axis(handles.axes7, [0 trajectory.rw_or_stop 0 LIMIT]);
+    axis(handles.axes7, [0 (length(data)-1) 0 LIMIT]);
 end
 
 end
