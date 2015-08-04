@@ -26,7 +26,7 @@ smoothval = smoothwindow{get(handles.indivfilter, 'Value')};
 smoothval = str2num(smoothval);
 data = smooth(data, smoothval);
 multiplyradius = [1; 2; 3];
-zerocenter = [2; 3; 4; 5; 6; 7];
+zerocenter = [2; 3; 4; 5; 6];
 if sum(multiplyradius == plottype)
     data = data*handles.RADIUS/100;
     LIMIT = handles.RADIUS*1.08;
