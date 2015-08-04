@@ -22,7 +22,7 @@ function varargout = xy_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help xy_anlys_gui
 
-% Last Modified by GUIDE v2.5 03-Aug-2015 14:38:04
+% Last Modified by GUIDE v2.5 03-Aug-2015 19:15:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -178,17 +178,22 @@ traj_struct=stats.traj_struct;
 handles.traj_struct = traj_struct;
 handles.pl_index = ~isempty(traj_struct);
 
-plot_indiv_traj(handles);
+handles = plot_indiv_traj(handles);
+try
+    handles = indiv_trajectory_plot(handles);
+catch
+end
 
 guidata(hObject, handles);
 
-function plot_indiv_traj(handles)
+function handles = plot_indiv_traj(handles)
+% attempts to plot a trajectory if it exists
 try
     axes(handles.axes6); cla; 
     axis manual; hold on;
     traj_struct = handles.traj_struct;
     if get(handles.time_info_checkbox,'Value')
-        t_step = 10*str2num(get(handles.timestep_edit,'String'));
+        t_step = str2num(get(handles.timestep_edit,'String'));
     else
         t_step=0;
     end
@@ -199,10 +204,6 @@ try
     if(numel(traj_struct))>0
         plot_traj_xy(traj_struct,t_step,offset_index, ...
            pl_index,handles);
-        set(handles.text_startt,'String', ...
-            num2str(handles.traj_struct(pl_index).js_onset));
-        set(handles.text_magnp,'String', ...
-            num2str(length(traj_struct(pl_index).traj_x)));
     end
     hold off;
 catch e 
@@ -221,23 +222,11 @@ function prev_plot_button_Callback(hObject, eventdata, handles)
 % hObject    handle to prev_plot_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if get(handles.time_info_checkbox,'Value')
-    t_step = 10*str2num(get(handles.timestep_edit,'String'));
-else
-    t_step=0;
-end
-
-offset_index = get(handles.offset_menu,'Value');
-pl_index=handles.pl_index;
-pl_index=max(pl_index-1,1);
-if(numel(handles.traj_struct))>0
-    plot_traj_xy(handles.traj_struct,t_step,offset_index,pl_index,handles);
-end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
-set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
-
-handles.pl_index = pl_index;
+handles.pl_index = max(handles.pl_index-1,1);
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
 guidata(hObject, handles);
+
 
 
 % --- Executes on button press in next_plot_button.
@@ -245,22 +234,11 @@ function next_plot_button_Callback(hObject, eventdata, handles)
 % hObject    handle to next_plot_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if get(handles.time_info_checkbox,'Value')
-    t_step = 10*str2num(get(handles.timestep_edit,'String'));
-else
-    t_step=0;
-end
-
-offset_index = get(handles.offset_menu,'Value');
-pl_index=handles.pl_index;
-pl_index=min(pl_index+1,numel(handles.traj_struct));
-if(numel(handles.traj_struct))>0
-    plot_traj_xy(handles.traj_struct,t_step,offset_index,pl_index,handles);
-end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
-set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
-handles.pl_index = pl_index;
+handles.pl_index = min(handles.pl_index+1,numel(handles.traj_struct));
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
 guidata(hObject, handles);
+
 
 function selectdir_push_CreateFcn(hObject, eventdata, handles)
 function offset_menu_Callback(hObject, eventdata, handles)
@@ -431,6 +409,24 @@ function filter5_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 5);
     guidata(hObject, handles);
 function filter5_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function indivfilter_Callback(hObject, eventdata, handles)
+    handles = indiv_trajectory_plot(handles);
+    guidata(hObject, handles);
+
+function indivfilter_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+function indivselectplot_Callback(hObject, eventdata, handles)
+    handles = indiv_trajectory_plot(handles);
+    guidata(hObject, handles);
+
+function indivselectplot_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
