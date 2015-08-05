@@ -7,46 +7,51 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %
 % ARGUMENTS:
 %
-%       dirlist :: list of directory structs (with name field)
+%   dirlist :: list of directory structs (with name field)
 %
 % OPTIONAL ARGS:
 %
-%       interv :: histogram interval (ms)
-%           DEFAULT: 20
+%   interv :: histogram interval (ms)
+%       DEFAULT: 20
 %
-%       normalize :: a 1/0 flag instructing whether to normalize the
-%           distribution to a probability distribution, or keep raw counts.
-%           DEFAULT : 1
+%   normalize :: a 1/0 flag instructing whether to normalize the
+%       distribution to a probability distribution, or keep raw counts.
+%       DEFAULT : 1
 %
-%       combineflag :: if multiple directories are given, whether to 
-%           combine all data (1) or plot days individually (0)
-%           DEFAULT : 0
+%   combineflag :: if multiple directories are given, whether to 
+%       combine all data (1) or plot days individually (0)
+%       DEFAULT : 0
 %
-%       plotflag :: whether to plot (1) or just return data (0)
-%           DEFAULT : 1
+%   smoothparam :: parameter for smoothing distribution - can lose
+%       information or misrepresent actual distribution, so be careful about
+%       using
+%       DEFAULT : 1 (no smoothing)
+%
+%   plotflag :: whether to plot (1) or just return data (0)
+%       DEFAULT : 1
 %       
-%       ax :: list of axes handles - plots all data (if multiple jstructs) on
-%           the first element in ax. If no axes are given and plotflag is on,
-%           creates a new figure
-%           DEFAULT : []
+%   ax :: list of axes handles - plots all data (if multiple jstructs) on
+%       the first element in ax. If no axes are given and plotflag is on,
+%       creates a new figure
+%       DEFAULT : []
 %
 % OUTPUTS:
 %
-%       data :: cell array, where each cell is an n x 2 matrix representing the
-%           dist_times and probability data at each bin
+%   data :: cell array, where each cell is an n x 2 matrix representing the
+%       dist_times and probability data at each bin
 %
-%       labels :: a struct containing the x, y, and title labels for plotting
+%   labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
-default = {20, 1, 0, 1, []};
+default = {20, 1, 0, 1, 1, []};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error(['too many arguments (> 6), only one required ' ... 
-            'and five optional.']);
+if numvarargs > 6
+    error(['too many arguments (> 7), only one required ' ... 
+            'and 6 optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, normalize, combineflag, plotflag, ax] = default{:};
+[interv, normalize, combineflag, smoothparam, plotflag, ax] = default{:};
 
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
@@ -71,7 +76,7 @@ for i=1:length(statslist)
     if normalize
         np_js = np_js./(sum(np_js));
     end
-    data{i} = [dist_time', np_js];
+    data{i} = [dist_time', smooth(np_js, smoothparam)];
 end
 
 %% Plot data

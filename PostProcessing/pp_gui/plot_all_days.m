@@ -31,6 +31,10 @@ arg1 = get(arg1s(axnum), 'String');
 arg2 = get(arg2s(axnum), 'String'); 
 arg3 = get(arg3s(axnum), 'String');
 combineflag = get(handles.combinedays, 'Value');
+smoothps = cellstr(get(handles.smoothparam,'String'));
+smoothparam = smoothps{get(handles.smoothparam,'Value')};
+smoothparam = str2num(smoothparam);
+normalize = get(handles.normalizecheck, 'Value');
 
 if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
     statscombined = load_stats(dirlist, 1);
@@ -48,17 +52,16 @@ cla(axes(axnum), 'reset');
 %   see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
-    norm = str2num(arg2);
-    np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
+    np_js_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     interv = str2num(arg1);
-    np_post_distribution(dirlist, interv, combineflag, 1, axes(axnum));
+    np_post_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
 elseif strcmp(plotname, 'Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    hold_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
+    hold_time_distr(dirlist, arg1, arg2, combineflag, smoothparam, axes(axnum), []);
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
