@@ -24,57 +24,62 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %       stdev - double vector of standard deviation at each time point
 %       numbers - double vector containing percentage of trajectories
 %           from bin used at each point. (time 0 will always be 100).
-%       lhandle :: the figure handle corresponding to the plot generate when
+%
+%   lhandle :: the line handle corresponding to the plot generated when
 %           'plot' flag is used, otherwise empty
 %
 % ARGUMENTS:
 %
-%       stats :: the result from xy_getstats(jstruct) for some jstruct
+%   stats :: the result from xy_getstats(jstruct) for some jstruct
 %
-% OPTIONAL:
+% OPTIONAL ARGS:
 %       
-%       derivative :: integer in range [0, 2] saying if trajectory analysis
-%           should plot the 0th, 1st, or 2nd derivatives of trajectory 
-%           deviation (corresponding to position, radial velocity, radial
-%           acceleration) - currently only 0th derivative is supported, but
-%           future edits will change this.
-%           DEFAULT: 1
+%   derivative ::  a flag indicating what data trajectory_analysis should
+%       look at it
+%       0 - Deviation (Trajectory Magnitude)
+%       -- Currently Unsupported --
+%       1 - Radial Velocity
+%       2 - Radial Acceleration
+%       3 - Velocity Magnitude
+%       4 - Acceleration Magnitude
+%
+%       DEFAULT: 0
 %       
-%       plot_range :: number representing number of plots. 
-%           DEFAULT: 4
+%   plot_range :: number representing number of plots. 
+%       DEFAULT: 4
 %
-%       hold_time_range :: the time range [A B] (ms) for which trajectories
-%           are included, i.e. any trajectory with a hold time in the range
-%           [A, B] is analyzed
-%           DEFAULT: [400 1400]
+%   hold_time_range :: the time range [A B] (ms) for which trajectories
+%       are included, i.e. any trajectory with a hold time in the range
+%       [A, B] is analyzed
+%       DEFAULT: [400 1400]
 %
-%       plot_contingencies :: [HT T1 T2] this vector tells which lines to
-%           indicate contingencies as a reference - 
-%           HT is the hold time, T1 and T2 are the respective deviations 
-%               EX: [300 30 60]
-%           value of [0 0] or [0 0 0] doesn't plot any lines   
-%           DEFAULT: [0 0 0] - no plotting 
+%   plot_contingencies :: [HT T1 T2] this vector tells which lines to
+%       indicate contingencies as a reference - 
+%       HT is the hold time, T1 and T2 are the respective deviations 
+%       EX: [300 30 60]
+%       value of [0 0] or [0 0 0] doesn't plot any lines   
+%       DEFAULT: [0 0 0] - no plotting 
 %
-%       pflag :: 1 if plots are desired, otherwise just returns bin statistics
-%           DEFAULT: 1
+%   pflag :: 1 if plots are desired, otherwise just returns bin statistics
+%       DEFAULT: 1
 %
-%       smoothparam :: smoothing parameter (moving average window in ms)
-%           DEFAULT: 1 (no smoothing)
+%   smoothparam :: smoothing parameter (moving average window in ms)
+%       DEFAULT: 1 (no smoothing)
 %
-%       axes_lst :: a list of axes handles of where to plot. If specified,
-%           length(axes_lst) >= plot_range
-%           DEFAULT: []
+%   axes_lst :: a list of axes handles of where to plot. If specified,
+%       length(axes_lst) >= plot_range
+%       DEFAULT: []
 %
-%       color :: color to plot all data with
-%           DEFAULT: 'r'
+%   color :: color to plot all data with
+%       DEFAULT: 'r'
 %
-%       multi :: 2 if both quartiles and percents should also be plotted
-%           1 if just both quartiles in addition to median
-%           0 plots just median (useful when multiple days prevents a clear
-%           graph)
-%           DEFAULT: 2
+%   multi :: 2 if both quartiles and percents should also be plotted
+%       1 if just both quartiles in addition to median
+%       0 plots just median (useful when multiple days prevents a clear
+%       graph)
+%       DEFAULT: 2
 
-% Argument Manipulation
+%% Argument Manipulation
 default = {0, 4,[400 1400], [0 0 0], 1, 1, [], 'r', 2};
 numvarargs = length(varargin);
 if numvarargs > 9
@@ -209,7 +214,8 @@ function [avg, med, stdev, numbers, ...
             lowerbnd(time) = bin_summary(time).lowerbnd;
         catch
             avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0; 
-            upperbnd(time)=0;lowerbnd(time)=0; 
+            upperbnd(time)=0;
+            lowerbnd(time)=0; 
         end
     end
 end

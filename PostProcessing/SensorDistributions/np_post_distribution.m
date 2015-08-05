@@ -11,18 +11,28 @@ function [data, labels] = np_post_distribution(dirlist, varargin)
 %
 % OPTIONAL ARGS
 %
-%   interv :: histogram interval (optional, default 20ms)
+%   interv :: histogram interval (ms)
+%       DEFAULT: 20
 %
-%   combineflag :: if multiple jstructs are given, combines all data and
-%       makes a single plot if 1, plots structs individually if 0
-%       (optional, default 0)
+%   normalize :: a 1/0 flag instructing whether to normalize the
+%       distribution to a probability distribution, or keep raw counts.
+%       DEFAULT : 1
+%
+%   combineflag :: if multiple directories are given, whether to 
+%       combine all data (1) or plot days individually (0)
+%       DEFAULT : 0
+%
+%   smoothparam :: parameter for smoothing distribution - does not affect
+%       data, just visualization
+%       DEFAULT : 1 (no smoothing)
 %
 %   plotflag :: whether to plot (1) or just return data (0)
-%       (optional, default 1)
-%
+%       DEFAULT : 1
+%       
 %   ax :: list of axes handles - plots all data (if multiple jstructs) on
 %       the first element in ax. If no axes are given and plotflag is on,
-%       creates a new figure (optional, default empty)
+%       creates a new figure
+%       DEFAULT : []
 %
 % OUTPUTS:
 %
@@ -64,7 +74,7 @@ for i=1:length(statslist)
     if normalize
         np_js_post = np_js_post ./(sum(np_js_post));
     end
-    data{i} = [dist_time', smooth(np_js_post, smoothparam)];
+    data{i} = [dist_time', np_js_post];
 end
 
 %% Plot data
@@ -76,7 +86,7 @@ if plotflag == 1
         tmpdata = data{i};
         dist_time = tmpdata(:, 1);
         np_js_post = tmpdata(:, 2);
-        stairs(dist_time, np_js_post, colors(i), 'LineWidth', LINEWIDTH);
+        stairs(dist_time, smooth(np_js_post, smoothparam), colors(i), 'LineWidth', LINEWIDTH);
     end
     xlabel(labels.xlabel); ylabel(labels.ylabel);
     title(labels.title);

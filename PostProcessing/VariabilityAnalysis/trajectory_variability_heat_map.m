@@ -21,7 +21,7 @@ function [ output_args ] = trajectory_variability_heat_map(stats, varargin)
 %
 %   ht_range :: only trajectories in the range ht_range will be considered
 %       in analysis 
-%       DEFAULT - :: 200
+%       DEFAULT - :: [300 800]
 %
 %   rew_filter :: only rewarded trajectories will be analyzed
 %       DEFAULT :: 1
@@ -31,34 +31,44 @@ function [ output_args ] = trajectory_variability_heat_map(stats, varargin)
 %       numgroups. If empty, a new figure with subplots is generated
 %       DEFAULT - []
 %   
-default = {3, 50, []};
+default = {3, [300 800], 50 []};
 numvarargs = length(varargin);
 if numvarargs > 6
     error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[numgroups, min_ht, axlst] = default{:};
+[numgroups, ht_range, axlst] = default{:};
 
-trajstruct = filter_trajectories(trajstruct); 
+tstruct = stats.traj_struct;
+bin = sort_traj_into_bins(tstruct, ht_range); 
+tstruct = bin.traj_struct;
 
+indices = floor(linspace(1, numgroups+1-2*eps(numgroups), length(tstruct)));
+endpoints = [1, find(diff(indices)), length(tstruct)];
+for i = 2:length(endpoints)
+    heat_map = generate_heat_map(tstruct(endpoints(i-1):endpoints(i)));
+end
 
-generate_heat_map(trajstruct)
 
 end
 
-function [trajstruct] = filter_trajectories(trajstruct, min_ht, rewflag)
-% returns a filtered version of trajstruct - returned value has only
-% trajectories above min_ht, and if rewflag is enabled, trajectories that
-% were rewarded
+%only adds points above a certain range to the heat map
+function heat_map = generate_heat_map(trajstruct, threshold)
 
 end
 
-function [output_args] = align_target(traj_x, traj_y)
+function [rad, theta] = align_target(traj_x, traj_y)
 % performs coordinate transformation  of traj_x and traj_y to polar
 % coordinate system and then aligns by polar angle of end point.
 
-end
+[theta, rad] = cart2pol(traj_x, traj_y);
+theta = theta*180/pi;
 
-function generate_heat_map(trajstruct)
+%align by angle to radial line of end point.
+theta = theta - theta(end);
+
+%now make sure we put everything in the range -180 to 180
+theta = theta-360*(theta>180)+360*(theta<180);
+
 
 end
