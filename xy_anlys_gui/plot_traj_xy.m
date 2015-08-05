@@ -22,22 +22,10 @@ end
 set(handles.rewardinfo,'String', rwinfo);
 
 %attempt getting contingency information from directory;
-try
-    working_dir = get(handles.working_dir_text,'String');
-    stuff = strsplit(working_dir, '\');
-    datecont = strsplit(stuff{end-1}, '_');
-    thresh2 = str2num(datecont{2})*RADIUS/100;
-    thresh = str2num(datecont{4})*RADIUS/100;
-    holdtime = str2num(datecont{3});holddist_vect
-    minangle = str2num(datecont{5});
-    maxangle = str2num(datecont{6});
-catch
-    thresh = 0.5*RADIUS;
-    thresh2 = 0.01*RADIUS;
-    holdtime = 300;
-    minangle = -180;
-    maxangle = 180;
-end
+working_dir = get(handles.working_dir_text,'String');
+[thresh2, holdtime, thresh, minangle, maxangle] = extract_contingency_info(working_dir);
+thresh2 = thresh2*RADIUS/100;
+thresh = thresh*RADIUS/100;
 if pl_index == 1
     set(handles.innerthresh, 'String', num2str(thresh));
     set(handles.ht, 'String', num2str(holdtime));

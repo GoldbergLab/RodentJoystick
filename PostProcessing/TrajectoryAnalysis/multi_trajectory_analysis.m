@@ -23,13 +23,13 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], [0 0 0], 0, []};
+default = {0, 4,[400 1400], 0, 5, []};
 numvarargs = length(varargin);
 if numvarargs > 6
     error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, CONTL, combineflag, axeslst] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -50,7 +50,7 @@ for i= 1:length(statslist)
     [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
     [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
-        TIME_RANGE, [ht outthresh innerthresh], 1, axeslst, colors(i), statflag);
+        TIME_RANGE, [ht outthresh innerthresh], 1, smoothparam, axeslst, colors(i), statflag);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));
