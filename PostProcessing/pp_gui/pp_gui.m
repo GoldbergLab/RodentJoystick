@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 09-Jul-2015 10:51:13
+% Last Modified by GUIDE v2.5 05-Aug-2015 11:13:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -884,4 +884,38 @@ function console_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+end
+
+
+% --- Executes on selection change in smoothparam.
+function smoothparam_Callback(hObject, eventdata, handles)
+% hObject    handle to smoothparam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns smoothparam contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from smoothparam
+end
+
+% --- Executes during object creation, after setting all properties.
+function smoothparam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to smoothparam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+end
+
+
+% --- Executes on button press in normalizecheck.
+function normalizecheck_Callback(hObject, eventdata, handles)
+% hObject    handle to normalizecheck (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of normalizecheck
 end
