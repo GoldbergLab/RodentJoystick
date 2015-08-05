@@ -45,6 +45,10 @@ if isempty(xax) || isempty(yax)
     xax = -100:(floor(201/scalesize)):100;
     yax = xax;
     activitymap = 1;
+else
+    activitymap = 0;
+    xscalesize = length(xax);
+    yscalesize = length(yax);
 end
 
 %% Mapping Data Appropriately
@@ -68,11 +72,18 @@ pcolorval = prctile(traj_pdf, colorperc);
 axes(ax(1));
 hold on; title(tstr); 
 xlabel(xlab); ylabel(ylab);
-scale = -100:(floor(201/scalesize)):100;
-pcolor(ax, xax, yax, data); shading interp; axis square;
+pcolor(ax, xax, yax, data); shading interp; 
 if activitymap
+    axis square;
     set(ax, 'XTick', [-100 -50 0 50 100]);
     set(ax, 'YTick', [-100 -50 0 50 100]);  
+else
+    xind = 1:(floor(length(xax)/4)):length(xax);
+    yind = 1:(floor(length(yax)/4)):length(yax);
+    if xind(end) ~= length(xax); xind = [xind, length(xax)]; end;
+    if yind(end) ~= length(yax); yind = [yind, length(yax)]; end;
+    set(ax, 'XTick', xax(xind));
+    set(ax, 'YTick', yax(yind));
 end
 caxis(pcolorval); hold off;
 
