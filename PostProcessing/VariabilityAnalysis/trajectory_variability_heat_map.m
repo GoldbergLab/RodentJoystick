@@ -35,18 +35,18 @@ function [ output_args ] = trajectory_variability_heat_map(stats, varargin)
 %       numgroups. If empty, a new figure with subplots is generated
 %       DEFAULT - []
 %   
-default = {3, [300 800], 1, []};
+default = {2, [200 Inf], 20, 2, 1, []};
 numvarargs = length(varargin);
 if numvarargs > 4
     error('too many arguments (> 5), only 1 required and 4 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[numgroups, ht_range, rew_filter, axlst] = default{:};
+[numgroups, ht_range, threshold, bin_size, rew_filter, axlst] = default{:};
 
 if length(axlst)<numgroups
-    figure;
+    figure('Position', [200 200 400 800]);
     for i = 1:numgroups;
-        axlst(i) = subplot(1, numgroups, i);
+        axlst(i) = subplot(numgroups, 1, i);
     end
 end
 
@@ -57,23 +57,27 @@ tstruct = bin.traj_struct;
 indices = floor(linspace(1, numgroups+1-2*eps(numgroups), length(tstruct)));
 endpoints = [1, find(diff(indices)), length(tstruct)];
 for i = 1:(length(endpoints)-1)
-    data = generate_heat_map_data(tstruct(endpoints(i):endpoints(i+1)));
-    draw_heat_map(data, axlst(i), 'Trajectory Variability', 1, [5 95], 20:2:100, -180:2:180);
+    data = generate_heat_map_data(tstruct(endpoints(i):endpoints(i+1)), threshold, bin_size);
+    angle_bins = -180:bin_size:180;
+    rad_bins = threshold:bin_size:100;
+    draw_heat_map(data, axlst(i), 'Trajectory Variability', 1, [5 95], ...
+        angle_bins(1:end-1), rad_bins(1:end-1));
 end
 
 end
 
 %only adds points above a certain range to the heat map
-function data = generate_heat_map_data(trajstruct, threshold)
-    angle_bins = -180:2:180;
-    rad_bins = 20:2:100;
-    accumulator = zeros(length(rad_bins), length(angle_bins));
-    for i = 1:length(trajstruct)
-        [rad, theta] = align_target(traj_x, traj_y);
-        filter = rad>threshold;
-        theta = theta(filter);
-        rad = rad(filter);
-        accumulator = accumulator + hist2d([rad theta], rad_bins, angle_bins);
+function data = generate_heat_map_data(tstruct, threshold, interv)
+    angle_bins = -180:interv:180;
+    rad_bins = threshold:interv:100;
+    accumulator = zeros(length(rad_bins)-1, length(angle_bins)-1);
+    for i = 1:length(tstruct)
+        tx = tstruct(i).traj_x;
+        ty = tstruct(i).traj_y;
+        [rad, theta] = align_target(tx, ty);
+        theta = theta(rad>threshold);
+        rad = rad(rad>threshold);
+        accumulator = accumulator + hist2d([rad' theta'], rad_bins, angle_bins);
     end
     data = accumulator/(sum(sum(accumulator)));
 end
@@ -89,7 +93,7 @@ theta = theta*180/pi;
 theta = theta - theta(end);
 
 %now make sure we put everything in the range -180 to 180
-theta = theta-360*(theta>180)+360*(theta<180);
+theta = theta-360*(theta>180)+360*(theta<-180);
 
 
 end
