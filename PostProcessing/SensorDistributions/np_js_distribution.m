@@ -22,9 +22,8 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %       combine all data (1) or plot days individually (0)
 %       DEFAULT : 0
 %
-%   smoothparam :: parameter for smoothing distribution - can lose
-%       information or misrepresent actual distribution, so be careful about
-%       using
+%   smoothparam :: parameter for smoothing distribution -does not affect
+%       data, just visualization
 %       DEFAULT : 1 (no smoothing)
 %
 %   plotflag :: whether to plot (1) or just return data (0)
@@ -76,7 +75,7 @@ for i=1:length(statslist)
     if normalize
         np_js = np_js./(sum(np_js));
     end
-    data{i} = [dist_time', smooth(np_js, smoothparam)];
+    data{i} = [dist_time', np_js];
 end
 
 %% Plot data
@@ -88,7 +87,7 @@ if plotflag == 1
         tmpdata = data{i};
         dist_time = tmpdata(:, 1);
         np_js = tmpdata(:, 2);
-        stairs(dist_time, np_js, colors(i), 'LineWidth', LINEWIDTH);
+        stairs(dist_time, smooth(np_js, smoothparam), colors(i), 'LineWidth', LINEWIDTH);
     end
     xlabel(labels.xlabel); ylabel(labels.ylabel);
     title(labels.title);
