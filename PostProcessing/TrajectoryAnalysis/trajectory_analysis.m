@@ -58,6 +58,9 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %       pflag :: 1 if plots are desired, otherwise just returns bin statistics
 %           DEFAULT: 1
 %
+%       smoothparam :: smoothing parameter (moving average window in ms)
+%           DEFAULT: 1 (no smoothing)
+%
 %       axes_lst :: a list of axes handles of where to plot. If specified,
 %           length(axes_lst) >= plot_range
 %           DEFAULT: []
@@ -72,13 +75,13 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %           DEFAULT: 2
 
 % Argument Manipulation
-default = {0, 4,[400 1400], [0 0 0], 1, [], 'r', 2};
+default = {0, 4,[400 1400], [0 0 0], 1, 1, [], 'r', 2};
 numvarargs = length(varargin);
-if numvarargs > 8
-    error('too many arguments (> 9), only one required and eight optional.');
+if numvarargs > 9
+    error('too many arguments (> 10), only one required and 9 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag] = default{:};
+[derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, smoothparam, axeslst, color, multiflag] = default{:};
 
 %% GENERATE AXES LIST
 %if trajectory_analysis is given no axes handles, but expected to plot,
@@ -127,14 +130,14 @@ for i = 1:PLOT_RANGE
     
     if pflag == 1
         axes(axeslst(i));
-        ubd = upperbnd; lbd = lowerbnd; md = median; me = mean; stdv = stdev;
-        lhandle = plot(time, md, color, 'LineWidth', 1); hold on;
+        ubd = upperbnd; lbd = lowerbnd; md = median;
+        lhandle = plot(time, smooth(md, smoothparam), color, 'LineWidth', 1); hold on;
         if multiflag
-            plot(time, ubd, color, 'LineStyle', ':');
-            plot(time, lbd, color, 'LineStyle', ':');
+            plot(time, smooth(ubd, smoothparam), color, 'LineStyle', ':');
+            plot(time, smooth(lbd, smoothparam), color, 'LineStyle', ':');
         end
         if multiflag>1
-            plot( time, numbers, color, 'LineStyle', '--');
+            plot(time, numbers, color, 'LineStyle', '--');
         end
         title(axeslst(i), labels.title{i}, 'FontSize', 8); hold on;
         xlabel(axeslst(i), labels.xlabel); ylabel(axeslst(i), labels.ylabel);

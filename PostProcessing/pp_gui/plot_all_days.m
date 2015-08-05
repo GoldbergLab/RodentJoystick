@@ -42,14 +42,23 @@ end
 cla(axes(axnum), 'reset');
 %% PLOTTING ROUTINES - EDIT HERE TO ADD NEW FUNCTIONS
 % The following are available to any function call
-% dirlist - a list of directories to plot/analyze
-% arg1, arg2, arg3 are left as strings from taking from the textboxes
-%    makes it more flexible in case of string args in the future - and
-%    sometimes arguments will be '' or '-';
-% combineflag - 1/0 flag instructing whether to combine all days in dirlist
-%   or leave empty
-% axes(axnum) - axes available for plotting
-%   see notes on wiki for accessing other axes
+%
+%   dirlist :: a list of directories to plot/analyze
+%
+%   arg1, arg2, arg3 :: 
+%       strings from taking from the textboxes makes it more flexible 
+%       in case of string args in the future - and sometimes arguments 
+%       will be '' or '-';
+%
+%   combineflag :: 1/0 flag instructing whether to combine all days in 
+%       dirlist or leave empty
+%   
+%   normalize :: 1/0 global flag declaring normalizing
+% 
+%   smoothparam :: desired smoothing - i.e. ` smooth(data, smoothparam)`
+%
+%   axes(axnum) :: axes available for plotting
+%       see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
     np_js_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
@@ -117,8 +126,8 @@ elseif strcmp(plotname, 'Angle Distribution (Linear)')
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
+    start = str2num(arg1);
+    endt = str2num(arg2);
     if axnum == 1 || axnum == 4
         axestoplot = [axes(1); axes(2); axes(4); axes(5)];
     else
@@ -130,20 +139,22 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 0, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
+        multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
+            combineflag, smoothparam, axestoplot);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
+    start = str2num(arg1);
+    endt = str2num(arg2);
     info = 'Trajectory Analysis will plot over all 6 axes. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
         for i = 1:length(axes)
             cla(axes(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 6, [arg1 arg2], [0 0 0], combineflag, axes);
+        multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
+            combineflag, smoothparam, axes);
     end
 end
 

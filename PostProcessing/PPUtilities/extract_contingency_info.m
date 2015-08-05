@@ -28,11 +28,12 @@ try
     ht = str2num(datecont{3});
     minangle = str2num(datecont{5});
     maxangle = str2num(datecont{6});
-catch
+catch e 
+    disp(getReport(e));
     thresh2 = 0;
     thresh = 0;
     ht = 0;
     minangle = -180;
-    maxangle = 0;
+    maxangle = 180;
 end
 

@@ -2,11 +2,23 @@ function [handles] = indiv_trajectory_plot(handles)
 traj_struct = handles.traj_struct;
 %   Detailed explanation goes here
 plottype = get(handles.indivselectplot, 'Value');
-
+working_dir = get(handles.working_dir_text,'String');
+[thresh2, holdtime, thresh] = extract_contingency_info(working_dir);
+thresh2 = thresh2*(handles.RADIUS)/100;
+thresh = thresh*(handles.RADIUS)/100;
 trajectory = traj_struct(handles.pl_index);
+axes(handles.axes7);
+cla;
 
 if plottype == 1;
+    gray = 0.6*[1 1 1];
     data = trajectory.magtraj;
+    axes(handles.axes7);
+    hold on;
+    line([0 length(data)-1], [thresh thresh], 'Color', gray);
+    line([0 length(data)-1], [thresh2 thresh2], 'Color', gray);
+    line([holdtime holdtime], [0 100], 'Color', gray);
+    hold off;
 elseif plottype == 2;
     data = trajectory.traj_x;
 elseif plottype == 3;
@@ -34,12 +46,15 @@ else
     data = data*handles.RADIUS*10;
     LIMIT = handles.RADIUS*10*2;
 end
+axes(handles.axes7);
+hold on;
 plot(handles.axes7, 0:1:(length(data)-1), data);
 if sum(zerocenter == plottype)
     axis(handles.axes7, [0 (length(data)-1) -LIMIT LIMIT]);
 else
     axis(handles.axes7, [0 (length(data)-1) 0 LIMIT]);
 end
+hold off;
 
 end
 
