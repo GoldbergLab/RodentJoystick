@@ -2,9 +2,10 @@ function [ output_args ] = multi_start_to_target_distr(dirlist, varargin)
 % multi_start_to_target_distr(dirlist, [hist_bin, smoothparam, chron_group, numplots, ht_range, rw_filter, axlst])
 %
 %   NOTE: This set of functions was a test to see if this kind of
-%   variability analysis would work - but it didn't really achieve
-%   anything.
-%   Probably glitchy.
+%   variability analysis would work - but it didn't achieve anything
+%   useful.
+%   Probably still glitchy , but can edit and figure out if anything will
+%   come of this analysis.
 %   
 %   generates plots of the distribution of distances from a trajectory's
 %   start to its end point. start_to_target_distribution takes a stats 
