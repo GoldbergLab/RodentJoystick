@@ -29,7 +29,8 @@ elseif length(list)<1
     err = ['No jstructs found in ',wdir];
 end
 try
-    stats = xy_getstats(list(1).name, [], [], wdir);
+    load(list(1).name);
+    stats = xy_getstats(jstruct, wdir);
     clear jstruct;
     [velaccel, velaccelraw] = compute_vel_accel_distr(stats);
     save(strcat(wdir,'\velaccel.mat'), 'velaccel');
