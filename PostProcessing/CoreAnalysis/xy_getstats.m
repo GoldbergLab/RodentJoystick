@@ -213,13 +213,10 @@ jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
-
-num_traj= jstruct_stats.numtraj;
-srate = jstruct_stats.srate;
-pellet_count = jstruct_stats.pellet_count;
+jstruct_stats.day = floor(jstruct(2).real_time);
 
 if ~isempty(savedir)
     save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...
     'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
-    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate');
+    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
 end

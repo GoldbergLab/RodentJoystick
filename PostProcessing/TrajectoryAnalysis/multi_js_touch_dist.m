@@ -12,7 +12,7 @@ if plotflag && isempty(ax);
     figure;
     ax = gca();
 end
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 set_distances = zeros(1, length(statslist));
 for i= 1:length(statslist)

@@ -52,7 +52,7 @@ if numvarargs > 6
 end
 [default{1:numvarargs}] = varargin{:};
 [interv, normalize, combineflag, smoothparam, plotflag, ax] = default{:};
-
+clear varargin; clear default; clear numvarargs;
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
@@ -68,7 +68,7 @@ else
 end
 dist_time = -1000:interv:1000;
 
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist, dates] = load_stats(dirlist, combineflag, 'np_js');
 labels.legend = dates;
 for i=1:length(statslist)
     stats = statslist(i);
