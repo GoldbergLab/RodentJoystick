@@ -44,7 +44,7 @@ if combineflag==0 || length(dirlist) == 1
             %stats = xy_getstats(jstruct);
         end
         statslist(k) = stats;
-        clear jstruct; clear stats;
+        clear stats;
     end
 else
 %% FIND COMBINED DATA    
