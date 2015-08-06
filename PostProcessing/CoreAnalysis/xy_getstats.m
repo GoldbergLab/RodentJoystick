@@ -40,32 +40,23 @@
 %           magatnp :: field indicating trajectory magnitude at start of nose poke
 %           posttouch :: onset of post touch
 %           rw_or_stop :: minimum of trajectory reward time and nosepoke release
-function jstruct_stats = xy_getstats(js,varargin)
-default = {[], [], ''};
+function jstruct_stats = xy_getstats(jstruct,varargin)
+default = {''};
 numvarargs = length(varargin);
-if numvarargs > 3
-    error('too many arguments (> 4), only one required and three optional.');
+if numvarargs > 1
+    error('too many arguments (> 2), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[jstruct_x, jstruct_y, savedir] = default{:};
-if isempty(jstruct_x) || isempty(jstruct_y)
-    load(js, 'jstruct_d');
-    specified = 0;
-else 
-    specified = 1; 
-    jstruct_d = js;
-    %flag indicating that jstruct_x and jstruct_y need to be loaded as
-    %needed
-end
+[savedir] = default{:};
 
 %Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
 %and Number of Pellets dispensed
 np_count=0; js_r_count = 0; js_l_count = 0; pellet_count = 0;
-for i=1:length(jstruct_d)
-    np_count = np_count + size(jstruct_d(i).np_pairs,1);
-    js_r_count = js_r_count + size(jstruct_d(i).js_pairs_r,1);
-    js_l_count = js_l_count + size(jstruct_d(i).js_pairs_l,1);
-    pellet_count = pellet_count + numel(jstruct_d(i).reward_onset);
+for i=1:length(jstruct)
+    np_count = np_count + size(jstruct(i).np_pairs,1);
+    js_r_count = js_r_count + size(jstruct(i).js_pairs_r,1);
+    js_l_count = js_l_count + size(jstruct(i).js_pairs_l,1);
+    pellet_count = pellet_count + numel(jstruct(i).reward_onset);
 end
 jstruct_stats.np_count = np_count;
 jstruct_stats.js_r_count = js_r_count;
@@ -74,11 +65,11 @@ jstruct_stats.pellet_count = pellet_count;
     
 % Get Distribution of NP_JS
 list=[];
-for i=1:length(jstruct_d)
-    if (numel(jstruct_d(i).np_pairs)>0 && numel(jstruct_d(i).js_pairs_r>0))
-        for j=1:size(jstruct_d(i).np_pairs,1)
+for i=1:length(jstruct)
+    if (numel(jstruct(i).np_pairs)>0 && numel(jstruct(i).js_pairs_r>0))
+        for j=1:size(jstruct(i).np_pairs,1)
             %keep adding each 
-            list = [list;(jstruct_d(i).js_pairs_r(:,1)-jstruct_d(i).np_pairs(j,1))];
+            list = [list;(jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1))];
         end
     end
 end
@@ -86,10 +77,10 @@ jstruct_stats.np_js = list(find((list>-10000)&(list<10000)));
 
 % Get Distribution of NP_JSPost
 list=[];
-for i=1:length(jstruct_d)
-    if (numel(jstruct_d(i).np_pairs)>0 && numel(jstruct_d(i).js_pairs_l>0))
-        for j=1:size(jstruct_d(i).np_pairs,1)
-            list = [list;(jstruct_d(i).js_pairs_l(:,1)-jstruct_d(i).np_pairs(j,1))];
+for i=1:length(jstruct)
+    if (numel(jstruct(i).np_pairs)>0 && numel(jstruct(i).js_pairs_l>0))
+        for j=1:size(jstruct(i).np_pairs,1)
+            list = [list;(jstruct(i).js_pairs_l(:,1)-jstruct(i).np_pairs(j,1))];
         end
     end
 end
@@ -101,21 +92,17 @@ traj_pdf_jstrial= zeros(100,100);
 k=0;
 
 trialnum=0;
-if ~specified
-    load(js, 'jstruct_x');
-    load(js, 'jstruct_y');
-end
-for struct_index=1:length(jstruct_d)
-    traj_x = jstruct_x(struct_index).traj_x;
-    traj_y = jstruct_y(struct_index).traj_y;    
-    np_pairs = jstruct_d(struct_index).np_pairs;
-    rw_onset = jstruct_d(struct_index).reward_onset;
-    js_pairs_r = jstruct_d(struct_index).js_pairs_r;
-    js_pairs_l = jstruct_d(struct_index).js_pairs_l;
-    js_reward = jstruct_d(struct_index).js_reward;
+for struct_index=1:length(jstruct)
+    traj_x = jstruct(struct_index).traj_x;
+    traj_y = jstruct(struct_index).traj_y;    
+    np_pairs = jstruct(struct_index).np_pairs;
+    rw_onset = jstruct(struct_index).reward_onset;
+    js_pairs_r = jstruct(struct_index).js_pairs_r;
+    js_pairs_l = jstruct(struct_index).js_pairs_l;
+    js_reward = jstruct(struct_index).js_reward;
     
     try
-        laser_on = jstruct_d(struct_index).laser_on;        
+        laser_on = jstruct(struct_index).laser_on;        
     end
     
     %% Process, and develop traj_struct
@@ -225,7 +212,7 @@ jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
-jstruct_stats.day = floor(jstruct_d(1).real_time);
+jstruct_stats.day = floor(jstruct(1).real_time);
 
 if ~isempty(savedir)
     save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...

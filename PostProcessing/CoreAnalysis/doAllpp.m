@@ -47,8 +47,8 @@ tic; %begin timing analysis
 disp(['Processing: ', working_dir]);
 default = {2, 0};
 numvarargs = length(varargin);
-if numvarargs > 1
-    error('too many arguments (> 2), only one required and one optional.');
+if numvarargs > 2
+    error('too many arguments (> 3), only 1 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [analysisflag, singlestep] = default{:};
@@ -84,9 +84,9 @@ end
 %% xy_makestruct: generate jstruct
 if ~failedflag && ((analysisflag<=3 && ~singlestep) || analysisflag == 3)
     try
-        [jstruct_d, jstruct_x, jstruct_y] =xy_makestruct(working_dir);
-        save([working_dir,'/jstruct.mat'],'jstruct_d', 'jstruct_x', 'jstruct_y');
-        clear jstruct_d jstruct_x jstruct_y;
+        [jstruct] =xy_makestruct(working_dir);
+        save([working_dir,'/jstruct.mat'],'jstruct');
+        clear jstruct;
     catch e ; failedflag = 3; err = getReport(e);
     end
 end
