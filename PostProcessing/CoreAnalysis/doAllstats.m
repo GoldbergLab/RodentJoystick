@@ -4,7 +4,7 @@ function [failure, err] = doAllstats(wdir)
 %   performs all computation/post processing of specific statistics
 %   and metrics. Currently, it just computes the stats structure along with
 %   the velocity/acceleration data, but it can be extended to do additional 
-%   post processing. I (Nitin) feel its better to change this rather than
+%   post processing. Its better to change this rather than
 %   doAllpp to cache specific post processing data
 %
 % OUTPUTS: 
@@ -30,9 +30,8 @@ elseif length(list)<1
 end
 try
     load(list(1).name);
-    stats = xy_getstats(jstruct);
+    stats = xy_getstats(jstruct, wdir);
     clear jstruct;
-    save(strcat(wdir,'\stats.mat'),'stats');
     [velaccel, velaccelraw] = compute_vel_accel_distr(stats);
     save(strcat(wdir,'\velaccel.mat'), 'velaccel');
     save(strcat(wdir,'\velaccelraw.mat'), 'velaccelraw');

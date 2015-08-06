@@ -1,5 +1,6 @@
 function [data, labels] = np_post_distribution(dirlist, varargin)
-%np_post_distribution(dirlist, [interv, combineflag, plotflag, ax, combinecolor]) 
+%[data, labels] = np_post_distribution(dirlist, [interv, normalize, 
+%   combineflag, smoothparam, plotflag, ax]) 
 %   
 %   plots the nose poke vs post touch time distribution
 %   for the data from a given day. If multiple days are given, it
