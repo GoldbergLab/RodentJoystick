@@ -1,9 +1,10 @@
 function [data, labels] = np_js_distribution(dirlist, varargin)
-%np_js_distribution(dirlist, [interv, combineflag, plotflag, ax])
+% [data, labels ] = np_js_distribution(dirlist, [interv, normalize, 
+%   combineflag, smoothparam, plotflag, ax])
 % 
-% plots the nose poke vs joystick touch time distribution
-% for the data from a given day. If multiple days are given, it
-% plots all data on the same axes
+%   plots the nose poke vs joystick touch time distribution
+%   for the data from a given day. If multiple days are given, it
+%   plots all data on the same axes
 %
 % ARGUMENTS:
 %

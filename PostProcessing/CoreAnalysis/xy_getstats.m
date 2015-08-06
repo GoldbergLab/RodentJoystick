@@ -1,4 +1,4 @@
-% stats = xy_getstats(jstruct)
+% stats = xy_getstats(jstruct, savedir)
 %   
 %   generates a struct containing several fields describing an entire day's
 %   (folder's) trajectories.
@@ -41,13 +41,13 @@
 %           posttouch :: onset of post touch
 %           rw_or_stop :: minimum of trajectory reward time and nosepoke release
 function jstruct_stats = xy_getstats(jstruct,varargin)
-default = {[0 inf]};
+default = {''};
 numvarargs = length(varargin);
 if numvarargs > 1
     error('too many arguments (> 2), only one required and one optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[index] = default{:};
+[savedir] = default{:};
 
 %Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
 %and Number of Pellets dispensed
@@ -154,7 +154,10 @@ for struct_index=1:length(jstruct)
                 %If optogenetic expt was on, determine if "Hit" trial or
                 %"Catch" trial
                 try
-                if sum(((laser_on(:,1))>js_pairs_r(j,1))&((laser_on(:,1))<js_pairs_r(j,2)))>0
+                if sum(...
+                        ((laser_on(:,1))> js_pairs_r(j,1))&...
+                        ((laser_on(:,1))< js_pairs_r(j,2)) ...
+                    )>0
                     laser = 1;
                 else
                     laser = 0;
@@ -196,7 +199,8 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
                     traj_struct(k).rw_or_stop = rw_or_stop;
-                    traj_pdf_jstrial = traj_pdf_jstrial + hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
+                    traj_pdf_jstrial = traj_pdf_jstrial + ...
+                        hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
                 end
             end    
             end  
@@ -204,11 +208,18 @@ for struct_index=1:length(jstruct)
     end
 end
 
-
-
 jstruct_stats.traj_pdf_jstrial = traj_pdf_jstrial./sum(sum(traj_pdf_jstrial));
 jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
-% Get Theta Distributions
+
+num_traj= jstruct_stats.numtraj;
+srate = jstruct_stats.srate;
+pellet_count = jstruct_stats.pellet_count;
+
+if ~isempty(savedir)
+    save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...
+    'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
+    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate');
+end
