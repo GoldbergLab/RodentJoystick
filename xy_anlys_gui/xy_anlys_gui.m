@@ -89,15 +89,16 @@ function selectdir_push_Callback(hObject, eventdata, handles)
  working_dir = uigetdir;
  handles.working_dir = working_dir;
  set(handles.filelist_box,'Value',1);
- load(strcat(working_dir,'\jstruct.mat'));
+ jsloc = [working_dir, '\jstruct.mat'];
+ load(jsloc, 'jstruct_d');
  
- handles.jstruct = jstruct;
- day = floor(jstruct(1).real_time);
+ handles.jstruct_d = jstruct_d;
+ day = floor(jstruct_d(1).real_time);
  
  %populate listbox
- str_list = cell(size(jstruct, 2), 1);
- for i=1:size(jstruct,2)
-     str_list{i} = jstruct(i).filename;
+ str_list = cell(size(jstruct_d, 2), 1);
+ for i=1:size(jstruct_d,2)
+     str_list{i} = jstruct_d(i).filename;
  end
  set(handles.filelist_box,'String',str_list);
  set(handles.working_dir_text,'String',working_dir);
@@ -110,26 +111,37 @@ function filelist_box_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 struct_index=get(hObject,'Value');
-jstruct = handles.jstruct;
-stats = xy_getstats(jstruct(struct_index));
-set(handles.time_text, 'String', datestr(jstruct(struct_index).real_time, 'HH:MM:SS'));
-handles.start_time = jstruct(struct_index).real_time;
+jstruct_d = handles.jstruct_d;
+working_dir = handles.working_dir;
+jsloc = [working_dir, '\jstruct.mat'];
+
+set(handles.time_text, 'String', datestr(jstruct_d(struct_index).real_time, 'HH:MM:SS'));
+handles.start_time = jstruct_d(struct_index).real_time;
  
 RADIUS = 6.35;
 handles.RADIUS = RADIUS;
-raw_x = (jstruct(struct_index).traj_x);
-raw_y = (jstruct(struct_index).traj_y);
-traj_x = raw_x*(RADIUS/100);
-traj_y = raw_y*(RADIUS/100);
+
+load(jsloc, 'jstruct_x');
+raw_x = (jstruct_x(struct_index));
+clear jstruct_x;
+load(jsloc, 'jstruct_y');
+raw_y = (jstruct_y(struct_index));
+clear jstruct_y;
+stats = xy_getstats(jstruct_d(struct_index), raw_x, raw_y);
+
+raw_x = raw_x.traj_x;
+raw_y = raw_y.traj_y;
+traj_x = (raw_x)*(RADIUS/100);
+traj_y = (raw_y)*(RADIUS/100);
 magtraj =sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
 
 %raw sensor information
-np_pairs = jstruct(struct_index).np_pairs;
-rw_onset = jstruct(struct_index).reward_onset;
-js_pairs_r = jstruct(struct_index).js_pairs_r;
-js_pairs_l = jstruct(struct_index).js_pairs_l;
+np_pairs = jstruct_d(struct_index).np_pairs;
+rw_onset = jstruct_d(struct_index).reward_onset;
+js_pairs_r = jstruct_d(struct_index).js_pairs_r;
+js_pairs_l = jstruct_d(struct_index).js_pairs_l;
 try
-    laser_on = jstruct(struct_index).laser_on;
+    laser_on = jstruct_d(struct_index).laser_on;
 catch
 end
 

@@ -1,4 +1,4 @@
-%[jstruct] = xy_makestruct(working_dir) 
+%[jstruct_d, jstruct_x, jstruct_y] = xy_makestruct(working_dir) 
 %
 %   xy_makestruct(working_dir) takes all the .mat files in working_dir and
 %   processes all of them to create a single jstruct that stores a summary of
@@ -8,16 +8,11 @@
 %
 % OUTPUT:
 %
-%   Each jstruct(i) for all i has the following fields
+%   Each jstruct_d(i) for all i has the following fields
 %
 %   filename :: name of the combined .mat file in the following format: 
 %       [frameno (10)]_Box_[0-9]_[Date (9)] - number in parentheses
 %       indicates number of characters
-%
-%   path :: another structure which is a vector listing the .dat files used
-%       to generate the combined .mat file. Since this usually is not
-%       necessary, further information can be found by looking at the
-%       structure itself
 %
 %   real_time :: the time (in MATLAB standard double representation of
 %       time) of the beginning of the element in the jstruct.
@@ -46,7 +41,7 @@
 %       rewarded
 %
 %   np_js_start :: start of trajectory
-function [jstruct] = xy_makestruct(working_dir)
+function [jstruct_d, jstruct_x, jstruct_y] = xy_makestruct(working_dir)
 
 working_dir_1 = strcat(working_dir,'/','comb');
 filelist = dir(strcat(working_dir_1,'/*.mat'));
@@ -98,26 +93,27 @@ for i=1:length(filelist)
             end
         end
     end
-    jstruct(i).filename = filelist(i).name;
-    jstruct(i).path = dir;
-    jstruct(i).traj_x = working_buff(1,:);
-    jstruct(i).traj_y = working_buff(2,:);
-    jstruct(i).np_pairs = np;
-    jstruct(i).js_pairs_r = js_r;
-    jstruct(i).js_pairs_l = js_l;
-    jstruct(i).reward_onset = reward_on;
-    jstruct(i).js_reward = js_reward;
-    jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
+    jstruct_d(i).filename = filelist(i).name;
+    jstruct_x(i).filename = filelist(i).name;
+    jstruct_y(i).filename = filelist(i).name;
+    jstruct_x(i).traj_x = working_buff(1,:);
+    jstruct_y(i).traj_y = working_buff(2,:);
+    jstruct_d(i).np_pairs = np;
+    jstruct_d(i).js_pairs_r = js_r;
+    jstruct_d(i).js_pairs_l = js_l;
+    jstruct_d(i).reward_onset = reward_on;
+    jstruct_d(i).js_reward = js_reward;
+    jstruct_d(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
     try
-        jstruct(i).laser_on = laser_on;
-        jstruct(i).lick_on = lick;
+        jstruct_d(i).laser_on = laser_on;
+        jstruct_d(i).lick_on = lick;
     catch
     end
 
     % Mark nose pokes prior to start of each joystick deflection
-    start_p = zeros(size(jstruct(i).js_pairs_r,1),1);
-    if numel(jstruct(i).js_pairs_r)>0 && numel(jstruct(i).np_pairs)>0
-        for j=1:size(jstruct(i).js_pairs_r,1)
+    start_p = zeros(size(jstruct_d(i).js_pairs_r,1),1);
+    if numel(jstruct_d(i).js_pairs_r)>0 && numel(jstruct_d(i).np_pairs)>0
+        for j=1:size(jstruct_d(i).js_pairs_r,1)
             if(sum(((np(:,1)-js_r(j,1))<0)&((np(:,2)-js_r(j,1))>0))>0)            
                 temp = (np(:,1)-js_r(j,1))<0;
                 start_p(j) = max(np(temp));            
@@ -125,7 +121,7 @@ for i=1:length(filelist)
         end
     end
    
-   jstruct(i).np_js_start = start_p;
+   jstruct_d(i).np_js_start = start_p;
 end
 end
 
