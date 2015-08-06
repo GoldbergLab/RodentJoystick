@@ -60,7 +60,6 @@ y = RADIUS*sind(0:1:360);
 plot(x,y,'k','LineWidth',2);
 
 
-axis([-100 100 -100 100])
 axis square;
 k=pl_index;
 

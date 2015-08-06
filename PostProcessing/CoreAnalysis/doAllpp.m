@@ -30,10 +30,14 @@
 % 
 % OPTIONAL ARGS: 
 %
-%       analysisflag :: instructs where in analysis pipeline to begin
+%       analysisflag :: instructs where in analysis process to begin
 %           combine_contingencies (1) -> ppscript (2) -> make jstruct (3)
 %           -> generate stats (4)
 %           DEFAULT - 2
+%
+%       singlestep :: when enabled, only performs the single step selected (1),
+%           otherwise does rest of analysis process
+%           DEFAULT - 0
 %       
 
 function [failedflag, err] = doAllpp(working_dir, varargin)
@@ -41,13 +45,13 @@ tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
 disp(['Processing: ', working_dir]);
-default = {2};
+default = {2, 0};
 numvarargs = length(varargin);
 if numvarargs > 1
     error('too many arguments (> 2), only one required and one optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[analysisflag] = default{:};
+[analysisflag, singlestep] = default{:};
 
 failedflag = 0; err='';
 try
@@ -59,7 +63,7 @@ catch e
 end
 
 %% combine_contingencies: place in appropriate folder
-if ~failedflag && analysisflag<2
+if ~failedflag && ((analysisflag<=1 && ~singlestep) || analysisflag == 1)
     try
         working_dir = combine_contingencies(working_dir);
     catch e
@@ -68,7 +72,7 @@ if ~failedflag && analysisflag<2
 end
 
 %% ppscript: generate combined matlab files
-if ~failedflag && analysisflag <3%hasn't failed so far
+if ~failedflag && ((analysisflag<=2 && ~singlestep) || analysisflag == 2)
     try
         fileformatspec = '%f %f %s %s %s %s %s'; numfield = 7;
         ppscript(working_dir,fileformatspec,numfield);
@@ -78,17 +82,17 @@ if ~failedflag && analysisflag <3%hasn't failed so far
 end
 
 %% xy_makestruct: generate jstruct
-if ~failedflag && analysisflag<4
+if ~failedflag && ((analysisflag<=3 && ~singlestep) || analysisflag == 3)
     try
-        jstruct=xy_makestruct(working_dir);
-        save(strcat(working_dir,'/jstruct.mat'),'jstruct');
-        clear jstruct;
+        [jstruct_d, jstruct_x, jstruct_y] =xy_makestruct(working_dir);
+        save([working_dir,'/jstruct.mat'],'jstruct_d', 'jstruct_x', 'jstruct_y');
+        clear jstruct_d jstruct_x jstruct_y;
     catch e ; failedflag = 3; err = getReport(e);
     end
 end
 
 %% doAllstats: additional post processing
-if ~failedflag && analysisflag < 5
+if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
     try
         [failedflag, err] = doAllstats(working_dir);
     catch e
