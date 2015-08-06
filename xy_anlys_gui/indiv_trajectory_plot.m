@@ -44,7 +44,7 @@ if sum(multiplyradius == plottype)
     LIMIT = handles.RADIUS*1.08;
 else
     data = data*handles.RADIUS*10;
-    LIMIT = handles.RADIUS*10*2;
+    LIMIT = handles.RADIUS*10*3;
 end
 axes(handles.axes7);
 hold on;
