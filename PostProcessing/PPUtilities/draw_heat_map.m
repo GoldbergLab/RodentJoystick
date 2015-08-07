@@ -41,8 +41,9 @@ end
 
 if isempty(xax) || isempty(yax)
     xscalesize = size(data, 1);
-    yscalesize = size(data, 2);
-    xax = -100:(floor(201/scalesize)):100;
+    yscalesize = size(data, 1);
+    xax = -100:(floor(201/xscalesize)):100;
+    xax = xax(1:size(data,2));
     yax = xax;
     activitymap = 1;
 else
@@ -72,7 +73,7 @@ pcolorval = prctile(traj_pdf, colorperc);
 axes(ax(1));
 hold on; title(tstr); 
 xlabel(xlab); ylabel(ylab);
-pcolor(ax, xax, yax, data); shading interp; 
+pcolor(ax, xax, yax, data); shading flat; 
 if activitymap
     axis square;
     set(ax, 'XTick', [-100 -50 0 50 100]);
