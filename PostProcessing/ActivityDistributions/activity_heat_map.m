@@ -1,5 +1,5 @@
 function [data, labels] = activity_heat_map(stats, varargin)
-% [data, labels] = activity_heat_map(stats [ax, logmapping, colorperc])
+% [data, labels] = activity_heat_map(stats, [ax, logmapping, colorperc])
 %   
 %   plots the probability distribution given by stats.traj_pdf_jstrial onto
 %   the axes handle ax if available (otherwise it simply generates a new figure)
@@ -20,17 +20,17 @@ function [data, labels] = activity_heat_map(stats, varargin)
 %           plot
 %
 
-default = {1, [25 75], []};
+default = {1, [25 75], [], [1 100]};
 numvarargs = length(varargin);
-if numvarargs > 3
-    error('too many arguments (> 4), only one required and three optional.');
+if numvarargs > 4
+    error('too many arguments (> 5), only one required and 4 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc, ax] = default{:};
+[logmapping, colorperc, ax, radii] = default{:};
 if (length(ax)<1); figure; ax = gca(); end
 if logmapping == 1
     colorperc = [0 99];
 end
 data = stats.traj_pdf_jstrial;
-labels = draw_heat_map(data, ax, 'Activity Distribution', logmapping, colorperc);
+labels = draw_heat_map(data, ax, 'Activity Distribution', logmapping, colorperc, radii);
 
