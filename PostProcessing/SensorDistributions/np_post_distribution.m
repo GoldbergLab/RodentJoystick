@@ -62,7 +62,7 @@ if plotflag == 1 && length(ax) <1
 end
 if combineflag == 1
     data = cell(1, 1);
-else
+elseif combineflag == 0
     data = cell(length(dirlist), 1);
 end
 dist_time = -1000:interv:1000;
