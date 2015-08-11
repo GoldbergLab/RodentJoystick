@@ -17,7 +17,7 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %   bin_summary :: a struct with the following fields:
 %       lt, geq - bin contains all trajectories with hold times in
 %           the length geq - lt (greater or equal to, and strictly less than)
-%       med - double vector with median at each time point
+%       md - double vector with median at each time point
 %       upperbnd - double vector of 75th percentile at each time point
 %       lowerbnd - double vector of 25th percentile at each time point
 %       mean - double vector of mean at each time point
