@@ -7,7 +7,8 @@ for i = 1:length(tmpdirlist)
     if ~tmpdirlist(i).isdir; break; end;
     dirlist(i) = tmpdirlist(i);
 end
-
+offset = 0;
+dirlist = dirlist(1+offset:end);
 statslist = load_stats(dirlist, 2, 'np_js');
 for i = 1:length(statslist)
     npjs_pairscount(i) = length(statslist(i).np_js);
@@ -21,8 +22,9 @@ for i = 1:length(data);
     np_js = tmpdata(:, 2);
     accumdata = [accumdata; np_js'];
 end
+accumdata = [accumdata; zeros(1, size(accumdata, 2))];
 x = -1000:interv:1000;
-y = 1:size(accumdata, 1);
+y = (1:size(accumdata, 1))+offset;
 figure; ax = gca;
 pcolor(ax, x, y, accumdata);
 shading flat;
