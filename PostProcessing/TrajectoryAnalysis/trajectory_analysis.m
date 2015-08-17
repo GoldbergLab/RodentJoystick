@@ -127,6 +127,7 @@ for i = 1:PLOT_RANGE
     time = 1:1:length(numbers); 
     inittraj = numbers(1); numbers = 100*numbers./inittraj;
     bin_summary(i).numbers = numbers;
+    bin_summary(i).trajcount = inittraj;
     
     tstr = strcat(num2str(round(bin.geq)), '-', num2str(round(bin.lt)), ' ms:');
     percent = num2str(100*inittraj/totaltraj, 4); format bank;
