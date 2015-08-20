@@ -1,27 +1,43 @@
 function [data, labels, summary] = hold_time_distr(dirlist, varargin )
 %[data, labels, summary] 
-% = hold_time_distr(dirlist, [hist_int, TIME_RANGE, combineflag, ax, allstuff])
-%hold_time_distr plots the distribution of hold times with intervals
-%defined by hist_int for a range [0, TIME_RANGE];
-%OUTPUTS:
+%   = hold_time_distr(dirlist, [hist_int, TIME_RANGE, combineflag, smoothparam, ax, allstuff])
+%   
+%   hold_time_distr plots the distribution of hold times with intervals
+%   defined by hist_int for a range [0, TIME_RANGE];
+%
+% OUTPUTS
+%   
 %   data :: cell array with a cell for each jstruct in dirlist containing
 %       histogram data for each cell has the format:
 %       [time, holdtime_ht] (holdtime ht has already been binned)
+%
 %   labels :: struct containing xlabel, ylabel, title, and legend
+%
 %   summary :: cell array with a cell for each jstruct in dirlist containing
 %       statistics describing hold time distribution for each day
 %       each cell has the format:
 %       [firstquartile median thirdquartile mean stdev]
-%ARGUMENTS:
+%
+% ARGUMENTS
+%
 %   dirlist :: list of directories corresponding to days (struct from rdir)
-%   OPTIONAL
+%
+% OPTIONAL ARGS
+%
 %   hist_int :: size of the bins for histogram generation (in ms)
 %       DEFAULT : 20
+%
 %   TIME_RANGE :: number that tells end time range
 %       DEFAULT : 2000
+%
 %   combineflag :: tells whether to combine all data from all jstructs into
 %       a single plot (1), or plot each day separately (0)
 %       DEFAULT: 0
+%
+%   smoothparam :: parameter describing smoothing - changes data using a
+%       moving average
+%       DEFAULT : 1 (no smoothing)
+%
 %   ax :: a vector containing axes handles for hold_time_distr to plot on
 %       if empty, hold_time_distr will generate a new figure
 %       DEFAULT : []
@@ -37,13 +53,13 @@ function [data, labels, summary] = hold_time_distr(dirlist, varargin )
 
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {20, 2000, 0, [], []};
+default = {20, 2000, 0, 1, [], []};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hist_int, TIME_RANGE, combineflag, ax, allstuff] = default{:};
+[hist_int, TIME_RANGE, combineflag, smoothparam, ax, allstuff] = default{:};
 if (length(ax)<1); figure; ax = gca(); end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 labels.xlabel = 'Hold Time (ms)';
@@ -54,7 +70,8 @@ if ~isempty(allstuff)
     dates = allstuff.dates;
     allstats = allstuff.stats;
 else
-    [extradata, dates, allstats] = get_rewardandht_times(dirlist, hist_int, TIME_RANGE, combineflag);
+    [extradata, dates, allstats] = get_rewardandht_times(dirlist, ... 
+        hist_int,  TIME_RANGE, combineflag);
 end
 labels.legend = dates;
 data = cell(length(extradata), 1); summary = cell(length(extradata), 1);
@@ -73,7 +90,7 @@ hold on;
 LINEWIDTH = 1; if length(extradata)==1; LINEWIDTH = 2; end;
 for i = 1:length(data)
     datatmp = data{i};
-    stairs(datatmp(:, 1), datatmp(:, 2), colors(i), 'LineWidth', LINEWIDTH);
+    stairs(datatmp(:, 1), smooth(datatmp(:, 2), smoothparam), colors(i), 'LineWidth', LINEWIDTH);
 end
 xlabel(labels.xlabel); ylabel(labels.ylabel);
 title(labels.title);

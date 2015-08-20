@@ -31,46 +31,46 @@ arg1 = get(arg1s(axnum), 'String');
 arg2 = get(arg2s(axnum), 'String'); 
 arg3 = get(arg3s(axnum), 'String');
 combineflag = get(handles.combinedays, 'Value');
+smoothps = cellstr(get(handles.smoothparam,'String'));
+smoothparam = smoothps{get(handles.smoothparam,'Value')};
+smoothparam = str2num(smoothparam);
+normalize = get(handles.normalizecheck, 'Value');
 
 if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
     statscombined = load_stats(dirlist, 1);
 end
 cla(axes(axnum), 'reset');
 %% PLOTTING ROUTINES - EDIT HERE TO ADD NEW FUNCTIONS
-% The following are available to 
-% arg1, arg2, arg3 are left as strings from taking from the textboxes
-%    makes it more flexible in case of string args in the future - and
-%    sometimes arguments will be '' or '-';
+% The following are available to any function call
 %
+%   dirlist :: a list of directories to plot/analyze
+%
+%   arg1, arg2, arg3 :: 
+%       strings from taking from the textboxes makes it more flexible 
+%       in case of string args in the future - and sometimes arguments 
+%       will be '' or '-';
+%
+%   combineflag :: 1/0 flag instructing whether to combine all days in 
+%       dirlist or leave empty
+%   
+%   normalize :: 1/0 global flag declaring normalizing
+% 
+%   smoothparam :: desired smoothing - i.e. ` smooth(data, smoothparam)`
+%
+%   axes(axnum) :: axes available for plotting
+%       see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
-    norm = str2num(arg2);
-    np_js_distribution(dirlist, interv, norm, combineflag, 1, axes(axnum));
+    np_js_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
-    arg1 = str2num(arg1);
-    np_post_distribution(dirlist, arg1, combineflag, 1, axes(axnum));
-elseif strcmp(plotname, 'Hold Length Distribution (Max)')
-%   arg1label = 'Interv'; %Histogram interval (ms)
-%   arg2label = 'Normalize'; %whether to normalize distributions
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    arg2 = ~(~arg2);
-    holdtime_firstcontact_distribution(dirlist, 150, arg1, combineflag, arg2, 1, axes(axnum));  
-elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
-%   arg1label = 'Interv'; %Histogram interval (ms)
-%   arg2label = 'Normalize'; %whether to normalize distributions
-%   arg3label = 'Thresh'; %Distance threshold
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    arg3 = str2num(arg3);
-    arg2 = ~(~arg2);
-    holdtime_firstcontact_distribution(dirlist, arg3, arg1, combineflag, arg2, 1, axes(axnum)); 
-elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
+    interv = str2num(arg1);
+    np_post_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
+elseif strcmp(plotname, 'Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    hold_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
+    hold_time_distr(dirlist, arg1, arg2, combineflag, smoothparam, axes(axnum), []);
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
@@ -91,23 +91,21 @@ elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
     joystick_to_reward_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    multi_time_distr(dirlist, arg1, 'single', combineflag, arg2, inf, axes(axnum));
+    interv = str2num(arg1);
+    norm = str2num(arg2);
+    rewonly = str2num(arg3);
+    multi_time_distr(dirlist, interv, 'single', combineflag, norm, rewonly, inf, axes(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
     rewrate = str2num(arg1);
     holdtime = str2num(arg2);
     thresh = str2num(arg3);
-    [~, setdiststr] = multi_js_touch_dist(dirlist, rewrate, thresh, holdtime, combineflag, axes(axnum));
+    interv = 15;
+    plotflag = 1;
+    [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
+        holdtime, combineflag, plotflag, smoothparam, axes(axnum));
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
-elseif strcmp(plotname, 'XY Hold Dist')
-    rewrate = str2num(arg1);
-    targcht = str2num(arg2);
-    [~, htstr] = multi_xy_holddist(dirlist, targcht, rewrate, combineflag);
-    htstr = ['XY Hold Dist: ';htstr];
-    handles = update_console(handles, htstr);
 elseif strcmp(plotname, 'Activity Heat Map')
     activity_heat_map(statscombined, 1, [2 99], axes(axnum));
 elseif strcmp(plotname, 'Velocity Heat Map')
@@ -131,8 +129,8 @@ elseif strcmp(plotname, 'Angle Distribution (Linear)')
 elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
+    start = str2num(arg1);
+    endt = str2num(arg2);
     if axnum == 1 || axnum == 4
         axestoplot = [axes(1); axes(2); axes(4); axes(5)];
     else
@@ -144,20 +142,22 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 4, [arg1 arg2], [0 0 0], combineflag, axestoplot);
+        multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
+            combineflag, smoothparam, axestoplot);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
+    start = str2num(arg1);
+    endt = str2num(arg2);
     info = 'Trajectory Analysis will plot over all 6 axes. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
         for i = 1:length(axes)
             cla(axes(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 6, [arg1 arg2], [0 0 0], combineflag, axes);
+        multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
+            combineflag, smoothparam, axes);
     end
 end
 

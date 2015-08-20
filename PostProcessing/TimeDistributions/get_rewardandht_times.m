@@ -29,7 +29,8 @@ function [data, dates, statistics] = get_rewardandht_times(dirlist, varargin )
 %
 %   dirlist :: list of directories corresponding to days (structs)
 %
-%   OPTIONAL
+% OPTIONAL ARGS:
+%
 %   hist_int :: size of the bins for data generation (future histogram
 %       plotting)
 %       DEFAULT : 20
@@ -50,7 +51,11 @@ end
 [default{1:numvarargs}] = varargin{:};
 [hist_int, TIME_RANGE, combineflag] = default{:};
 
-[statslist, dates] = load_stats(dirlist, combineflag);
+if length(TIME_RANGE)==1
+    TIME_RANGE = [0 TIME_RANGE];
+end
+
+[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
 data = cell(length(statslist), 1);
 statistics = cell(length(statslist), 1);
 for i = 1:length(statslist)
@@ -64,7 +69,7 @@ end
 
 function [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE)
 tstruct = stats.traj_struct;
-time = 0:hist_int:TIME_RANGE;        
+time = TIME_RANGE(1):hist_int:TIME_RANGE(2);        
 holdtimes = zeros(length(tstruct), 1);
 rw_or_stop = zeros(length(tstruct), 1);
 j =0; rewtimes = []; js2rew = [];

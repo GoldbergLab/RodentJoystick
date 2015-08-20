@@ -5,15 +5,12 @@ function [obj] = populate_function_list(obj)
 %% MODIFY THIS SECTION TO ADD PLOTS
 function_list = {'Nosepoke Joystick Onset Distribution';
                     'Nosepoke Post Onset Distribution';
-                    'Hold Length Distribution (Max)';
-                    'Hold Length Distribution (Threshold)';
-                    'Hold Time Distribution (Trajectories)';
+                    'Hold Time Distribution';
                     'Rewarded Hold Time Distribution';
                     'Reward Rate by Hold Time Distribution';
                     'Joystick Onset to Reward Distribution';
                     'Nosepoke/Reward Activity Distribution';
                     'JS Touch Dist';
-                    'XY Hold Dist';
                     'Activity Heat Map';
                     'Velocity Heat Map';
                     'Velocity Variation Heat Map';

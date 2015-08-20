@@ -27,21 +27,38 @@ function [labels] = draw_heat_map(data, ax, type, varargin)
 %           logarithmically scaled and plotted (1) or left as is (0)
 %
 %       colorperc :: color percentiles for pcolor axis 
+%
 
-default = {1, [5 80]};
+%% Argument Manipulation
+default = {1, [5 80], [1 100], [], []};
+
 numvarargs = length(varargin);
-if numvarargs > 2
-    error('too many arguments (> 4), only two required and two optional.');
+if numvarargs > 5
+    error('too many arguments (> 8), only 3 required and 5 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc] = default{:};
-scalesize = size(data, 1);
+[logmapping, colorperc, contl, xax, yax]= default{:};
+
+if isempty(xax) || isempty(yax)
+    xscalesize = size(data, 1);
+    yscalesize = size(data, 1);
+    xax = -100:(floor(201/xscalesize)):100;
+    xax = xax(1:size(data,2));
+    yax = xax;
+    activitymap = 1;
+else
+    activitymap = 0;
+    xscalesize = length(xax);
+    yscalesize = length(yax);
+end
+
+%% Mapping Data Appropriately
 if logmapping == 1
     data = log(data);
-    traj_pdf = reshape(data, scalesize*scalesize, 1);
+    traj_pdf = reshape(data, xscalesize*yscalesize, 1);
     traj_pdf = sort(traj_pdf(traj_pdf ~= -Inf ));
 else
-    traj_pdf = reshape(data, scalesize*scalesize, 1);
+    traj_pdf = reshape(data, xscalesize*yscalesize, 1);
     traj_pdf = sort(traj_pdf(traj_pdf ~= 0));
 end
 
@@ -49,22 +66,31 @@ end
 pflag = 'Normal'; if logmapping == 1; pflag = 'Log'; end;
 tstr = [type, ' (',pflag,' mapping)'];
 xlab = 'X'; ylab = 'Y';
-pcv2_ind = min(floor(colorperc(2)/100*length(traj_pdf)), length(traj_pdf));
-pcolorval2 = traj_pdf(pcv2_ind);
-pcv1_ind = max(floor(colorperc(1)/100*length(traj_pdf)), 1);
-pcolorval1 = traj_pdf(pcv1_ind);
+pcolorval = prctile(traj_pdf, colorperc);
 
 
 %% Nothing interesting, just actually plotting data now
 axes(ax(1));
 hold on; title(tstr); 
 xlabel(xlab); ylabel(ylab);
-scale = -100:(floor(201/scalesize)):100;
-scale = scale(1:scalesize);
-pcolor(ax, scale, scale, data); shading interp; axis square;
-set(ax, 'XTick', [-100 -50 0 50 100]);
-set(ax, 'YTick', [-100 -50 0 50 100]);
-caxis([pcolorval1 pcolorval2]); hold off;
+pcolor(ax, xax, yax, data); shading flat; 
+if activitymap
+    axis square;
+    set(ax, 'XTick', [-100 -50 0 50 100]);
+    set(ax, 'YTick', [-100 -50 0 50 100]);
+    plot(ax, 100*sind(0:0.5:360), 100*cosd(0:0.5:360), 'LineWidth', 3, 'Color', [0 0 0]);
+    plot(ax, contl(1)*sind(0:0.5:360), contl(1)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+    plot(ax, contl(2)*sind(0:0.5:360), contl(2)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+
+else
+    xind = 1:(floor(length(xax)/4)):length(xax);
+    yind = 1:(floor(length(yax)/4)):length(yax);
+    if xind(end) ~= length(xax); xind = [xind, length(xax)]; end;
+    if yind(end) ~= length(yax); yind = [yind, length(yax)]; end;
+    set(ax, 'XTick', xax(xind));
+    set(ax, 'YTick', yax(yind));
+end
+caxis(pcolorval); hold off;
 
 labels.xlabel = xlab; labels.ylabel = ylab; labels.title = tstr;
 end

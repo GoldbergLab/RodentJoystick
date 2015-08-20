@@ -5,13 +5,12 @@ contents = cellstr(get(hObject,'String'));
 plotname = contents{get(hObject, 'Value')};
 function_list = {'Nosepoke Joystick Onset Distribution';
                     'Nosepoke Post Onset Distribution';
-                    'Hold Length Distribution (Max)';
-                    'Hold Length Distribution (Threshold)';
                     'Hold Time Distribution (Trajectories)';
                     'Rewarded Hold Time Distribution';
                     'Reward Rate by Hold Time Distribution';
                     'Joystick Onset to Reward Distribution';
                     'Nosepoke/Reward Activity Distribution';
+                    'JS Touch Dist';
                     'Activity Heat Map';
                     'Velocity Heat Map';
                     'Velocity Variation Heat Map';
@@ -28,24 +27,10 @@ arg1label = '-'; arg2label = '-'; arg3label = '-';
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     arg1 = '20';
     arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '1';
-    arg2label = 'Normalize'; % normalize plot 
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = '20';
     arg1label = 'Interv'; %Histogram interval (ms)
-elseif strcmp(plotname, 'Hold Length Distribution (Max)')
-    arg1 = '20';
-    arg1label = 'Interv'; %Histogram interval (ms)
-    arg2 = '0'; 
-    arg2label = 'Normalize'; %whether to normalize distributions
-elseif strcmp(plotname, 'Hold Length Distribution (Threshold)')
-    arg1 = '20'; 
-    arg1label = 'Interv'; %Histogram interval (ms)
-    arg3 = '50'; 
-    arg3label = 'Thresh'; %Distance threshold
-    arg2 = '0'; 
-    arg2label = 'Normalize'; %whether to normalize distributions
-elseif strcmp(plotname, 'Hold Time Distribution (Trajectories)')
+elseif strcmp(plotname, 'Hold Time Distribution')
     arg1 = '20'; 
     arg1label = 'Interv'; %Histogram interval (ms)
     arg2 = '2000'; 
@@ -70,6 +55,8 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg1label = 'Interv'; %Histogram interval (min)
     arg2 = '0';
     arg2label = 'Normalize';
+    arg3 = '0';
+    arg3label = 'Rew Only';
 elseif strcmp(plotname, 'JS Touch Dist')
     arg1 = '0.25';
     arg1label = 'Rew Rate';
@@ -77,11 +64,6 @@ elseif strcmp(plotname, 'JS Touch Dist')
     arg2label = 'Targ HT';
     arg3 = '50';
     arg3label = 'Thresh';
-elseif strcmp(plotname, 'XY Hold Dist')
-    arg1 = '0.25';
-    arg1label = 'Rew Rate';
-    arg2 = '20';
-    arg2label = 'Targ. CHT';
 elseif strcmp(plotname, 'Activity Heat Map')
     arg1 = '2'; 
     arg1label = 'Bin'; %Bin Size (min)

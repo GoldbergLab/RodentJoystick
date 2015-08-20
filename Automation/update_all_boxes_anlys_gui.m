@@ -38,7 +38,6 @@ for i = 1:60 %how far we're willing to look back for contingency information
     end
     if length(dayscompare)-duplicates>= NumDaysCompare; break; end;
 end
-disp(length(dayscompare));
 if length(dayscompare)<1
     error(['Not enough days recently to update contigency automatically',...
             '- must be done manually']);
@@ -88,8 +87,8 @@ maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,
                 handles.newmaxangle4, handles.newmaxangle5, handles.newmaxangle6,...
                 handles.newmaxangle7, handles.newmaxangle8];
             
-stats = load_stats(dayscompare, 1);
-sz = length(dayscompare);
+stats = load_stats(dayscompare, 1, 'pellet_count', 'srate', 'np_count', 'trialnum');
+sz = length(dayscompare)-duplicates;
 set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));
 set(srates(boxnum), 'String', num2str(stats.srate));
 set(npokes(boxnum), 'String', num2str(stats.np_count/sz));

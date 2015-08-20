@@ -1,4 +1,4 @@
-% stats = xy_getstats(jstruct)
+% stats = xy_getstats(jspath/jstruct_d, [jstruct_x, jstruct_y, savedir])
 %   
 %   generates a struct containing several fields describing an entire day's
 %   (folder's) trajectories.
@@ -6,18 +6,31 @@
 % OUTPUT:
 %
 %       stats has the following fields:
+%
 %       np_count :: nose poke count for the day
+%
 %       js_r_count :: number of right joystick touches
+%
 %       js_l_count :: number of left joystick touches
+%
 %       pellet_count :: number of pellets dispensed fo the day.
+%
 %       np_js :: vector of nosepoke to joystick touch onset times
+%
 %       np_js_post :: vector of nosepoke to post touch onset times
+%
 %       numtraj ::: the number of trajectories that the mouse attempted
+%
 %       traj_struct :: struct of trajectories, with each element containing the
 %           following fields
 %           traj_x :: vector of x position at each ms
 %           traj_y :: vector of y position at each ms
 %           magtraj :: vector of trajectory magnitude at each ms
+%           vel_x :: x_velocity in units of % deviation / ms
+%           vel_y :: y_velocity in % deviation/ms units
+%           magvel :: velocity magnitude in % deviation/ms - but in
+%               cartesian coordinates
+%           radvel :: radial velocity in %deviation/ms
 %           js_onset :: joystick onset from start of data collection "bout"
 %           start_p :: start of nosepoke
 %           stop_p :: end of trajectory
@@ -28,13 +41,13 @@
 %           posttouch :: onset of post touch
 %           rw_or_stop :: minimum of trajectory reward time and nosepoke release
 function jstruct_stats = xy_getstats(jstruct,varargin)
-default = {[0 inf]};
+default = {''};
 numvarargs = length(varargin);
 if numvarargs > 1
-    error('too many arguments (> 2), only one required and one optional.');
+    error('too many arguments (> 2), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[index] = default{:};
+[savedir] = default{:};
 
 %Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
 %and Number of Pellets dispensed
@@ -78,11 +91,10 @@ traj_struct = [];
 traj_pdf_jstrial= zeros(100,100);
 k=0;
 
-trialnum=0; 
+trialnum=0;
 for struct_index=1:length(jstruct)
-    %% initialize   
     traj_x = jstruct(struct_index).traj_x;
-    traj_y = jstruct(struct_index).traj_y;
+    traj_y = jstruct(struct_index).traj_y;    
     np_pairs = jstruct(struct_index).np_pairs;
     rw_onset = jstruct(struct_index).reward_onset;
     js_pairs_r = jstruct(struct_index).js_pairs_r;
@@ -141,7 +153,10 @@ for struct_index=1:length(jstruct)
                 %If optogenetic expt was on, determine if "Hit" trial or
                 %"Catch" trial
                 try
-                if sum(((laser_on(:,1))>js_pairs_r(j,1))&((laser_on(:,1))<js_pairs_r(j,2)))>0
+                if sum(...
+                        ((laser_on(:,1))> js_pairs_r(j,1))&...
+                        ((laser_on(:,1))< js_pairs_r(j,2)) ...
+                    )>0
                     laser = 1;
                 else
                     laser = 0;
@@ -160,13 +175,20 @@ for struct_index=1:length(jstruct)
                     
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
+                    vel_x = [0, diff(traj_x_t)];
+                    vel_y = [0, diff(traj_y_t)];
+                    traj_struct(k).vel_x = vel_x;
+                    traj_struct(k).vel_y = vel_y;
                     traj_struct(k).magtraj = mag_traj;
+                    traj_struct(k).velmag = sqrt(vel_x.^2 + vel_y.^2);
+                    traj_struct(k).radvel = [0, diff(mag_traj)];
                     traj_struct(k).js_onset = js_pairs_r(j,1);
                     traj_struct(k).start_p = start_p;
                     traj_struct(k).stop_p = stop_p;
                     traj_struct(k).rw = js_reward(j);
-                    traj_struct(k).rw_onset = 0;
                     traj_struct(k).laser = laser;
+                    traj_struct(k).rw_onset = 0;
+                    
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
                         onset_ind = onset_ind + 1;                        
@@ -176,7 +198,8 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
                     traj_struct(k).rw_or_stop = rw_or_stop;
-                    traj_pdf_jstrial = traj_pdf_jstrial + hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
+                    traj_pdf_jstrial = traj_pdf_jstrial + ...
+                        hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
                 end
             end    
             end  
@@ -184,11 +207,15 @@ for struct_index=1:length(jstruct)
     end
 end
 
-
-
 jstruct_stats.traj_pdf_jstrial = traj_pdf_jstrial./sum(sum(traj_pdf_jstrial));
 jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
-% Get Theta Distributions
+jstruct_stats.day = floor(jstruct(1).real_time);
+
+if ~isempty(savedir)
+    save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...
+    'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
+    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
+end

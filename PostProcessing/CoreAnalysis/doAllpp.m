@@ -30,28 +30,28 @@
 % 
 % OPTIONAL ARGS: 
 %
-%       statflag :: whether to compute and save stats struct along with
-%           velaccel structs (1) or not perform computation (0). Highly
-%           recommended to leave this enabled, as many analysis scripts
-%           require the stats structure to be saved.
-%       
-%       combinecont :: a flag indicating whether to combine the raw data
-%           folder with the previous and appropriate contingency (1), 
-%           or leave as is (0). Recommend to leave enabled for automated
-%           post processing, but otherwise depends on user.
+%       analysisflag :: instructs where in analysis process to begin
+%           combine_contingencies (1) -> ppscript (2) -> make jstruct (3)
+%           -> generate stats (4)
+%           DEFAULT - 2
 %
+%       singlestep :: when enabled, only performs the single step selected (1),
+%           otherwise does rest of analysis process
+%           DEFAULT - 0
+%       
+
 function [failedflag, err] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
 disp(['Processing: ', working_dir]);
-default = {1, 1};
+default = {2, 0};
 numvarargs = length(varargin);
-if numvarargs > 1
-    error('too many arguments (> 2), only one required and one optional.');
+if numvarargs > 2
+    error('too many arguments (> 3), only 1 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[statflag, combinecont] = default{:};
+[analysisflag, singlestep] = default{:};
 
 failedflag = 0; err='';
 try
@@ -63,7 +63,7 @@ catch e
 end
 
 %% combine_contingencies: place in appropriate folder
-if ~failedflag && combinecont
+if ~failedflag && ((analysisflag<=1 && ~singlestep) || analysisflag == 1)
     try
         working_dir = combine_contingencies(working_dir);
     catch e
@@ -72,7 +72,7 @@ if ~failedflag && combinecont
 end
 
 %% ppscript: generate combined matlab files
-if ~failedflag %hasn't failed so far
+if ~failedflag && ((analysisflag<=2 && ~singlestep) || analysisflag == 2)
     try
         fileformatspec = '%f %f %s %s %s %s %s'; numfield = 7;
         ppscript(working_dir,fileformatspec,numfield);
@@ -82,19 +82,19 @@ if ~failedflag %hasn't failed so far
 end
 
 %% xy_makestruct: generate jstruct
-if ~failedflag
+if ~failedflag && ((analysisflag<=3 && ~singlestep) || analysisflag == 3)
     try
-        jstruct=xy_makestruct(working_dir);
-        save(strcat(working_dir,'/jstruct.mat'),'jstruct');
+        [jstruct] =xy_makestruct(working_dir);
+        save([working_dir,'/jstruct.mat'],'jstruct');
         clear jstruct;
     catch e ; failedflag = 3; err = getReport(e);
     end
 end
 
 %% doAllstats: additional post processing
-if statflag && ~failedflag
+if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
     try
-        failedflag = doAllstats(working_dir);
+        [failedflag, err] = doAllstats(working_dir);
     catch e
         failedflag = 4; err = getReport(e);
     end

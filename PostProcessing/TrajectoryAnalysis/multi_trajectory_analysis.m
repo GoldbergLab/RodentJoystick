@@ -1,35 +1,58 @@
 function [labels] = multi_trajectory_analysis(dirlist, varargin)
-%[data, labels, summary] 
-% = multi_trajectory_analysis(dirlist, [derivative, plot_range, hold_time_range, plot_contingencies, combineflag, axes_lst])
-%rewarded_time_distr plots the distribution of rewarded trajectories' hold
-%times using intervals defined by hist_int for a range [0, TIME_RANGE].
+%[labels] 
+% = multi_trajectory_analysis(dirlist, [derivative, plot_range, 
+%       hold_time_range, combineflag, smoothparam, axes_lst])
+%   
+%   multi_trajectory_analysis performs the analysis done by the function
+%   trajectory_analysis for multiple days/directories defined by dirlist
+%
 % ARGUMENTS: 
-%       dirlist :: list of days (as directories in struct representation
+%
+%   dirlist :: list of days (as directories in struct representation
 %       from rdir)
-%       OPTIONAL ARGS:
-%       plot_range :: number representing number of plots. DEFAULT: 4
-%       hold_time_range :: the time range [A B] (ms) for which trajectories
-%           are included, i.e. any trajectory with a hold time in the range
-%           [A, B] is analyzed
-%           DEFAULT: [400 1400]
-%       plot_contingencies :: [HT T1 T2] this vector tells which lines to
-%           indicate contingencies as a reference - 
-%           HT is the hold time, T1 and T2 are the respective deviations 
-%               EX: [300 30 60]
-%           value of [0 0] or [0 0 0] doesn't plot any lines   
-%           DEFAULT: [0 0 0] - no plotting 
-%       axes_lst :: a list of axes handles of where to plot. If specified,
-%           length(axes_lst) >= plot_range
+%
+% OPTIONAL ARGS:
+%   
+%   derivative :: a flag indicating what data trajectory_analysis should
+%       look at it
+%       0 - Deviation (Trajectory Magnitude)
+%       -- Currently Unsupported --
+%       1 - Radial Velocity
+%       2 - Radial Acceleration
+%       3 - Velocity Magnitude
+%       4 - Acceleration Magnitude
+%       DEFAULT - 0
+%
+%   plot_range :: number representing number of plots. 
+%       DEFAULT - 4
+%
+%   hold_time_range :: the time range [A B] (ms) for which trajectories
+%       are included, i.e. any trajectory with a hold time in the range
+%       [A, B] is analyzed
+%       DEFAULT: [400 1400]
+%
+%   combineflag :: flag indicating whether to combine all data and generate
+%       a single plot, or leave as separate days
+%       DEFAULT - 0
+%
+%   smoothparam :: parameter describing smoothing (parameter is the size of
+%       filter window - filter is moving average)
+%       DEFAULT - 5
+%
+%   axeslst :: a list of axes handles of where to plot. If specified,
+%       length(axes_lst) >= plot_range. If empty, then generates a new
+%       figure
+%       DEFAULT - []
 
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], [0 0 0], 0, []};
+default = {0, 4,[400 1400], 0, 5, []};
 numvarargs = length(varargin);
 if numvarargs > 6
     error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, CONTL, combineflag, axeslst] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -44,12 +67,13 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
 [statslist, dates] = load_stats(dirlist, combineflag);
-groupings = zeros(length(statslist));
 %statflag - plot only medians if more than four days to be plotted
-statflag = ~(length(statslist) > 4;
+statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
+    [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
-    [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE,TIME_RANGE, CONTL, 1, axeslst, colors(i), statflag);
+    [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
+        TIME_RANGE, [ht outthresh innerthresh], 1, smoothparam, axeslst, colors(i), statflag);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));

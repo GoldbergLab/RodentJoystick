@@ -14,11 +14,6 @@
 %       [frameno (10)]_Box_[0-9]_[Date (9)] - number in parentheses
 %       indicates number of characters
 %
-%   path :: another structure which is a vector listing the .dat files used
-%       to generate the combined .mat file. Since this usually is not
-%       necessary, further information can be found by looking at the
-%       structure itself
-%
 %   real_time :: the time (in MATLAB standard double representation of
 %       time) of the beginning of the element in the jstruct.
 %       (so subsequent absolute time is with real_time + onset/1000) where
@@ -57,10 +52,10 @@ fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
 % start_frame = str2num(filelist(1).name(1:end-4));
 start_frame_first = start_frame;
 
+k = 1;
 for i=1:length(filelist)         
     load(strcat(working_dir_1,'/',filelist(i).name));
     working_buff=working_buff';
-    
     % nose pokes 
     np = sensor_on_off_times(working_buff(5,:));   
     % first touch_sense
@@ -69,9 +64,15 @@ for i=1:length(filelist)
     js_l = sensor_on_off_times(working_buff(4,:));
     %Laser on and off
     if size(working_buff,1)>6
-    laser_on = sensor_on_off_times(working_buff(7,:));
-    jstruct(i).laser_on = laser_on;
+        laser_on = sensor_on_off_times(working_buff(7,:));
     end
+    if size(working_buff,1)>7
+        [lick, maxlick] = sensor_on_off_times(working_buff(8,:));
+        if maxlick > 500
+            disp('lick on > 500 ms');
+        end
+    end
+    
     %mark reward times
     reward_del = working_buff(6,:);
     reward_logical = (reward_del>0.5);
@@ -93,7 +94,6 @@ for i=1:length(filelist)
         end
     end
     jstruct(i).filename = filelist(i).name;
-    jstruct(i).path = dir;
     jstruct(i).traj_x = working_buff(1,:);
     jstruct(i).traj_y = working_buff(2,:);
     jstruct(i).np_pairs = np;
@@ -102,8 +102,13 @@ for i=1:length(filelist)
     jstruct(i).reward_onset = reward_on;
     jstruct(i).js_reward = js_reward;
     jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
+    try
+        jstruct(i).laser_on = laser_on;
+        jstruct(i).lick_on = lick;
+    catch
+    end
 
-      % Mark nose pokes prior to start of each joystick deflection
+    % Mark nose pokes prior to start of each joystick deflection
     start_p = zeros(size(jstruct(i).js_pairs_r,1),1);
     if numel(jstruct(i).js_pairs_r)>0 && numel(jstruct(i).np_pairs)>0
         for j=1:size(jstruct(i).js_pairs_r,1)
@@ -122,23 +127,25 @@ end
 % onset/offset pairs for example, pairs(1, 1) and pairs(1,2) will return 
 % the times that a nosepoke came on and went off for the first nosepoke
 % in the file
-function [pairs] = sensor_on_off_times(rawsens)
-    pairs = [];
+function [pairs, maxlen] = sensor_on_off_times(rawsens)
+    pairs = []; maxlen = 0;
     sens_logic = ([0,rawsens,0]>0.5);
-    l=1;
+    k=1;
     if sum(sens_logic)>1
         sense_transition = diff(sens_logic); %this will show the transitions 
         b=sense_transition;
         flag=1;       
         for j=1:length(b)        
             if b(j)==1 && flag==1
-                pairs(l,1) = j+1;
-                pairs(l,2) = 0;
+                pairs(k,1) = j+1;
+                pairs(k,2) = 0;
                 flag=0;
             elseif b(j)==-1 && flag==0        
-                pairs(l,2) = j-1;
+                pairs(k,2) = j-1;
                 flag=1;
-                l=l+1;
+                time = pairs(k,2) - pairs(k,1);
+                if time>maxlen; maxlen = time; end;
+                k=k+1;
             end  
         end
     end

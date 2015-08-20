@@ -23,9 +23,12 @@ time = now;
 toprocesslist = directories_to_do(experiment_directory);
 title = {'Analysis attempted on the following directories within ','', [experiment_directory, ':']};
 %attempt all analysis here
-[failure, actual, succeed] = multi_doAll(toprocesslist, 2);
+[failure, actual, succeed] = multi_doAll(toprocesslist, 1);
 pp_report = [title; failure];
-[bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
+try
+    [bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
+catch 
+end
 
 try %attempting write of log report
     title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];

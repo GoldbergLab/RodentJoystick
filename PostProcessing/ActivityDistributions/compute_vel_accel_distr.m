@@ -36,9 +36,6 @@ function [data, rawdata] = compute_vel_accel_distr(stats,varargin)
 %   rawdata :: struct with 201x201 cell arrays corresponding to cells
 %       representing blocks in the x-y coordinate space -100:1:100 x
 %       -100:1:100. Each cell contains a double vector 
-    
-data.accel_ang = accel_ang;
-data.accelv_ang
 %       TODO :: decompose acceleration into tangential and normal components at
 %           each point in trajectory
 %

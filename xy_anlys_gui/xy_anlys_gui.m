@@ -22,7 +22,7 @@ function varargout = xy_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help xy_anlys_gui
 
-% Last Modified by GUIDE v2.5 26-Mar-2014 14:26:27
+% Last Modified by GUIDE v2.5 03-Aug-2015 19:15:56
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,17 +54,12 @@ function xy_anlys_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for xy_anlys_gui
 handles.output = hObject;
-axes(handles.axes1);
-zoom on
-axes(handles.axes2);
-zoom on
-axes(handles.axes3);
-zoom on
-axes(handles.axes4);
-zoom on
-axes(handles.axes5);
-zoom on
-linkaxes([handles.axes1 handles.axes2 handles.axes3 handles.axes4 handles.axes5 handles.axes7],'x');
+axes(handles.axes1); zoom on
+axes(handles.axes2); zoom on
+axes(handles.axes3); zoom on
+axes(handles.axes4); zoom on
+axes(handles.axes5); zoom on
+linkaxes([handles.axes1 handles.axes2 handles.axes3 handles.axes4 handles.axes5],'x');
 
 axes(handles.axes6);
 axis equal; 
@@ -86,165 +81,6 @@ function varargout = xy_anlys_gui_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
-% --- Executes on selection change in filelist_box.
-function filelist_box_Callback(hObject, eventdata, handles)
-% hObject    handle to filelist_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
- contents = cellstr(get(hObject,'String'));
- struct_index=get(hObject,'Value');
- jstruct = handles.jstruct;
- stats = xy_getstats(jstruct(struct_index),[0 inf]);
- 
- windowSize = 20;
- 
- traj_x = jstruct(struct_index).traj_x;
- traj_y = jstruct(struct_index).traj_y;
- np_pairs = jstruct(struct_index).np_pairs;
- rw_onset = jstruct(struct_index).reward_onset;
- js_pairs_r = jstruct(struct_index).js_pairs_r;
- js_pairs_l = jstruct(struct_index).js_pairs_l;
- js_reward = jstruct(struct_index).js_reward;
- try
- laser_on = jstruct(struct_index).laser_on;
- end
-   
- samp_rate = 1000; 
-
- xmin = 1/samp_rate;
- xmax = length(traj_x)/samp_rate;
- ymin = 0;
- ymax = 5;
- 
- np_vect = zeros(1,length(traj_x));
- for i=1:size(np_pairs,1)
-    np_vect(np_pairs(i,1):np_pairs(i,2))=4;
- end
- 
- rw_vect = zeros(1,length(traj_x));
- for i=1:size(rw_onset,2)
-    rw_vect(rw_onset(i):(rw_onset(i)+50))=4;
- end
- 
- js_vect_r = zeros(1,length(traj_x));
- for i=1:size(js_pairs_r,1)
-    js_vect_r(js_pairs_r(i,1):js_pairs_r(i,2))=4;
- end
- js_vect_l = zeros(1,length(traj_x));
- for i=1:size(js_pairs_l,1)
-    js_vect_l(js_pairs_l(i,1):js_pairs_l(i,2))=4;
- end
- 
- laser_vect = zeros(1,length(traj_x));
- try
-     for i=1:size(laser_on,1)
-     laser_vect(laser_on(i,1):laser_on(i,2)) = 5;
-     end
- end
- 
- str_ls = 'bgrcmykbgrcmyk';
-
- axes(handles.axes1)
- cla
- plot(handles.axes1,(1/samp_rate):(1/samp_rate):xmax,traj_x*(6.35/100),'k','LineWidth',2);
- axis(handles.axes1,[xmin xmax -6.5 6.5])
- 
- axes(handles.axes2)
- cla
- plot(handles.axes2,(1/samp_rate):(1/samp_rate):xmax,traj_y*(6.35/100),'k','LineWidth',2);
- axis(handles.axes2,[xmin xmax -6.5 6.5])
- 
- axes(handles.axes3)
- cla
- plot(handles.axes3,(1/samp_rate):(1/samp_rate):xmax,np_vect,'r','LineWidth',2);
- axis(handles.axes3,[xmin xmax ymin ymax])
- 
- axes(handles.axes4)
- cla
- plot(handles.axes4,(1/samp_rate):(1/samp_rate):xmax,rw_vect,'k','LineWidth',2);
- axis(handles.axes4,[xmin xmax ymin 6])
- 
- axes(handles.axes5)
- cla
- plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,(((traj_x).^2+(traj_y).^2).^(0.5))*(6.35/100),'LineWidth',2)
- axis(handles.axes5,[xmin xmax  0 7]);
- hold on
- plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_r*1.5,'k','LineWidth',2);
- plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,js_vect_l*1,'r','LineWidth',2);
- try
- plot(handles.axes5,(1/samp_rate):(1/samp_rate):xmax,laser_vect*1,'g','LineWidth',2);
- end
- 
- axes(handles.axes7)
- cla
- plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_r,'k','LineWidth',2);
- hold on
- plot(handles.axes7,(1/samp_rate):(1/samp_rate):xmax,js_vect_l/0.8,'r','LineWidth',2);
- axis(handles.axes7,[xmin xmax ymin 6])
-  
-% set(handles.date_text,'String',datestr(jstruct(struct_index).date_time));
- 
- axes(handles.axes6);
- cla
- axis manual
- 
- hold on
- thresh = str2num(get(handles.threshold_edit,'String'));
- rw_fr = str2num(get(handles.rw_zone_fr,'String'));
- rw_to = str2num(get(handles.rw_zone_to,'String'));
- 
- x = thresh*cosd(1:1:360);
- y = thresh*sind(1:1:360);
- 
- plot(x,y,'k','LineWidth',2);
- plot(x(rw_fr:rw_to),y(rw_fr:rw_to),'c','LineWidth',2);
-%  axis([-0.8 0.8 -0.8 0.8])
- 
- traj_struct=stats.traj_struct;
- handles.traj_struct = traj_struct;
- 
- if get(handles.time_info_checkbox,'Value')
-     t_step = 10*str2num(get(handles.timestep_edit,'String'));
- else
-     t_step=0;
- end
- 
- onset_index = get(handles.onset_menu,'Value');
- offset_index = get(handles.offset_menu,'Value');
- pl_index = 1;
- handles.pl_index = pl_index;
- if(numel(traj_struct))>0 
- plot_traj_xy(traj_struct,t_step,onset_index,offset_index,thresh,handles.pl_index,handles);
- set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
- set(handles.text_magnp,'String',num2str(length(traj_struct(pl_index).traj_x)));
- end
- 
-
-
- hold off
-  
- guidata(hObject, handles);
-%  axis(handles.axes6,[2 3 2 3]);
-%  hold on
-%  comet(handles.axes6,handles.working_buff.buff(1,:),handles.working_buff.buff(2,:))
-%  
-% Hints: contents = cellstr(get(hObject,'String')) returns filelist_box contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from filelist_box
-
-% --- Executes during object creation, after setting all properties.
-function filelist_box_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to filelist_box (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: listbox controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
 % --- Executes on button press in selectdir_push.
 function selectdir_push_Callback(hObject, eventdata, handles)
 % hObject    handle to selectdir_push (see GCBO)
@@ -253,148 +89,149 @@ function selectdir_push_Callback(hObject, eventdata, handles)
  working_dir = uigetdir;
  handles.working_dir = working_dir;
  set(handles.filelist_box,'Value',1);
- load(strcat(working_dir,'\jstruct.mat'));
+ jsloc = [working_dir, '\jstruct.mat'];
+ load(jsloc);
  
  handles.jstruct = jstruct;
+ day = floor(jstruct(1).real_time);
  
- %filelist = dir(strcat(working_dir,'\*.mat'));
  %populate listbox
+ str_list = cell(size(jstruct, 2), 1);
  for i=1:size(jstruct,2)
      str_list{i} = jstruct(i).filename;
  end
  set(handles.filelist_box,'String',str_list);
  set(handles.working_dir_text,'String',working_dir);
- 
+ set(handles.date_text, 'String', datestr(day, 'mm/dd/yy'));
  guidata(hObject, handles);
 
-
-
-% --- Executes on button press in pushbutton2.
-function pushbutton2_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton2 (see GCBO)
+% --- Executes on selection change in filelist_box.
+function filelist_box_Callback(hObject, eventdata, handles)
+% hObject    handle to filelist_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+struct_index=get(hObject,'Value');
+jstruct = handles.jstruct;
 
+set(handles.time_text, 'String', datestr(jstruct(struct_index).real_time, 'HH:MM:SS'));
+handles.start_time = jstruct(struct_index).real_time;
+ 
+RADIUS = 6.35;
+handles.RADIUS = RADIUS;
 
-% --- Executes on button press in analyse_push.
-function analyse_push_Callback(hObject, eventdata, handles)
-%[stat_structure] = xy_getstats(handles.working_dir,get(handles.filelist_box,'String'));
+raw_x = (jstruct(struct_index).traj_x);
+raw_y = (jstruct(struct_index).traj_y);
+stats = xy_getstats(jstruct(struct_index));
+traj_x = (raw_x)*(RADIUS/100);
+traj_y = (raw_y)*(RADIUS/100);
+magtraj =sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
 
-figure
-plot(stat_structure(:,1),stat_structure(:,2),'rx');
-ylim([0 5]);
-% hObject    handle to analyse_push (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+%raw sensor information
+np_pairs = jstruct(struct_index).np_pairs;
+rw_onset = jstruct(struct_index).reward_onset;
+js_pairs_r = jstruct(struct_index).js_pairs_r;
+js_pairs_l = jstruct(struct_index).js_pairs_l;
+try
+    laser_on = jstruct(struct_index).laser_on;
+catch
+end
 
+samp_rate = 1000;
+handles.SAMPLE_RATE = samp_rate;
+%axes arguments;
+xmin = 1/samp_rate; xmax = length(traj_x)/samp_rate;
 
-% --- Executes during object creation, after setting all properties.
-function selectdir_push_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to selectdir_push (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+np_vect = zeros(1,length(traj_x));
+for i=1:size(np_pairs,1)
+    np_vect(np_pairs(i,1):np_pairs(i,2))=1;
+end
 
+js_vect_l = zeros(1,length(traj_x));
+for i=1:size(js_pairs_l,1)
+   js_vect_l(js_pairs_l(i,1):js_pairs_l(i,2))=1;
+end
 
-% --- Executes during object creation, after setting all properties.
-function analyse_push_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to analyse_push (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+js_vect_r = zeros(1,length(traj_x));
+for i=1:size(js_pairs_r,1)
+   js_vect_r(js_pairs_r(i,1):js_pairs_r(i,2))=1;
+end
 
+rw_vect = zeros(1,length(traj_x));
+for i=1:size(rw_onset,2)
+   rw_vect(rw_onset(i):(rw_onset(i)+50))=1;
+end
 
-% --- Executes on selection change in onset_menu.
-function onset_menu_Callback(hObject, eventdata, handles)
-% hObject    handle to onset_menu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+laser_vect = zeros(1,length(traj_x));
+try
+    for i=1:size(laser_on,1)
+       laser_vect(laser_on(i,1):laser_on(i,2)) = 1;
+    end
+catch
+end
 
-% Hints: contents = cellstr(get(hObject,'String')) returns onset_menu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from onset_menu
+plotdata = [np_vect; js_vect_l; js_vect_r; rw_vect; laser_vect; ...
+            magtraj; traj_x; traj_y];
+        
+handles.plotdata = plotdata;
+handles.xaxis = [xmin xmax];
 
+for i = 1:5
+    handles = plot_raw_data(handles, i);
+end
 
-% --- Executes during object creation, after setting all properties.
-function onset_menu_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to onset_menu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+traj_struct=stats.traj_struct;
+handles.traj_struct = traj_struct;
+handles.pl_index = ~isempty(traj_struct);
 
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+handles = plot_indiv_traj(handles);
+try
+    handles = indiv_trajectory_plot(handles);
+catch
+end
+
+guidata(hObject, handles);
+
+function handles = plot_indiv_traj(handles)
+% attempts to plot a trajectory if it exists
+try
+    axes(handles.axes6); cla; 
+    axis manual; hold on;
+    traj_struct = handles.traj_struct;
+    if get(handles.time_info_checkbox,'Value')
+        t_step = str2num(get(handles.timestep_edit,'String'));
+    else
+        t_step=0;
+    end
+    offset_index = get(handles.offset_menu,'Value');
+    pl_index = handles.pl_index;
+    set(handles.trajectory_indexcount, 'String', ...
+        [num2str(pl_index), '/',num2str(length(traj_struct))]);
+    if(numel(traj_struct))>0
+        plot_traj_xy(traj_struct,t_step,offset_index, ...
+           pl_index,handles);
+    end
+    hold off;
+catch e 
+    disp(getReport(e));
+end
+ 
+
+function filelist_box_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
-
-% --- Executes on selection change in offset_menu.
-function offset_menu_Callback(hObject, eventdata, handles)
-% hObject    handle to offset_menu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns offset_menu contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from offset_menu
-
-
-% --- Executes during object creation, after setting all properties.
-function offset_menu_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to offset_menu (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-
-function threshold_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to threshold_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of threshold_edit as text
-%        str2double(get(hObject,'String')) returns contents of threshold_edit as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function threshold_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to threshold_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in prev_plot_button.
+ 
+%% Individual Trajectory plotting functions
+ % --- Executes on button press in prev_plot_button.
 function prev_plot_button_Callback(hObject, eventdata, handles)
 % hObject    handle to prev_plot_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if get(handles.time_info_checkbox,'Value')
-    t_step = 10*str2num(get(handles.timestep_edit,'String'));
-else
-    t_step=0;
-end
-thresh = str2num(get(handles.threshold_edit,'String'));
-
-onset_index = get(handles.onset_menu,'Value');
-offset_index = get(handles.offset_menu,'Value');
-pl_index=handles.pl_index;
-pl_index=max(pl_index-1,1);
-if(numel(handles.traj_struct))>0
-    plot_traj_xy(handles.traj_struct,t_step,onset_index,offset_index,thresh,pl_index,handles);
-end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
-set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
-
-handles.pl_index = pl_index;
+handles.pl_index = max(handles.pl_index-1,1);
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
 guidata(hObject, handles);
+
 
 
 % --- Executes on button press in next_plot_button.
@@ -402,107 +239,199 @@ function next_plot_button_Callback(hObject, eventdata, handles)
 % hObject    handle to next_plot_button (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if get(handles.time_info_checkbox,'Value')
-    t_step = 10*str2num(get(handles.timestep_edit,'String'));
-else
-    t_step=0;
-end
-
-onset_index = get(handles.onset_menu,'Value');
-offset_index = get(handles.offset_menu,'Value');
-thresh = str2num(get(handles.threshold_edit,'String'));
-pl_index=handles.pl_index;
-pl_index=min(pl_index+1,numel(handles.traj_struct));
-if(numel(handles.traj_struct))>0
-    plot_traj_xy(handles.traj_struct,t_step,onset_index,offset_index,thresh,pl_index,handles);
-end
-set(handles.text_startt,'String',num2str(handles.traj_struct(pl_index).js_onset));
-set(handles.text_magnp,'String',num2str(length(handles.traj_struct(pl_index).traj_x)));
-handles.pl_index = pl_index;
+handles.pl_index = min(handles.pl_index+1,numel(handles.traj_struct));
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
 guidata(hObject, handles);
 
 
-% --- Executes on button press in hold_plot_checkbox.
-function hold_plot_checkbox_Callback(hObject, eventdata, handles)
-% hObject    handle to hold_plot_checkbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% Hint: get(hObject,'Value') returns toggle state of hold_plot_checkbox
-
-
+function selectdir_push_CreateFcn(hObject, eventdata, handles)
+function offset_menu_Callback(hObject, eventdata, handles)
+function offset_menu_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 % --- Executes on button press in time_info_checkbox.
 function time_info_checkbox_Callback(hObject, eventdata, handles)
-% hObject    handle to time_info_checkbox (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of time_info_checkbox
-
-
 
 function timestep_edit_Callback(hObject, eventdata, handles)
-% hObject    handle to timestep_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of timestep_edit as text
-%        str2double(get(hObject,'String')) returns contents of timestep_edit as a double
-
-
-% --- Executes during object creation, after setting all properties.
 function timestep_edit_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to timestep_edit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+%% axes 1 callback buttons/functions
+function np1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function post1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function js1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function rew1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function laser1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function analogmenu1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+function analogmenu1_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function filter1_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+% Hints: contents = cellstr(get(hObject,'String')) returns filter1 contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from filter1
+function filter1_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%% axes 2 callback buttons/functions
+function np2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function post2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function js2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function rew2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function laser2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function analogmenu2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function analogmenu2_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function filter2_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+function filter2_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%% axes 3 callback buttons/functions
+function np3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function post3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function js3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function rew3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function laser3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function analogmenu3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function analogmenu3_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function filter3_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+function filter3_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+%% axes 4 callback buttons/functions
+function np4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function post4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function js4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function rew4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function laser4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function analogmenu4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function analogmenu4_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function filter4_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+function filter4_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
 
-
-function rw_zone_fr_Callback(hObject, eventdata, handles)
-% hObject    handle to rw_zone_fr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of rw_zone_fr as text
-%        str2double(get(hObject,'String')) returns contents of rw_zone_fr as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function rw_zone_fr_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to rw_zone_fr (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+%% axes5 callback functions
+function np5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function post5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function js5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function rew5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function laser5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function analogmenu5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function analogmenu5_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+function filter5_Callback(hObject, eventdata, handles)
+    handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+function filter5_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
+function indivfilter_Callback(hObject, eventdata, handles)
+    handles = indiv_trajectory_plot(handles);
+    guidata(hObject, handles);
 
+function indivfilter_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 
-function rw_zone_to_Callback(hObject, eventdata, handles)
-% hObject    handle to rw_zone_to (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
+function indivselectplot_Callback(hObject, eventdata, handles)
+    handles = indiv_trajectory_plot(handles);
+    guidata(hObject, handles);
 
-% Hints: get(hObject,'String') returns contents of rw_zone_to as text
-%        str2double(get(hObject,'String')) returns contents of rw_zone_to as a double
-
-
-% --- Executes during object creation, after setting all properties.
-function rw_zone_to_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to rw_zone_to (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
+function indivselectplot_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
