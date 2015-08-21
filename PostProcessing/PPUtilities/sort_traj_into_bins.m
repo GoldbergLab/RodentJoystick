@@ -22,8 +22,7 @@ function sortedtraj = sort_traj_into_bins(tstruct, bins, varargin)
 %
 % ARGUMENTS
 %
-%   tstruct :: the trajectory structure to be binned (hold time
-%       from the field rw_or_stop, not length)
+%   tstruct :: the trajectory structure to be binned (from stats.traj_struct)
 %
 %   bins :: a vector defining how the trajectories should be binned: 
 %       EX: bins = [200 300 400 500] will result in sortedtraj containing 3
