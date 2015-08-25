@@ -131,6 +131,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg2label = 'End'; %end time;
     start = str2num(arg1);
     endt = str2num(arg2);
+    traj_id = str2num(arg3);
     if axnum == 1 || axnum == 4
         axestoplot = [axes(1); axes(2); axes(4); axes(5)];
     else
@@ -143,7 +144,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
             cla(axestoplot(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
-            combineflag, smoothparam, axestoplot);
+            combineflag, smoothparam, axestoplot, traj_id);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
