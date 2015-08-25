@@ -86,11 +86,15 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
     arg1label = 'Start'; %start time;
     arg2 = '900'; 
     arg2label = 'End'; %end time;
+    arg3 = 0;
+    arg3label = 'TrajID'; %determine which traj to plot. e.g. all = 0, laser only = 1
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
     arg1 = '200'; 
     arg1label = 'Start'; %start time;
     arg2 = '1400'; 
     arg2label = 'End'; %end time;
+    arg3 = 0;
+    arg3label = 'TrajID'; %determine which traj to plot. e.g. all = 0, laser only = 1
 end
 
 %% GUI Handling/Data manipulation;

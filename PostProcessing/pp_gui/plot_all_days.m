@@ -151,6 +151,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg2label = 'End'; %end time;
     start = str2num(arg1);
     endt = str2num(arg2);
+    traj_id = str2num(arg3);
     info = 'Trajectory Analysis will plot over all 6 axes. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
@@ -158,7 +159,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (6)')
             cla(axes(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
-            combineflag, smoothparam, axes);
+            combineflag, smoothparam, axes, traj_id);
     end
 end
 
