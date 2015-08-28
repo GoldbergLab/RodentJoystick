@@ -47,6 +47,7 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %   traj_id :: choose to plot trajectories of a certain kind 
 %       all_trajectories  0
 %       laser only        1
+%       no maniplulation  2
     
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
 default = {0, 4,[400 1400], 0, 5, [], 0};
@@ -75,6 +76,13 @@ if (traj_id == 1)
  for stat_index=1:length(statslist)
      tstruct = statslist(stat_index).traj_struct;
      output = arrayfun(@(y) ~isempty(find(y.laser == 1)), tstruct);
+     tstruct = tstruct(output);
+     statslist(stat_index).traj_struct=tstruct;
+ end
+elseif (traj_id==2)
+ for stat_index=1:length(statslist)
+     tstruct = statslist(stat_index).traj_struct;
+     output = arrayfun(@(y) ~isempty(find(y.laser == 0)), tstruct);
      tstruct = tstruct(output);
      statslist(stat_index).traj_struct=tstruct;
  end

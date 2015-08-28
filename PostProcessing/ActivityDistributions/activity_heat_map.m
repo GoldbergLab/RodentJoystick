@@ -20,17 +20,37 @@ function [data, labels] = activity_heat_map(stats, varargin)
 %           plot
 %
 
-default = {1, [25 75], [], [1 100]};
+default = {1, [25 75], [], [1 100], 0};
 numvarargs = length(varargin);
-if numvarargs > 4
-    error('too many arguments (> 5), only one required and 4 optional.');
+if numvarargs > 5
+    error('too many arguments (> 6), only one required and 5 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc, ax, radii] = default{:};
+[logmapping, colorperc, ax, radii, traj_id] = default{:};
 if (length(ax)<1); figure; ax = gca(); end
 if logmapping == 1
     colorperc = [0 99];
 end
-data = stats.traj_pdf_jstrial;
+
+%pick trajectories
+if (traj_id == 1)
+ for stat_index=1:length(stats)
+     tstruct = stats(stat_index).traj_struct;
+     output = arrayfun(@(y) ~isempty(find(y.laser == 1)), tstruct);
+     tstruct = tstruct(output);
+     stats(stat_index).traj_struct=tstruct;
+ end
+elseif (traj_id==2)
+ for stat_index=1:length(stats)
+     tstruct = stats(stat_index).traj_struct;
+     output = arrayfun(@(y) ~isempty(find(y.laser == 0)), tstruct);
+     tstruct = tstruct(output);
+     stats(stat_index).traj_struct=tstruct;
+ end
+else 
+ % do nothing, all trajectories go into computation
+end
+
+data = trajectorypdf(stats);
 labels = draw_heat_map(data, ax, 'Activity Distribution', logmapping, colorperc, radii);
 

@@ -65,7 +65,9 @@ elseif strcmp(plotname, 'JS Touch Dist')
     arg3 = '50';
     arg3label = 'Thresh';
 elseif strcmp(plotname, 'Activity Heat Map')
-    arg1 = '2'; 
+    arg1 = '2';
+    arg2 = '0';
+    arg2label = 'TrajID';
     arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = '2'; 

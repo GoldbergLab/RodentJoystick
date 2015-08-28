@@ -107,7 +107,8 @@ elseif strcmp(plotname, 'JS Touch Dist')
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
 elseif strcmp(plotname, 'Activity Heat Map')
-    activity_heat_map(statscombined, 1, [2 99], axes(axnum));
+    arg2=str2num(arg2);
+    activity_heat_map(statscombined, 1, [2 99], axes(axnum),[1 100],arg2);
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = str2num(arg1);
     velocity_heat_map(dirlist, axes(axnum), [], arg1);
