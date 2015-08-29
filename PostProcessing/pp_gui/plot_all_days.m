@@ -107,7 +107,8 @@ elseif strcmp(plotname, 'JS Touch Dist')
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
 elseif strcmp(plotname, 'Activity Heat Map')
-    activity_heat_map(statscombined, 1, [2 99], axes(axnum));
+    arg2=str2num(arg2);
+    activity_heat_map(statscombined, 1, [2 99], axes(axnum),[1 100],arg2);
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = str2num(arg1);
     velocity_heat_map(dirlist, axes(axnum), [], arg1);
@@ -131,6 +132,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
 %   arg2label = 'End'; %end time;
     start = str2num(arg1);
     endt = str2num(arg2);
+    traj_id = str2num(arg3);
     if axnum == 1 || axnum == 4
         axestoplot = [axes(1); axes(2); axes(4); axes(5)];
     else
@@ -143,13 +145,14 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
             cla(axestoplot(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
-            combineflag, smoothparam, axestoplot);
+            combineflag, smoothparam, axestoplot, traj_id);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
     start = str2num(arg1);
     endt = str2num(arg2);
+    traj_id = str2num(arg3);
     info = 'Trajectory Analysis will plot over all 6 axes. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
@@ -157,7 +160,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (6)')
             cla(axes(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
-            combineflag, smoothparam, axes);
+            combineflag, smoothparam, axes, traj_id);
     end
 end
 
