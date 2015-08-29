@@ -74,7 +74,7 @@ end
 %% ppscript: generate combined matlab files
 if ~failedflag && ((analysisflag<=2 && ~singlestep) || analysisflag == 2)
     try
-        fileformatspec = '%f %f %s %s %s %s %s'; numfield = 7;
+        fileformatspec = '%f %f %s %s %s %s %s %s'; numfield = 7;
         ppscript(working_dir,fileformatspec,numfield);
     catch e
         failedflag = 2; err = getReport(e);

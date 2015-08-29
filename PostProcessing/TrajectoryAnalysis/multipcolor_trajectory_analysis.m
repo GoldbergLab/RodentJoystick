@@ -61,22 +61,23 @@ for i = 1:length(statslist);
             md = smooth(bin_summary(j).md, 5)';
             accumdata(j).median = [accumdata(j).median; md];
             xlimits(j) = bin_summary(j).lt-1;
+            rawcount{i, j} = num2str(bin_summary(j).trajcount);
         end
     catch e;
         disp(getReport(e));
         disp(['Failed on Day ', num2str(i+dayoffset)]);
     end
+    disp(i);
 end
 clear targ_rew hold_time dist_thresh all_traj_flag plotflag holddist_vect
 y = (0:(size(accumdata(1).median, 1)))+dayoffset;
-colorscale = [0 80];
-
 figure; 
 
-
+factor = 6.35/100;
+colorscale = [0 80].*factor;
 for i = 1:bins
     median = accumdata(i).median;
-    median = [median; zeros(1, size(median, 2))];
+    median = [median; zeros(1, size(median, 2))].*factor;
     x = 1:1:xlimits(i);
     ax = subplot(1, bins, i);
     if pcolorflag
@@ -87,7 +88,9 @@ for i = 1:bins
         set(sfhandle, 'XLim', [0 200*i+200]);
     end
     shading flat;
-    title(ax, 'Median Trajectory Deviation');
+    bin = [0 200]+i*[200 200];
+    title(ax, ['Median Trajectory Displacement: ', ...
+        num2str(bin(1)), ' - ' num2str(bin(2))] );
     xlabel(ax, 'Time(ms)');
     ylabel(ax, 'Day');
     set(ax, 'XTick', 0:100:(xlimits(i)+1));
@@ -96,27 +99,27 @@ for i = 1:bins
         line([holdtimes(j) holdtimes(j)],[j j+1], 'LineWidth', 2, ...
             'Color', [1 1 1]*1); 
     end
-%     for j = 1:length(median)
-%         k = j+offset;
-%         line(ax, [-1000 2000], [k k], 'LineWidth', 1, 'Color', [0 0 0]);
-%         line(ax2, [0 2000], [k k], 'LineWidth', 1, 'Color', [0 0 0]);
-%         line(ax3, [0 2000], [k k], 'LineWidth', 1, 'Color', [0 0 0]);
-%     end
+
 end
 figure;
 x = 1:2;
 radii = [radii; zeros(1, size(radii, 2))];
 radii = [radii, zeros(size(radii, 1), 1)];
 
-ax2= subplot(1, 3, 1);
-pcolor(ax2, x, y, radii(:, 1:2));
+ax2= subplot(1, 2, 1);
+data = radii(:, 1:2).*factor;
+pcolor(ax2, x, y, data);
 caxis(ax2, colorscale); shading flat;
-title(ax2, 'Threshold'); ylabel(ax2, 'Day');
+set(ax2, 'XTickLabel', {''});
+title(ax2, 'Displacement Threshold'); ylabel(ax2, 'Day');
 
-ax3= subplot(1, 3, 2);
-pcolor(ax3, x, y, radii(:, 2:3));
-caxis(ax3, colorscale); shading flat; 
+ax3= subplot(1, 2, 2);
+data =  radii(:, 2:3).*factor;
+pcolor(ax3, x, y, data);
+caxis(ax3, colorscale); shading flat;
+set(ax3, 'XTickLabel', {''});
 title(ax3, 'Hold Threshold'); ylabel(ax3, 'Day');
+colorbar; 
 
 axes(ax2);
 for i = y
@@ -126,5 +129,5 @@ axes(ax3);
 for i = y
     line([-1 2], [i i], 'LineWidth', 0.5, 'Color', [0 0 0]);
 end
-ax4= subplot(1, 3, 3);
-colorbar(ax4);
+counts = rawcount;
+

@@ -8,7 +8,7 @@ for i = 1:length(tmpdirlist)
     dirlist(i) = tmpdirlist(i);
 end
 clear tmpdirlist;
-offset = 8;
+offset = 2;
 dirlist = dirlist(1+offset:end);
 
 interv = 50;
@@ -36,7 +36,7 @@ colorbar;
 for i = 1:length(y)
     j = i+offset;
     line(timerange, [j j], 'LineWidth', 0.5, 'Color', [0 0 0]);
-    line([medians(i) medians(i)],[j j+1], 'LineWidth', 2, 'Color', [0 0 0]); 
+    line([medians(i) medians(i)],[j j+1], 'LineWidth', 2, 'Color', [1 1 1]); 
 end
     
 set(ax, 'XTick', timerange(1):200:timerange(2));
