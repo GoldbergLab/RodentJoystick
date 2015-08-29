@@ -5,6 +5,7 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %   plots the nose poke vs joystick touch time distribution
 %   for the data from a given day. If multiple days are given, it
 %   plots all data on the same axes
+%   Uses np_js_distribution
 %
 % ARGUMENTS:
 %
@@ -20,7 +21,8 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %       DEFAULT : 1
 %
 %   combineflag :: if multiple directories are given, whether to 
-%       combine all data (1) or plot days individually (0)
+%       combine all data (1) or plot directories individually (0), or to
+%       group to days.
 %       DEFAULT : 0
 %
 %   smoothparam :: parameter for smoothing distribution -does not affect

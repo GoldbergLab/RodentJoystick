@@ -3,7 +3,10 @@
 %
 %   takes the stats structure, a target hold time, a target reward 
 %   percentage, and a distance threshold and computes a recommended hold
-%   threshold while also generating a distance distribution
+%   threshold while also generating a hold time distribution
+%   This hold time distribution looks only at the maximum length of a
+%   continuous segment under dist_thresh for a trial. This shows a
+%   distribution of hold times without the swats.
 %
 % ARGUMENTS: 
 %
@@ -47,9 +50,14 @@
 %       multi_js_touch_dist)
 %       DEFAULT - 'r'
 %
-% OUTPUT:
+% OUTPUTS:
 %
-%   dist - the recommended threshold for the distance
+%   set_dist :: the recommended threshold for the center hold threshold
+%
+%   holddist_vect :: the hold time distribution (histogram, vector of
+%       counts)
+%
+%   med_time :: the median hold time using the js_touch_dist 
 %   
 function [set_dist, holddist_vect, med_time] = js_touch_dist(stats, varargin)
 default = {20, 300, 0.25, 50, 1, 0, 1, [], 'r'};
