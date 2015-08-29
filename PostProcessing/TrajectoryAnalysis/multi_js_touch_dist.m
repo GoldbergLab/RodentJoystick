@@ -45,7 +45,7 @@ function [set_distances, set_distances_strings] = multi_js_touch_dist(dirlist,va
 %   smoothparam :: parameter indicating whether and how much the
 %       plots should be smoothed (uses moving average technique)
 %       DEFAULT - 1 (no smoothing)
-default = {20, 0.25, 50, 300, 0, 1, 1, []};
+default = {20, 0.25, 50, 300, 0, 1, 1, [], 0};
 
 numvarargs = length(varargin);
 if numvarargs > 9
@@ -58,9 +58,6 @@ if plotflag && isempty(ax);
     figure;
     ax = gca();
 end
-%% Temporary
-traj_id=1;
-%%
 
 [statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
@@ -84,7 +81,7 @@ else
  % do nothing, all trajectories go into computation
 end
 
-alltraj = 1;
+alltrajflag = 1;
 for i= 1:length(statslist)
     [set_dist] = js_touch_dist(statslist(i), interv, targ_time, ...
         targ_reward,dist_thresh, alltrajflag, plotflag, smoothparam, ax, colors(i));
