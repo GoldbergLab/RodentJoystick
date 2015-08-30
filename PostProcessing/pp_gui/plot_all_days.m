@@ -96,13 +96,14 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     rewonly = str2num(arg3);
     multi_time_distr(dirlist, interv, 'single', combineflag, norm, rewonly, inf, axes(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
-    rewrate = str2num(arg1);
+    traj_id = str2num(arg1);
     holdtime = str2num(arg2);
     thresh = str2num(arg3);
+    rewrate = 0.25;
     interv = 15;
     plotflag = 1;
     [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
-        holdtime, combineflag, plotflag, smoothparam, axes(axnum));
+        holdtime, combineflag, plotflag, smoothparam, axes(axnum),traj_id);
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
