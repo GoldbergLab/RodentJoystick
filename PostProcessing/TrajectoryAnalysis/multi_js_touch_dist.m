@@ -63,23 +63,8 @@ end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 set_distances = zeros(1, length(statslist));
 
-if (traj_id == 1)
- for stat_index=1:length(statslist)
-     tstruct = statslist(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 1)), tstruct);
-     tstruct = tstruct(output);
-     statslist(stat_index).traj_struct=tstruct;
- end
-elseif (traj_id==2)
- for stat_index=1:length(statslist)
-     tstruct = statslist(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 0)), tstruct);
-     tstruct = tstruct(output);
-     statslist(stat_index).traj_struct=tstruct;
- end
-else 
- % do nothing, all trajectories go into computation
-end
+% Get only the selected trajectories 
+statslist = get_stats_with_trajid(statslist,traj_id);
 
 alltrajflag = 1;
 for i= 1:length(statslist)

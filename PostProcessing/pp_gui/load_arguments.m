@@ -58,8 +58,10 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg3 = '0';
     arg3label = 'Rew Only';
 elseif strcmp(plotname, 'JS Touch Dist')
-    arg1 = '0.25';
-    arg1label = 'Rew Rate';
+%     arg1 = '0.25';
+%     arg1label = 'Rew Rate';
+    arg1 ='0';
+    arg1label = 'TrajID';
     arg2 = '200';
     arg2label = 'Targ HT';
     arg3 = '50';

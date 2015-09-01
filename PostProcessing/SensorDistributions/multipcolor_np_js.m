@@ -26,7 +26,9 @@ for i = 1:length(tmpdirlist)
     if ~tmpdirlist(i).isdir; break; end;
     dirlist(i) = tmpdirlist(i);
 end
-dirlist = dirlist(1+offset:end);
+offset = [1 42];
+dirlist = dirlist(offset(1):offset(2));
+
 statslist = load_stats(dirlist, 2, 'np_js');
 for i = 1:length(statslist)
     npjs_pairscount(i) = length(statslist(i).np_js);
@@ -47,17 +49,17 @@ for i = 1:length(data);
 end
 accumdata = [accumdata; zeros(1, size(accumdata, 2))];
 x = -1000:interv:1000;
-y = (1:size(accumdata, 1))+offset;
+y = (1:size(accumdata, 1))+offset(1);
 figure; ax = gca;
 pcolor(ax, x, y, accumdata);
 shading flat;
 title(ax, 'Nosepoke Aligned Joystick Contact Distribution');
 xlabel(ax, 'Joystick Onset after Nosepoke (ms)');
 ylabel(ax, 'Day');
-line([0 0], [0 length(y)+offset], 'LineWidth', 3, 'Color', [0 0 0]);
+line([0 0], [0 length(y)+offset(1)], 'LineWidth', 3, 'Color', [0 0 0]);
 colorbar;
 for i = 1:length(y)
-    line([-1000 1000], [i+offset i+offset], 'LineWidth', 0.5, 'Color', [0 0 0]);
+    line([-1000 1000], [i+offset(1) i+offset(1)]-1, 'LineWidth', 0.5, 'Color', [0 0 0]);
 end
     
 set(ax, 'XTick', -1000:250:1000);
