@@ -36,7 +36,7 @@ smoothparam = smoothps{get(handles.smoothparam,'Value')};
 smoothparam = str2num(smoothparam);
 normalize = get(handles.normalizecheck, 'Value');
 
-if strcmp(plotname, 'Activity Heat Map') || strcmp(plotname, 'Angle Distribution (Linear)')
+if strcmp(plotname, 'Activity Heat Map')
     statscombined = load_stats(dirlist, 1);
 end
 cla(axes(axnum), 'reset');

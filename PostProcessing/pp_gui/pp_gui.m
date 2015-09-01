@@ -127,8 +127,7 @@ catch
 end
 tempdirlist = uipickfiles('filter',startdir, 'output', 'struct');
 if ~isempty(tempdirlist)
-    [~, ind] = sort({tempdirlist.name});
-    handles.dirlist = tempdirlist(ind);
+    handles.dirlist = tempdirlist;
 try
     %update label of days being plotted;
     labeltxt = '';
