@@ -32,24 +32,7 @@ if logmapping == 1
     colorperc = [0 99];
 end
 
-%pick trajectories
-if (traj_id == 1)
- for stat_index=1:length(stats)
-     tstruct = stats(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 1)), tstruct);
-     tstruct = tstruct(output);
-     stats(stat_index).traj_struct=tstruct;
- end
-elseif (traj_id==2)
- for stat_index=1:length(stats)
-     tstruct = stats(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 0)), tstruct);
-     tstruct = tstruct(output);
-     stats(stat_index).traj_struct=tstruct;
- end
-else 
- % do nothing, all trajectories go into computation
-end
+stats = get_stats_with_trajid(stats,traj_id);
 
 data = trajectorypdf(stats);
 labels = draw_heat_map(data, ax, 'Activity Distribution', logmapping, colorperc, radii);
