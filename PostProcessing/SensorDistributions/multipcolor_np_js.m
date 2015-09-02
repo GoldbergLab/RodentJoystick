@@ -26,7 +26,6 @@ for i = 1:length(tmpdirlist)
     if ~tmpdirlist(i).isdir; break; end;
     dirlist(i) = tmpdirlist(i);
 end
-offset = [1 42];
 dirlist = dirlist(offset(1):offset(2));
 
 statslist = load_stats(dirlist, 2, 'np_js');

@@ -81,7 +81,7 @@ else
  % do nothing, all trajectories go into computation
 end
 
-alltrajflag = 1;
+alltrajflag = 0;
 for i= 1:length(statslist)
     [set_dist] = js_touch_dist(statslist(i), interv, targ_time, ...
         targ_reward,dist_thresh, alltrajflag, plotflag, smoothparam, ax, colors(i));

@@ -1,4 +1,4 @@
-function [counts] = multipcolor_trajectory_analysis(boxdir, dayrange)
+function [alltrajcounts] = multipcolor_trajectory_analysis(boxdir, dayrange)
 % multipcolor_trajectory_analysis(boxdir, dayrange)
 %   
 %   generates a p color plot showing the median deviation for trajectories
@@ -50,6 +50,7 @@ end
 endday = min(length(statslist), endday);
 statslist = statslist(dayoffset:endday);
 radii = radii(dayoffset:endday, :);
+alltrajcounts = [];
 
 for i = 1:length(statslist);
     stats = statslist(i);
@@ -57,17 +58,19 @@ for i = 1:length(statslist);
         plotflag = 0;
         bin_summary = trajectory_analysis(stats, ...
              0, bins, timerange, [], plotflag);
+        allbincounts = [];
         for j = 1:bins
             md = smooth(bin_summary(j).md, 5)';
             accumdata(j).median = [accumdata(j).median; md];
             xlimits(j) = bin_summary(j).lt-1;
-            rawcount{i, j} = num2str(bin_summary(j).trajcount);
+            counts = [bin_summary(j).trajcount, bin_summary(j).alltrajcount];
+            allbincounts = [allbincounts, counts];
         end
     catch e;
         disp(getReport(e));
         disp(['Failed on Day ', num2str(i+dayoffset)]);
     end
-    disp(i);
+    alltrajcounts = [alltrajcounts; allbincounts];
 end
 clear targ_rew hold_time dist_thresh all_traj_flag plotflag holddist_vect
 y = (0:(size(accumdata(1).median, 1)))+dayoffset;
@@ -129,5 +132,4 @@ axes(ax3);
 for i = y
     line([-1 2], [i i], 'LineWidth', 0.5, 'Color', [0 0 0]);
 end
-counts = rawcount;
 

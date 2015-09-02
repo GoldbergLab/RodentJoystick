@@ -89,14 +89,14 @@ elseif (traj_id==2)
 else 
  % do nothing, all trajectories go into computation
 end
-
+contlflag = 0;
 %statflag - plot only medians if more than four days to be plotted
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
     [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
     [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
-        TIME_RANGE, [ht outthresh innerthresh], 1, smoothparam, axeslst, colors(i), statflag);
+        TIME_RANGE, [ht outthresh innerthresh]*contlflag, 1, smoothparam, axeslst, colors(i), statflag);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));
