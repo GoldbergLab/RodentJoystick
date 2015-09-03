@@ -35,6 +35,7 @@ smoothps = cellstr(get(handles.smoothparam,'String'));
 smoothparam = smoothps{get(handles.smoothparam,'Value')};
 smoothparam = str2num(smoothparam);
 normalize = get(handles.normalizecheck, 'Value');
+lasercompareflag = get(handles.lasercomparemenu, 'Value');
 
 if strcmp(plotname, 'Activity Heat Map')
     statscombined = load_stats(dirlist, 1);
@@ -96,22 +97,36 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     rewonly = str2num(arg3);
     multi_time_distr(dirlist, interv, 'single', combineflag, norm, rewonly, inf, axes(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
-    traj_id = str2num(arg1);
-    holdtime = str2num(arg2);
-    thresh = str2num(arg3);
-    rewrate = 0.25;
-    interv = 15;
-    plotflag = 1;
+    traj_id = str2num(arg1); holdtime = str2num(arg2); thresh = str2num(arg3);
+    rewrate = 0.25; interv = 15; plotflag = 1;
+    if lasercompareflag>1
+        colnum = axnum;
+        if colnum > 3; colnum = colnum - 3; end;
+        cla(axes(colnum, 1), 'reset'); cla(axes(colnum, 2), 'reset');
+        multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
+        holdtime, combineflag, plotflag, smoothparam, axes(colnum, 1),1);
+        
+        multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
+        holdtime, combineflag, plotflag, smoothparam, axes(colnum, 2),lasercompareflag);
+    else
     [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
         holdtime, combineflag, plotflag, smoothparam, axes(axnum),traj_id);
     setdiststr = ['JS Touch Dist', setdiststr];
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
+    end
 elseif strcmp(plotname, 'Activity Heat Map')
     colnum = axnum;
     if colnum > 3; colnum = colnum - 3; end;
-    arg2=str2num(arg2);
-    activity_heat_map(statscombined, 1, [2 99], axes(colnum, 1:2),[1 100],arg2);
+    if lasercompareflag>1
+        cla(axes(colnum, 1), 'reset');
+        cla(axes(colnum, 2), 'reset');
+        activity_heat_map(statscombined, 1, [2 99], axes(colnum, 1),[1 100], 1);
+        activity_heat_map(statscombined, 1, [2 99], axes(colnum, 2),[1 100], lasercompareflag);
+    else
+        trajid=str2num(arg2);
+        activity_heat_map(statscombined, 1, [2 99], axes(axnum),[1 100],trajid);
+    end
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = str2num(arg1);
     velocity_heat_map(dirlist, axes(axnum), [], arg1);

@@ -65,6 +65,9 @@ set_distances = zeros(1, length(statslist));
 
 % Get only the selected trajectories 
 statslist = get_stats_with_trajid(statslist,traj_id);
+if plotflag
+    plotflag=traj_id+1;
+end
 
 alltrajflag = 0;
 for i= 1:length(statslist)

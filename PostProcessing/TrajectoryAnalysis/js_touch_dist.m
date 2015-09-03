@@ -34,7 +34,7 @@
 %       examines the hold time of the max contact.
 %       DEFAULT - 1
 %
-%   plotflag :: if plotflag == 1, function generates a plot, otherwise only
+%   plotflag :: if plotflag > 0, function generates a plot, otherwise only
 %       returns dist
 %       DEFAULT - 0
 %
@@ -123,13 +123,22 @@ holddist_vect = histc(holdlength,dist_time_hld);
 if normalize
     holddist_vect = holddist_vect./(sum(holddist_vect));
 end
+if plotflag == 1;
+    ext = '';
+elseif plotflag == 2;
+    ext = ' (Laser Only)';
+elseif plotflag == 3;
+    ext = ' (No Laser Only)';
+elseif plotflag == 4;
+    ext = ' (No Laser Only - Resampled)';
+end
 if plotflag
     axes(ax);
     hold on;
     stairs(dist_time_hld, smooth(holddist_vect, smoothparam),color,'LineWidth',1);
     xlabel('Hold Time');
     ylabel('Proportion');
-    title('JS Touch Hold Time Distr');
+    title(['JS Touch Hold Time Distr', ext]);
     hold off;
 end
 

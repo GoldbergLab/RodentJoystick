@@ -29,27 +29,24 @@ end
 [logmapping, colorperc, ax, radii, traj_id] = default{:};
 if (length(ax)<1)
     figure; 
-    if traj_id > 2
-        ax(1) = subplot(2, 1, 1);
-        ax(2) = subplot(2, 1, 2); 
-    else
-        ax = gca();
-    end
+    ax = gca();
 end
 
 if logmapping == 1
     colorperc = [0 99];
 end
+ext = '';
+if traj_id == 1;
+    ext = ' (Laser Only)';
+elseif traj_id == 2;
+    ext = ' (No Laser Only)';
+elseif traj_id == 3;
+    ext = ' (No Laser Only - Resampled)';
+end
 
 stats = get_stats_with_trajid(stats,traj_id);
+data = trajectorypdf(stats);
+labels = draw_heat_map(data, ax, ['Activity Distribution',ext], logmapping, colorperc, radii);
 
-if traj_id > 2
-    for i = 1:2
-        data = trajectorypdf(stats{i});
-        labels = draw_heat_map(data, ax(i), 'Activity Distribution', logmapping, colorperc, radii);
-    end
-else
-    data = trajectorypdf(stats);
-    labels = draw_heat_map(data, ax(1), 'Activity Distribution', logmapping, colorperc, radii);
 end
 

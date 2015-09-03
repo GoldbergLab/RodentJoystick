@@ -29,7 +29,13 @@ function [statslist, dates, days] = load_stats(dirlist, combineflag, varargin)
 %       format 'mm/dd/yy - mm/dd/yy'
 %
 % OPTIONAL ARGS:
-%
+%   
+%   fields :: if no fields are provided, load_stats will load all fields of
+%       the stats structure. Otherwise it will load only the fields
+%       provided. Can select from:
+%       'np_count', 'js_r_count', 'js_l_count', 'pellet_count', 'np_js',
+%       'np_js_post', 'traj_pdf_jstrial', 'numtraj', 'traj_struct',
+%       'trialnum', 'srate'
 %
 
 if combineflag==0 || length(dirlist) == 1

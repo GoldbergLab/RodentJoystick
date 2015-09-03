@@ -47,13 +47,14 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %   traj_id :: choose to plot trajectories of a certain kind 
 %       all_trajectories  0
 %       laser only        1
-%       no maniplulation  2
+%       no laser          2
+%       no laser (resampled)  3
     
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
 default = {0, 4,[400 1400], 0, 5, [], 0};
 numvarargs = length(varargin);
 if numvarargs > 7
-    error('too many arguments (> 8), only 1 required and 6 optional.');
+    error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id] = default{:};
@@ -72,25 +73,10 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 %% Loading days and actual plotting
 [statslist, dates] = load_stats(dirlist, combineflag);
 
-if (traj_id == 1)
- for stat_index=1:length(statslist)
-     tstruct = statslist(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 1)), tstruct);
-     tstruct = tstruct(output);
-     statslist(stat_index).traj_struct=tstruct;
- end
-elseif (traj_id==2)
- for stat_index=1:length(statslist)
-     tstruct = statslist(stat_index).traj_struct;
-     output = arrayfun(@(y) ~isempty(find(y.laser == 0)), tstruct);
-     tstruct = tstruct(output);
-     statslist(stat_index).traj_struct=tstruct;
- end
-else 
- % do nothing, all trajectories go into computation
-end
+statslist = get_stats_with_trajid(statslist,traj_id);
 contlflag = 1;
 %statflag - plot only medians if more than four days to be plotted
+
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
     [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
