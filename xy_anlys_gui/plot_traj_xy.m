@@ -66,8 +66,11 @@ k=pl_index;
 traj_x=traj_struct(k).traj_x;
 traj_y=traj_struct(k).traj_y;
 %Scaling from Percents and smoothing
-t_x = smooth(traj_x*(RADIUS/100), 3);
-t_y = smooth(traj_y*(RADIUS/100), 3);
+smoothparams = get(handles.smoothindivtrajparam, 'String');
+smoothparam = smoothparams{get(handles.smoothindivtrajparam, 'Value')};
+smoothparam = str2num(smoothparam);
+t_x = smooth(traj_x*(RADIUS/100), smoothparam);
+t_y = smooth(traj_y*(RADIUS/100), smoothparam);
 
 end_color = hsv2rgb([1 1 1]);
 marker_color = hsv2rgb([0.6 1 1]);
