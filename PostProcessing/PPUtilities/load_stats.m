@@ -96,9 +96,9 @@ function [statslist, dates, days] = combine_stats_struct(dirlist, combinedate, f
             try; statsaccum.js_r_count = stats.js_r_count + statsaccum.js_r_count; end;
             try; statsaccum.js_l_count = stats.js_l_count + statsaccum.js_l_count; end;
             try; statsaccum.pellet_count = stats.pellet_count + statsaccum.pellet_count; end;
-            try; statsaccum.np_js = [stats.np_js; statsaccum.np_js]; end;
+            try; statsaccum.np_js = [statsaccum.np_js; stats.np_js]; end;
             try; statsaccum.np_js_post = [stats.np_js_post; statsaccum.np_js_post]; end;
-            try; statsaccum.traj_struct = [stats.traj_struct, statsaccum.traj_struct]; end;
+            try; statsaccum.traj_struct = [statsaccum.traj_struct, stats.traj_struct]; end;
             try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial + ...
                     statsaccum.traj_pdf_jstrial; end;
             try; statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
