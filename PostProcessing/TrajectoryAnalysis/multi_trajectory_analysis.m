@@ -89,7 +89,7 @@ elseif (traj_id==2)
 else 
  % do nothing, all trajectories go into computation
 end
-contlflag = 0;
+contlflag = 1;
 %statflag - plot only medians if more than four days to be plotted
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)

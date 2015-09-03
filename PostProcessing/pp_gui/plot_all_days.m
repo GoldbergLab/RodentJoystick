@@ -13,8 +13,8 @@ catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');
     error('Attempted plotting without any days selected.');
 end
-axes = [handles.axes1; handles.axes2; handles.axes3; handles.axes4;
-        handles.axes5; handles.axes6];
+axes = [handles.axes1, handles.axes2, handles.axes3; ...
+        handles.axes4, handles.axes5, handles.axes6]';
 plotselectors = [handles.ax1plotselect; handles.ax2plotselect; handles.ax3plotselect;
                 handles.ax4plotselect; handles.ax5plotselect;
                 handles.ax6plotselect];
@@ -108,8 +108,10 @@ elseif strcmp(plotname, 'JS Touch Dist')
     setdiststr = setdiststr';
     handles = update_console(handles, setdiststr);
 elseif strcmp(plotname, 'Activity Heat Map')
+    colnum = axnum;
+    if colnum > 3; colnum = colnum - 3; end;
     arg2=str2num(arg2);
-    activity_heat_map(statscombined, 1, [2 99], axes(axnum),[1 100],arg2);
+    activity_heat_map(statscombined, 1, [2 99], axes(colnum, 1:2),[1 100],arg2);
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = str2num(arg1);
     velocity_heat_map(dirlist, axes(axnum), [], arg1);
@@ -135,10 +137,12 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
     endt = str2num(arg2);
     traj_id = str2num(arg3);
     if axnum == 1 || axnum == 4
-        axestoplot = [axes(1); axes(2); axes(4); axes(5)];
+        startcol = 1;
     else
-        axestoplot = [axes(2); axes(3); axes(5); axes(6)];
+        startcol = 2;
     end
+    axestoplot = reshape(axes(startcol:startcol+1, 1:2), [4 1]);
+
     info = 'Trajectory Analysis will overwrite 4 axes in a block pattern. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
@@ -161,7 +165,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (6)')
             cla(axes(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
-            combineflag, smoothparam, axes, traj_id);
+            combineflag, smoothparam, reshape(axes, [6 1]), traj_id);
     end
 end
 
