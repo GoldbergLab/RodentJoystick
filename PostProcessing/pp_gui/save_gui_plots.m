@@ -24,7 +24,7 @@ elseif get(handles.saveplotssingle, 'Value')==1
     separate = 0;
 end
 
-if separate == 1
+if separate
     for i = 1:6
     fh = figure;
     copyobj(axeslst(i), fh);
@@ -46,6 +46,10 @@ else
     catch
     end %don't want failed rendering to prevent restoring visibility
     render_visible_items(handles, 'on');
+    if get(handles.saveplotssingle, 'Value') == 1
+        set(handles.saveplotsfig, 'Visible', 'off');
+        set(handles.saveplotspng, 'Value', 1);
+    end
 
 end
 
