@@ -84,7 +84,7 @@ if numel(traj_x) > 0
         case 2
             offset = max_value_ind;
         otherwise
-            offset = length(traj_x);
+            offset = traj_struct(k).rw_or_stop;
     end
 
     if numel(offset)>0
@@ -92,10 +92,17 @@ if numel(traj_x) > 0
         plot(t_x,t_y,'k');
         plot(t_x(end),t_y(end),'rx','MarkerSize',10,'LineWidth',2);
         plot(t_x(1),t_y(1),'bx','MarkerSize',10,'LineWidth',2);
-        if t_step>1
-            for i = t_step:t_step:offset
-                plot(t_x(i),t_y(i), 'MarkerFaceColor', marker_color, 'Marker', 'O', 'MarkerSize', 5);
-                marker_color = marker_color + step_color;
+        if get(handles.rdp_on, 'Value')
+            tol = get(handles.rdp_tolerance, 'String');
+            tol = str2num(tol);
+            rdp_traj = dpsimplify( [t_x, t_y], tol);
+            plot(rdp_traj(:, 1), rdp_traj(:, 2), 'b');
+        else
+            if t_step>1
+                for i = t_step:t_step:offset
+                    plot(t_x(i),t_y(i), 'MarkerFaceColor', marker_color, 'Marker', 'O', 'MarkerSize', 5);
+                    marker_color = marker_color + step_color;
+                end
             end
         end
         axes(fullplot_Axes);
