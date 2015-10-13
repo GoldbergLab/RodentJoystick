@@ -40,7 +40,7 @@
 %           DEFAULT - 0
 %       
 
-function [failedflag, err] = doAllpp(working_dir, varargin)
+function [failedflag, err, newdir] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
@@ -53,7 +53,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [analysisflag, singlestep] = default{:};
 
-failedflag = 0; err='';
+failedflag = 0; err=''; newdir = '';
 try
     if (numel(working_dir)==0)
         working_dir = uigetdir(pwd);
@@ -95,9 +95,9 @@ end
 if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
     try
         [failedflag, err] = doAllstats(working_dir);
+        newdir = working_dir;
     catch e
         failedflag = 4; err = getReport(e);
     end
 end
-
 toc; %end timing and display
