@@ -109,6 +109,7 @@ function [statslist, dates, days] = combine_stats_struct(dirlist, combinedate, f
                     statsaccum.traj_pdf_jstrial; end;
             try; statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
             try; statsaccum.trialnum = stats.trialnum + statsaccum.trialnum; end;
+            try; statsaccum.srate = statsaccum.pellet_count/statsaccum.trialnum; end;
         else
             try; statsaccum.np_count = stats.np_count; end;
             try; statsaccum.js_r_count = stats.js_r_count; end;
@@ -120,6 +121,7 @@ function [statslist, dates, days] = combine_stats_struct(dirlist, combinedate, f
             try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
             try; statsaccum.numtraj = stats.numtraj; end;
             try; statsaccum.trialnum = stats.trialnum; end;
+            try; statsaccum.srate = -1; end;
         end
         clear stats;
     end

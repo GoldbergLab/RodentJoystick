@@ -14,17 +14,15 @@ function [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencie
 %will not change
 pellet_count_threshold = 100;
 
-stats = load_stats(dirlist, 1, 'pellet_count');
-
 [thresh, holdtime, centerhold, sector] = load_contingencies(dirlist);
 oldcont.thresh = thresh; oldcont.holdtime = holdtime;
 oldcont.centerhold = centerhold; oldcont.sector = sector;
 
 %Is average daily pellet count acceptable? (Also looks at Pellet Count
 %Override, which ignores the threshold)
-stats = load_stats(dirlist, 1);
+stats = load_stats(dirlist, 1, 'pellet_count');
 pc_acceptable = ((stats.pellet_count)/(length(dirlist)-duplicates) >= pellet_count_threshold) ...
-                    || get(handles.pcoverride, 'Value');
+                    || ~get(handles.pcoverride, 'Value');
 rewardrate = str2num(get(handles.rewardrate, 'String'));
 
 if pc_acceptable && get(handles.thresholdselect, 'Value')
@@ -52,8 +50,10 @@ end
 function centerhold = recommend_centerhold(dirlist, rewardrate, oldht, oldcenterhold)
     %LOWEST POSSIBLE VALUE FOR CENTERHOLD
     MIN_CH = 20;
-    [set_dists] = multi_js_touch_dist(dirlist, rewardrate, oldcenterhold, oldht, 0, 0);
-    centerhold = prctile(set_dists, 50);
+    hist_interval = 20; combineflag = 1; plotflag = 0;
+    [set_dists] = multi_js_touch_dist(dirlist, hist_interval, rewardrate, ...
+        oldcenterhold, oldht, combineflag, plotflag);
+    centerhold = set_dists;
     centerhold = max(centerhold, MIN_CH);
     if centerhold > oldcenterhold
         centerhold = oldcenterhold;

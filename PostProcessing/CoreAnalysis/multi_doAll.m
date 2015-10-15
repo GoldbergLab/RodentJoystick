@@ -35,7 +35,7 @@
 %           4 - create stats (and save into folder)
 
 
-function [report, actual_count, succeed, newdirs] = multi_doAll(dir_list, varargin) 
+function [report, actual_count, newdirs] = multi_doAll(dir_list, varargin) 
 default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1

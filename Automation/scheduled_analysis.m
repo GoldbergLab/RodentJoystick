@@ -1,3 +1,5 @@
+%Function to be called by a MATLAB timer object at a fixed rate to ensure
+%that analysis is scheduled and executed regularly
 function pp_report = scheduled_analysis(varargin)
 disp('Performing scheduled post processing analysis');
 %Function to be called by a MATLAB timer object at a fixed rate to ensure
@@ -23,10 +25,10 @@ time = now;
 toprocesslist = directories_to_do(experiment_directory);
 title = {'Analysis attempted on the following directories within ','', [experiment_directory, ':']};
 %attempt all analysis here
-[failure, actual, succeed, newdirs] = multi_doAll(toprocesslist, 1);
+[failure, actual, newdirs] = multi_doAll(toprocesslist, 1);
 pp_report = [title; failure];
 try
-    [bhvr_summary, bhvr_report] = behavior_report(newdirs, normal_pellets(1), normal_pellets(2));
+    [bhvr_report] = behavior_report(newdirs);
 catch 
 end
 
@@ -52,7 +54,7 @@ catch
 end
 pp_summary = ['Attempted processing on ', num2str(actual),...
                 ' directories within ', experiment_directory,...
-                ' and succeeded on ', num2str(succeed),' of them.', ...
+                ' and succeeded on ', num2str(length(newdirs)),' of them.', ...
                 ' Full report is attached.'];
 summary = [pp_summary, bhvr_summary];
 try
