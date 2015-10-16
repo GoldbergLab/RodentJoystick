@@ -12,11 +12,12 @@ if plotflag && isempty(ax);
     figure;
     ax = gca();
 end
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 set_distances = zeros(1, length(statslist));
+alltraj = 0;
 for i= 1:length(statslist)
-    [set_dist] = js_touch_dist(statslist(i),targ_time,targ_reward,dist_thresh, 0, plotflag, ax, colors(i));
+    [set_dist] = js_touch_dist(statslist(i),targ_time,targ_reward,dist_thresh, alltraj, plotflag, ax, colors(i));
     set_distances(i) = set_dist;
 end
 if plotflag

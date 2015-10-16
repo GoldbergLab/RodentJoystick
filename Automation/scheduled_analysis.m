@@ -25,11 +25,12 @@ title = {'Analysis attempted on the following directories within ','', [experime
 %attempt all analysis here
 [failure, actual, succeed] = multi_doAll(toprocesslist, 1);
 pp_report = [title; failure];
-[bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
+%[bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
 
 try %attempting write of log report
     title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
-    logdir = [experiment_directory, '\AutomatedLogs'];
+    direntries = strsplit(experiment_directory, '\');
+    logdir = [celljoin(direntries{1:end-1}, '\'), '\AutomatedLogs'];
     if exist(logdir, 'dir') == 0
         mkdir(logdir);
     end
@@ -51,7 +52,7 @@ pp_summary = ['Attempted processing on ', num2str(actual),...
                 ' directories within ', experiment_directory,...
                 ' and succeeded on ', num2str(succeed),' of them.', ...
                 ' Full report is attached.'];
-summary = [pp_summary, bhvr_summary];
+%summary = [pp_summary, bhvr_summary];
 try
     matlabmail(recipients, summary, title, logname);
 catch

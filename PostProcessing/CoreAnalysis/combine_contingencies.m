@@ -70,7 +70,7 @@ try
         movefile([dir,'\*'], [newloc,'\'], 'f');
     end
 catch e
-disp(getReport(e));
+    %disp(getReport(e));
     if combexist
         try
             movefile([dir, '\comb'], newloc);

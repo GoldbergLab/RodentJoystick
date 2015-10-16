@@ -145,7 +145,8 @@ try
     startdir = startdir(1:end-1); startdir = strjoin(startdir, '\');
     handles.startdir = startdir;
     
-    [statslist, dates] = load_stats(dirlist, 0);
+    [statslist, dates] = load_stats(dirlist, 0, 'pellet_count', ...
+        'srate', 'trialnum');
     disp(length(statslist));
     pellets = 0; trialnum = 0;
     text = {};

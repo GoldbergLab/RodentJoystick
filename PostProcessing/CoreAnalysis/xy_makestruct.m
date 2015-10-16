@@ -14,11 +14,6 @@
 %       [frameno (10)]_Box_[0-9]_[Date (9)] - number in parentheses
 %       indicates number of characters
 %
-%   path :: another structure which is a vector listing the .dat files used
-%       to generate the combined .mat file. Since this usually is not
-%       necessary, further information can be found by looking at the
-%       structure itself
-%
 %   real_time :: the time (in MATLAB standard double representation of
 %       time) of the beginning of the element in the jstruct.
 %       (so subsequent absolute time is with real_time + onset/1000) where
@@ -72,10 +67,7 @@ for i=1:length(filelist)
         laser_on = sensor_on_off_times(working_buff(7,:));
     end
     if size(working_buff,1)>7
-        [lick, maxlick] = sensor_on_off_times(working_buff(8,:));
-        if maxlick > 500
-            disp('lick on > 500 ms');
-        end
+        lick = sensor_on_off_times(working_buff(8,:));
     end
     
     %mark reward times
@@ -99,7 +91,6 @@ for i=1:length(filelist)
         end
     end
     jstruct(i).filename = filelist(i).name;
-    jstruct(i).path = dir;
     jstruct(i).traj_x = working_buff(1,:);
     jstruct(i).traj_y = working_buff(2,:);
     jstruct(i).np_pairs = np;

@@ -10,7 +10,7 @@
 %
 %       fileformatspec :: file format specification as a string (for
 %           reading lines). 
-%           EX: '%f %f %s %s %s %s %s %s
+%           EX: '%f %f %s %s %s %s %s %s'
 %           
 %       numField :: number of fields to be read
 %
@@ -48,9 +48,16 @@ for i = 2:(length(filelist))
     end
     
     if ((framenumber_prev+1)==frame_number)
-        working_buff= [working_buff;record_list];
-        %         record_list=[];
-        open_flag=0;
+        np = [0; record_list(:, 5); 0]>0.5;
+        np = (diff(np) ~= 0);
+        if sum(np)<40 %less than 25 nosepoke pairs
+            working_buff= [working_buff;record_list];
+            open_flag=0;
+        else
+            disp('NP Count High');
+            disp(filelist(i).name);
+            working_buff = [];
+        end
     else
         %working_buff = working_buff(1:6, 1:10:end);
         if numel(working_buff)>0

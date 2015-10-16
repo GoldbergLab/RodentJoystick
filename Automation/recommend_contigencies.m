@@ -14,7 +14,7 @@ function [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencie
 %will not change
 pellet_count_threshold = 100;
 
-stats = load_stats(dirlist, 1);
+stats = load_stats(dirlist, 1, 'pellet_count');
 
 [thresh, holdtime, centerhold, sector] = load_contingencies(dirlist);
 oldcont.thresh = thresh; oldcont.holdtime = holdtime;

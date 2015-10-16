@@ -43,7 +43,7 @@ end
 colors = 'rgbkmcyrgbkmcyrgbkmcy';
 if length(ax)<1; figure; ax = gca(); end;
 
-[statslist, dates] = load_stats(dir_list, combineflag);
+[statslist, dates] = load_stats(dir_list, combineflag, 'traj_struct');
 if length(statslist)<2
     plotflag = 1;
 else 

@@ -1,4 +1,4 @@
-% stats = xy_getstats(jstruct, savedir)
+% stats = xy_getstats(jspath/jstruct_d, [jstruct_x, jstruct_y, savedir])
 %   
 %   generates a struct containing several fields describing an entire day's
 %   (folder's) trajectories.
@@ -44,7 +44,7 @@ function jstruct_stats = xy_getstats(jstruct,varargin)
 default = {''};
 numvarargs = length(varargin);
 if numvarargs > 1
-    error('too many arguments (> 2), only one required and one optional.');
+    error('too many arguments (> 2), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [savedir] = default{:};
@@ -91,11 +91,10 @@ traj_struct = [];
 traj_pdf_jstrial= zeros(100,100);
 k=0;
 
-trialnum=0; 
+trialnum=0;
 for struct_index=1:length(jstruct)
-    %% initialize   
     traj_x = jstruct(struct_index).traj_x;
-    traj_y = jstruct(struct_index).traj_y;
+    traj_y = jstruct(struct_index).traj_y;    
     np_pairs = jstruct(struct_index).np_pairs;
     rw_onset = jstruct(struct_index).reward_onset;
     js_pairs_r = jstruct(struct_index).js_pairs_r;
@@ -213,13 +212,10 @@ jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
-
-num_traj= jstruct_stats.numtraj;
-srate = jstruct_stats.srate;
-pellet_count = jstruct_stats.pellet_count;
+jstruct_stats.day = floor(jstruct(1).real_time);
 
 if ~isempty(savedir)
     save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...
     'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
-    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate');
+    'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
 end
