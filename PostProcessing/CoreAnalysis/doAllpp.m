@@ -44,7 +44,6 @@ function [failedflag, err, newdir, time] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
-disp(['Processing: ', working_dir]);
 default = {2, 0};
 numvarargs = length(varargin);
 if numvarargs > 2
