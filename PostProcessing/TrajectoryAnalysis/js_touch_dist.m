@@ -1,8 +1,12 @@
-% js_touch_dist(stats,targ_time,targ_reward,dist_thresh, all_traj_flag) 
+% js_touch_dist(stats, [interv, targ_time,targ_reward,dist_thresh, 
+%       all_traj_flag, plotflag, smoothparam, ax, color]) 
 %
 %   takes the stats structure, a target hold time, a target reward 
 %   percentage, and a distance threshold and computes a recommended hold
-%   threshold while also generating a distance distribution
+%   threshold while also generating a hold time distribution
+%   This hold time distribution looks only at the maximum length of a
+%   continuous segment under dist_thresh for a trial. This shows a
+%   distribution of hold times without the swats.
 %
 % ARGUMENTS: 
 %
@@ -10,6 +14,9 @@
 %       required field: traj_struct
 %
 % OPTIONAL ARGS:
+%
+%   interv :: interval for plotting (ms)
+%       DEFAULT - 20
 %
 %   targ_time :: target hold time (ms)
 %       DEFAULT - 300
@@ -27,10 +34,14 @@
 %       examines the hold time of the max contact.
 %       DEFAULT - 1
 %
-%   plotflag :: if plotflag == 1, function generates a plot, otherwise only
+%   plotflag :: if plotflag > 0, function generates a plot, otherwise only
 %       returns dist
 %       DEFAULT - 0
 %
+%   smoothparam :: smoothing parameter (only affects final plotting, not
+%       data returned
+%       DEFAULT - 1 (no smoothing)
+%   
 %   ax :: an axes handle (can be empty). If empty and plotflag enabled,
 %       js_touch_dist generates a new figure and axes
 %       DEFAULT - []
@@ -39,18 +50,24 @@
 %       multi_js_touch_dist)
 %       DEFAULT - 'r'
 %
-% OUTPUT:
+% OUTPUTS:
 %
-%   dist - the recommended threshold for the distance
+%   set_dist :: the recommended threshold for the center hold threshold
+%
+%   holddist_vect :: the hold time distribution (histogram, vector of
+%       counts)
+%
+%   med_time :: the median hold time using the js_touch_dist 
 %   
-function [set_dist, med_time] = js_touch_dist(stats, varargin)
-default = {300, 0.25, 50, 1, 0, [], 'r'};
+function [set_dist, holddist_vect, med_time] = js_touch_dist(stats, varargin)
+default = {20, 300, 0.25, 50, 1, 0, 1, [], 'r'};
 numvarargs = length(varargin);
-if numvarargs > 7
-    error('too many arguments (> 8), only 1 required and 7 optional.');
+if numvarargs > 9
+    error('too many arguments (> 10), only 1 required and 9 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[targ_time, targ_reward, dist_thresh, all_traj_flag, plotflag, ax, color] = default{:};
+[interv, targ_time, targ_reward, dist_thresh, all_traj_flag, plotflag, ...
+    smoothparam, ax, color] = default{:};
 if plotflag>0 && length(ax)<1;
     figure;
     ax = gca();
@@ -99,15 +116,29 @@ for i=1:length(traj_struct)
 end
 
 dist_distri=dist_distri(dist_distri>0);
-dist_time_hld = 0:20:600;
+end_time_range = 600;
+dist_time_hld = 0:interv:end_time_range;
+normalize = 1;
 holddist_vect = histc(holdlength,dist_time_hld);
+if normalize
+    holddist_vect = holddist_vect./(sum(holddist_vect));
+end
+if plotflag == 1;
+    ext = '';
+elseif plotflag == 2;
+    ext = ' (Laser Only)';
+elseif plotflag == 3;
+    ext = ' (No Laser Only)';
+elseif plotflag == 4;
+    ext = ' (No Laser Only - Resampled)';
+end
 if plotflag
     axes(ax);
     hold on;
-    stairs(dist_time_hld, holddist_vect./(sum(holddist_vect)),color,'LineWidth',1);
+    stairs(dist_time_hld, smooth(holddist_vect, smoothparam),color,'LineWidth',1);
     xlabel('Hold Time');
     ylabel('Proportion');
-    title('JS Touch Hold Time Distr');
+    title(['JS Touch Hold Time Distr', ext]);
     hold off;
 end
 

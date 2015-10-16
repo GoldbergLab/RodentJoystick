@@ -1,7 +1,7 @@
 function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %[labels] 
 % = multi_trajectory_analysis(dirlist, [derivative, plot_range, 
-%       hold_time_range, combineflag, smoothparam, axes_lst])
+%       hold_time_range, combineflag, smoothparam, axes_lst, traj_id])
 %   
 %   multi_trajectory_analysis performs the analysis done by the function
 %   trajectory_analysis for multiple days/directories defined by dirlist
@@ -44,15 +44,20 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %       figure
 %       DEFAULT - []
 
-
+%   traj_id :: choose to plot trajectories of a certain kind 
+%       all_trajectories  0
+%       laser only        1
+%       no laser          2
+%       no laser (resampled)  3
+    
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], 0, 5, []};
+default = {0, 4,[400 1400], 0, 5, [], 0};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('too many arguments (> 7), only 1 required and 6 optional.');
+if numvarargs > 7
+    error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -67,13 +72,17 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
 [statslist, dates] = load_stats(dirlist, combineflag);
+
+statslist = get_stats_with_trajid(statslist,traj_id);
+contlflag = 1;
 %statflag - plot only medians if more than four days to be plotted
+
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
     [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
     [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
-        TIME_RANGE, [ht outthresh innerthresh], 1, smoothparam, axeslst, colors(i), statflag);
+        TIME_RANGE, [ht outthresh innerthresh]*contlflag, 1, smoothparam, axeslst, colors(i), statflag);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));

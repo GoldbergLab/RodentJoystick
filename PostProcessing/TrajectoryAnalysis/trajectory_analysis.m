@@ -17,7 +17,7 @@ function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %   bin_summary :: a struct with the following fields:
 %       lt, geq - bin contains all trajectories with hold times in
 %           the length geq - lt (greater or equal to, and strictly less than)
-%       med - double vector with median at each time point
+%       md - double vector with median at each time point
 %       upperbnd - double vector of 75th percentile at each time point
 %       lowerbnd - double vector of 25th percentile at each time point
 %       mean - double vector of mean at each time point
@@ -127,6 +127,8 @@ for i = 1:PLOT_RANGE
     time = 1:1:length(numbers); 
     inittraj = numbers(1); numbers = 100*numbers./inittraj;
     bin_summary(i).numbers = numbers;
+    bin_summary(i).trajcount = inittraj;
+    bin_summary(i).alltrajcount = totaltraj;
     
     tstr = strcat(num2str(round(bin.geq)), '-', num2str(round(bin.lt)), ' ms:');
     percent = num2str(100*inittraj/totaltraj, 4); format bank;

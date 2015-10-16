@@ -50,13 +50,9 @@ for i = 2:(length(filelist))
     if ((framenumber_prev+1)==frame_number)
         np = [0; record_list(:, 5); 0]>0.5;
         np = (diff(np) ~= 0);
-        if sum(np)<40 %less than 25 nosepoke pairs
+        if sum(np)<50 %less than 25 nosepoke pairs
             working_buff= [working_buff;record_list];
             open_flag=0;
-        else
-            disp('NP Count High');
-            disp(filelist(i).name);
-            working_buff = [];
         end
     else
         %working_buff = working_buff(1:6, 1:10:end);

@@ -1,4 +1,4 @@
-% [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
+% [report, actual_count, succeed, newdirs] = multi_doAll(dir_list, varargin) 
 %
 %   a robust post processing function that can perform exactly
 %   what doAllpp does, but for a list of directories. It will not crash on
@@ -18,6 +18,9 @@
 %       succeed :: number of entries in dir_list that multi_doAll succeeded
 %           in its analysis
 %
+%       newdirs :: a list of the new directories containing successfully
+%           analyzed data
+%
 % ARGUMENTS:
 %       
 %       dir_list :: list of directories (in struct representation) that
@@ -32,7 +35,7 @@
 %           4 - create stats (and save into folder)
 
 
-function [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
+function [report, actual_count, newdirs] = multi_doAll(dir_list, varargin) 
 default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1
@@ -52,7 +55,7 @@ for i = 1:length(dir_list)
         if dir_list(i).isdir
             actual_count = actual_count+ 1;
             errormsg = ''; fail = 0;
-            [fail, errormsg] = doAllpp(wdir, computeflag);
+            [fail, errormsg, newdir] = doAllpp(wdir, computeflag);
             
             %update appropriate record of failures
             report{i, 2} = errormsg;
@@ -68,6 +71,7 @@ for i = 1:length(dir_list)
                 report{i, 3} = 'Cause of failure unknown';
             else
                 succeed = succeed+1;
+                newdirs{succeed} = newdir;
                 report{i, 3} = 'Succeeded';
             end
         else

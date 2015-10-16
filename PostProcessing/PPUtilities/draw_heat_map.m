@@ -30,19 +30,20 @@ function [labels] = draw_heat_map(data, ax, type, varargin)
 %
 
 %% Argument Manipulation
-default = {1, [5 80], [], []};
+default = {1, [5 80], [1 100], [], []};
 
 numvarargs = length(varargin);
-if numvarargs > 4
-    error('too many arguments (> 7), only 3 required and 4 optional.');
+if numvarargs > 5
+    error('too many arguments (> 8), only 3 required and 5 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc, xax, yax]= default{:};
+[logmapping, colorperc, contl, xax, yax]= default{:};
 
 if isempty(xax) || isempty(yax)
     xscalesize = size(data, 1);
-    yscalesize = size(data, 2);
-    xax = -100:(floor(201/scalesize)):100;
+    yscalesize = size(data, 1);
+    xax = -100:(floor(201/xscalesize)):100;
+    xax = xax(1:size(data,2));
     yax = xax;
     activitymap = 1;
 else
@@ -72,11 +73,15 @@ pcolorval = prctile(traj_pdf, colorperc);
 axes(ax(1));
 hold on; title(tstr); 
 xlabel(xlab); ylabel(ylab);
-pcolor(ax, xax, yax, data); shading interp; 
+pcolor(ax, xax, yax, data); shading flat; 
 if activitymap
     axis square;
     set(ax, 'XTick', [-100 -50 0 50 100]);
-    set(ax, 'YTick', [-100 -50 0 50 100]);  
+    set(ax, 'YTick', [-100 -50 0 50 100]);
+    plot(ax, 100*sind(0:0.5:360), 100*cosd(0:0.5:360), 'LineWidth', 3, 'Color', [0 0 0]);
+    plot(ax, contl(1)*sind(0:0.5:360), contl(1)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+    plot(ax, contl(2)*sind(0:0.5:360), contl(2)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+
 else
     xind = 1:(floor(length(xax)/4)):length(xax);
     yind = 1:(floor(length(yax)/4)):length(yax);

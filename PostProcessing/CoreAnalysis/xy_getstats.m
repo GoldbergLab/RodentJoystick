@@ -140,6 +140,8 @@ for struct_index=1:length(jstruct)
                 post_start =  max(js_pairs_l(jt_js_temp,1)); 
                 % Post-touch offset
                 post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2);
+                
+                %FIND END OF TRAJECTORY
                 %End of trajectory is min of nosepoke ending,joystick
                 %touch offset,or reward offset if a rewarded trial whichever comes first
                 stop_p = min([js_pairs_r(j,2),np_end,post_end]); 

@@ -22,7 +22,7 @@ function varargout = xy_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help xy_anlys_gui
 
-% Last Modified by GUIDE v2.5 03-Aug-2015 19:15:56
+% Last Modified by GUIDE v2.5 08-Sep-2015 10:35:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -89,7 +89,8 @@ function selectdir_push_Callback(hObject, eventdata, handles)
  working_dir = uigetdir;
  handles.working_dir = working_dir;
  set(handles.filelist_box,'Value',1);
- load(strcat(working_dir,'\jstruct.mat'));
+ jsloc = [working_dir, '\jstruct.mat'];
+ load(jsloc);
  
  handles.jstruct = jstruct;
  day = floor(jstruct(1).real_time);
@@ -111,17 +112,26 @@ function filelist_box_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 struct_index=get(hObject,'Value');
 jstruct = handles.jstruct;
-stats = xy_getstats(jstruct(struct_index));
+
 set(handles.time_text, 'String', datestr(jstruct(struct_index).real_time, 'HH:MM:SS'));
 handles.start_time = jstruct(struct_index).real_time;
  
 RADIUS = 6.35;
 handles.RADIUS = RADIUS;
+
 raw_x = (jstruct(struct_index).traj_x);
 raw_y = (jstruct(struct_index).traj_y);
-traj_x = raw_x*(RADIUS/100);
-traj_y = raw_y*(RADIUS/100);
+stats = xy_getstats(jstruct(struct_index));
+traj_x = (raw_x)*(RADIUS/100);
+traj_y = (raw_y)*(RADIUS/100);
 magtraj =sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
+if(numel(stats.traj_struct))>0
+    js_onset = stats.traj_struct(1).js_onset;
+    off_time = js_onset + stats.traj_struct(1).rw_or_stop;
+    handles.highlight_range = [js_onset off_time];
+else
+    handles.highlight_range = [0 0];
+end
 
 %raw sensor information
 np_pairs = jstruct(struct_index).np_pairs;
@@ -429,6 +439,65 @@ function indivselectplot_Callback(hObject, eventdata, handles)
     guidata(hObject, handles);
 
 function indivselectplot_CreateFcn(hObject, eventdata, handles)
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in smoothindivtrajparam.
+function smoothindivtrajparam_Callback(hObject, eventdata, handles)
+% hObject    handle to smoothindivtrajparam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns smoothindivtrajparam contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from smoothindivtrajparam
+
+
+% --- Executes during object creation, after setting all properties.
+function smoothindivtrajparam_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to smoothindivtrajparam (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in rdp_on.
+function rdp_on_Callback(hObject, eventdata, handles)
+% hObject    handle to rdp_on (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rdp_on
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
+guidata(hObject, handles);
+
+
+function rdp_tolerance_Callback(hObject, eventdata, handles)
+% hObject    handle to rdp_tolerance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of rdp_tolerance as text
+%        str2double(get(hObject,'String')) returns contents of rdp_tolerance as a double
+handles = plot_indiv_traj(handles);
+handles = indiv_trajectory_plot(handles);
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function rdp_tolerance_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rdp_tolerance (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end

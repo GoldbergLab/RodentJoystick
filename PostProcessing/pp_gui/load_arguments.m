@@ -58,14 +58,18 @@ elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
     arg3 = '0';
     arg3label = 'Rew Only';
 elseif strcmp(plotname, 'JS Touch Dist')
-    arg1 = '0.25';
-    arg1label = 'Rew Rate';
+%     arg1 = '0.25';
+%     arg1label = 'Rew Rate';
+    arg1 ='0';
+    arg1label = 'TrajID';
     arg2 = '200';
     arg2label = 'Targ HT';
     arg3 = '50';
     arg3label = 'Thresh';
 elseif strcmp(plotname, 'Activity Heat Map')
-    arg1 = '2'; 
+    arg1 = '2';
+    arg2 = '0';
+    arg2label = 'TrajID';
     arg1label = 'Bin'; %Bin Size (min)
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = '2'; 
@@ -86,11 +90,15 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
     arg1label = 'Start'; %start time;
     arg2 = '900'; 
     arg2label = 'End'; %end time;
+    arg3 = 0;
+    arg3label = 'TrajID'; %determine which traj to plot. e.g. all = 0, laser only = 1
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
     arg1 = '200'; 
     arg1label = 'Start'; %start time;
     arg2 = '1400'; 
     arg2label = 'End'; %end time;
+    arg3 = 0;
+    arg3label = 'TrajID'; %determine which traj to plot. e.g. all = 0, laser only = 1
 end
 
 %% GUI Handling/Data manipulation;
