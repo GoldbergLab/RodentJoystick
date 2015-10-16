@@ -37,5 +37,6 @@ try
         report{k, 3} = num2str(stats.srate);
     end
 catch e
+    disp(getReport(e));
     report = {'', '', ''};
 end

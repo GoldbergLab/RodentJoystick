@@ -40,7 +40,7 @@
 %           DEFAULT - 0
 %       
 
-function [failedflag, err, newdir] = doAllpp(working_dir, varargin)
+function [failedflag, err, newdir, time] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
@@ -100,4 +100,5 @@ if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
         failedflag = 4; err = getReport(e);
     end
 end
-toc; %end timing and display
+time = toc; %end timing and display
+err = [num2str(time), ' seconds elapsed. ', err];

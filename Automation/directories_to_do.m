@@ -1,8 +1,8 @@
 function [ toprocesslist, list] = directories_to_do(expt_dir)
 %directories_to_do(expt_dir) generates a list of all directories (days)
 %that have not been analyzed yet (and are not the current day);
-%Experimentdirectory\Box_<boxnum>\ContingencyDate_Folder
-list = rdir([expt_dir, '\*\*']);
+%expt_dir\data\Box_<boxnum>_<mouseid>\ContingencyDate_Folder
+list = rdir([expt_dir, '\data\*\*']);
 k = 1;
 toprocesslist = struct('name', {}, 'isdir', []);
 for i = 1:length(list)

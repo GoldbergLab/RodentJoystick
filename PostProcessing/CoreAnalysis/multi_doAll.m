@@ -45,8 +45,8 @@ end
 [computeflag] = default{:};
 
 report = cell(length(dir_list), 3);
+newdirs = {};
 actual_count = 0;
-succeed = 0;
 for i = 1:length(dir_list)
     wdir = dir_list(i).name;
     report{i, 1} = wdir; 
@@ -70,8 +70,7 @@ for i = 1:length(dir_list)
             elseif fail
                 report{i, 3} = 'Cause of failure unknown';
             else
-                succeed = succeed+1;
-                newdirs{succeed} = newdir;
+                newdirs{length(newdirs)+1} = newdir;
                 report{i, 3} = 'Succeeded';
             end
         else
@@ -84,7 +83,3 @@ for i = 1:length(dir_list)
         report{i, 3} = 'Cause of failure unknown';
     end
 end
-
-disp([num2str(actual_count), ' entries out of the input list were actually']);
-disp(['directories. doAllpp processed ', num2str(succeed),'/',num2str(actual_count), ' of those directories.']);
-disp('See report struct for information on which days failed.');
