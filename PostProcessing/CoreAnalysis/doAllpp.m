@@ -36,7 +36,7 @@
 %           DEFAULT - 2
 %
 %       singlestep :: when enabled, only performs the single step selected (1),
-%           otherwise does rest of analysis process
+%           otherwise does rest of analysis process (0)
 %           DEFAULT - 0
 %       
 

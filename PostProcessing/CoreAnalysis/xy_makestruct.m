@@ -67,10 +67,7 @@ for i=1:length(filelist)
         laser_on = sensor_on_off_times(working_buff(7,:));
     end
     if size(working_buff,1)>7
-        [lick, maxlick] = sensor_on_off_times(working_buff(8,:));
-        if maxlick > 500
-            disp('lick on > 500 ms');
-        end
+        lick = sensor_on_off_times(working_buff(8,:));
     end
     
     %mark reward times

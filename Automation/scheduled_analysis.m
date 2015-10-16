@@ -35,7 +35,8 @@ end
 
 end
 
-% Attempts to write a text log to the experiment_directory
+% Attempts to write a text log to the experiment_directory\AutomatedLogs
+% folder
 function logname = write_analysis_log(experiment_directory, pp_report, bhvr_report)
 try %attempting write of log report
     title = ['Analysis_', datestr(now,'mm_dd_yyyy_HH_MM')];
@@ -68,6 +69,11 @@ recipients={'nitin.shyamkumar@gmail.com', ...
             'glab.cornell@gmail.com', ...
             };%add new recipients of daily reports here
 %% file processing
+pp_summary = ['Attempted processing on ', num2str(actual),...
+                ' directories within ', experiment_directory,...
+                ' and succeeded on ', num2str(length(newdirs)),' of them.', ...
+                ' Full report is attached.'];
+%summary = [pp_summary, bhvr_summary];
 try
     matlabmail(recipients, summary, title, logname);
 catch

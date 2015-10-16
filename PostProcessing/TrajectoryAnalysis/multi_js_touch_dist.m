@@ -1,4 +1,4 @@
-function [set_distances, set_distances_strings] = multi_js_touch_dist(dirlist,varargin)
+ function [set_distances, set_distances_strings] = multi_js_touch_dist(dirlist,varargin)
 %[set_dist, set_dist_str] = multi_js_touch_dist(dirlist,[interv, ...
 %   targ_reward, dist_thresh, targ_time, combineflag, plotflag, ax])
 %
