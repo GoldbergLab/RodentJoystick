@@ -1,5 +1,6 @@
-%Function to be called by a MATLAB timer object at a fixed rate to ensure
-%that analysis is scheduled and executed regularly
+% scheduled_analyis(experiment_directory)
+%
+%   runs the entire core analysis pipeline on 
 function pp_report = scheduled_analysis(experiment_directory)
 disp([datestr(now, 'HH:MM:SS'), ' Performing scheduled post processing analysis.']);
 
