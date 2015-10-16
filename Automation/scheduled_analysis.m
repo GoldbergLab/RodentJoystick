@@ -1,6 +1,13 @@
 % scheduled_analyis(experiment_directory)
 %
-%   runs the entire core analysis pipeline on 
+%   runs the entire core analysis pipeline on any subdirectories of
+%   experiment_directory containing raw, unprocessed data
+%
+% ARGUMENTS:
+%
+%   experiment_directory :: the desired experiment directory for running
+%       automated analysis
+%
 function pp_report = scheduled_analysis(experiment_directory)
 disp([datestr(now, 'HH:MM:SS'), ' Performing scheduled post processing analysis.']);
 
