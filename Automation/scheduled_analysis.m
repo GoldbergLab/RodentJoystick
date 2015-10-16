@@ -1,7 +1,7 @@
 %Function to be called by a MATLAB timer object at a fixed rate to ensure
 %that analysis is scheduled and executed regularly
 function pp_report = scheduled_analysis(experiment_directory)
-disp('Performing scheduled post processing analysis.');
+disp([datestr(now, 'HH:MM:SS'), ' Performing scheduled post processing analysis.']);
 
 toprocesslist = directories_to_do(experiment_directory);
 
@@ -15,9 +15,13 @@ pp_report = [title; report];
 %after analysis - generate report of pellet counts and success rates of new
 %data
 try
-    [bhvr_report] = behavior_report(newdirs);
-catch 
-    disp('Failed to generate behavior report');
+    if length(newdirs)>0
+        [bhvr_report] = behavior_report(newdirs);
+    else
+        bhvr_report = {'', '', ''};
+    end
+catch e
+    bhvr_report = {getReport(e), '', ''};
 end
 
 %attempt to write data
@@ -32,7 +36,7 @@ if emailflag
     attempt_email_delivery(summary, title, logname);
 end
 
-
+disp([datestr(now, 'HH:MM:SS'), ' Finished scheduled post processing analysis.']);
 end
 
 % Attempts to write a text log to the experiment_directory\AutomatedLogs
