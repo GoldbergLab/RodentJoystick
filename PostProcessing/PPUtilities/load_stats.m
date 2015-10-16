@@ -150,6 +150,7 @@ end
 
 function [stats] = add_field(stats, fname, fieldname)
     allfields = isempty(fieldname);
+    srateneeded = strcmp(fieldname, 'srate');
     if allfields || (strcmp(fieldname, 'np_count'))
         load(fname, 'np_count');
         stats.np_count = np_count;
@@ -162,7 +163,7 @@ function [stats] = add_field(stats, fname, fieldname)
         load(fname, 'js_l_count');
         stats.js_l_count = js_l_count;
     end
-    if allfields || strcmp(fieldname, 'pellet_count') 
+    if allfields || strcmp(fieldname, 'pellet_count') || srateneeded
         load(fname, 'pellet_count');
         stats.pellet_count = pellet_count;
     end
@@ -186,7 +187,7 @@ function [stats] = add_field(stats, fname, fieldname)
         load(fname, 'traj_struct');
         stats.traj_struct = traj_struct;
     end
-    if allfields || strcmp(fieldname, 'trialnum')
+    if allfields || strcmp(fieldname, 'trialnum') || srateneeded
         load(fname, 'trialnum');
         stats.trialnum = trialnum;
     end
