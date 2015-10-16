@@ -6,8 +6,7 @@
 %   
 % ARGUMENTS
 %
-%   dirlist :: dirlist is a standard struct representation of multiple
-%       directories
+%   dirlist :: dirlist is a cell array of directory path strings
 %
 % OUTPUTS
 %
