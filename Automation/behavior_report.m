@@ -1,4 +1,4 @@
-%[special, report] = behavior_report(dirlist, pelletmin, pelletmax) 
+%[report] = behavior_report(dirlist) 
 %
 %   takes a directory list and generates a string cell array report 
 %   of the pellet counts and success rates of all directory entries in
@@ -6,12 +6,7 @@
 %   
 % ARGUMENTS
 %
-%   dirlist :: dirlist is a standard struct representation of multiple
-%       directories
-%
-%   pelletmin, pelletmax :: the range of acceptable pellet values
-%       anything outside of this range will be specifically added to the
-%       cell array special
+%   dirlist :: dirlist is a cell array of directory path strings
 %
 % OUTPUTS
 %
@@ -21,7 +16,10 @@
 %   report :: cell array of size (m x 3) describing the full results of
 %       each directory entry
 %       each directory receives two lines
-function [report] = behavior_report(dirlist)
+function [report] = behavior_report(celldirlist)
+for i = 1:length(celldirlist)
+    dirlist(i).name = celldirlist{i};
+end
 try
     statslist = load_stats(dirlist, 0, 'pellet_count', 'srate');
     report = cell(length(statslist)*2, 3);

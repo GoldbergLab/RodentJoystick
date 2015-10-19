@@ -26,7 +26,7 @@ function handles = update_box(handles, boxnum)
 contents = get(handles.contdayselect, 'String');
 NumDaysCompare = str2num(contents{get(handles.contdayselect, 'Value')});
 exptdir = get(handles.exptdirlabel, 'String');
-basepath = [exptdir, '\Box_', num2str(boxnum),'*'];
+basepath = [exptdir, '\data\Box_', num2str(boxnum),'*'];
 today = floor(now);
 dayscompare = []; duplicates = 0;
 for i = 1:60 %how far we're willing to look back for contingency information
