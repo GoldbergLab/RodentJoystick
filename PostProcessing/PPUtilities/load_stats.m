@@ -121,7 +121,6 @@ function [statslist, dates, days] = combine_stats_struct(dirlist, combinedate, f
             try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
             try; statsaccum.numtraj = stats.numtraj; end;
             try; statsaccum.trialnum = stats.trialnum; end;
-            try; statsaccum.srate = -1; end;
         end
         clear stats;
     end

@@ -101,7 +101,6 @@ if numel(traj_x) > 0
     end
     axes(fullplot_Axes);
 end
-end
 axis([-1 1 -1 1]*RADIUS*1.08);
 hold off;
 end

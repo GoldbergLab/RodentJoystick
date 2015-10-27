@@ -167,14 +167,19 @@ for struct_index=1:length(jstruct)
                     laser = 0;
                 end
                 
+                
                 traj_x_t = traj_x(js_pairs_r(j,1):stop_p);
                 traj_y_t = traj_y(js_pairs_r(j,1):stop_p);
+                raw_x = traj_x(js_pairs_r(j,1):stop_p);
+                raw_y = traj_y(js_pairs_r(j,1):stop_p);
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));
                 %make sure nose poke occurs at point where joystick mag <50
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
                     
                     
+                    traj_struct(k).raw_x = raw_x;
+                    traj_struct(k).raw_y = raw_y;
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
                     vel_x = [0, diff(traj_x_t)];
