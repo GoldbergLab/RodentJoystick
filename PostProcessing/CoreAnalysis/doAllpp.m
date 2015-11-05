@@ -100,4 +100,5 @@ if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
     end
 end
 time = toc; %end timing and display
+
 err = [num2str(time), ' seconds elapsed: ', err];
