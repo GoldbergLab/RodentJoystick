@@ -57,7 +57,7 @@ redir_points = [];
 
 for kk=1:length(speed_minima)
    %check if the speed minimum is close to a radius of curvature change
-   if (min(abs(r_curv_minima - speed_minima(kk))))<5 %&&  ...
+   if (min(abs(r_curv_minima - speed_minima(kk))))<10 %&&  ...
            %(min(abs(theta_dot_cp - speed_minima(kk))))<100
        redir_points = [redir_points speed_minima(kk)];
    end
