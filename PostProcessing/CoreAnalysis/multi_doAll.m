@@ -1,4 +1,4 @@
-% [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
+% [report, actual_count, succeed, newdirs] = multi_doAll(dir_list, varargin) 
 %
 %   a robust post processing function that can perform exactly
 %   what doAllpp does, but for a list of directories. It will not crash on
@@ -18,6 +18,9 @@
 %       succeed :: number of entries in dir_list that multi_doAll succeeded
 %           in its analysis
 %
+%       newdirs :: a list of the new directories containing successfully
+%           analyzed data
+%
 % ARGUMENTS:
 %       
 %       dir_list :: list of directories (in struct representation) that
@@ -32,7 +35,7 @@
 %           4 - create stats (and save into folder)
 
 
-function [report, actual_count, succeed] = multi_doAll(dir_list, varargin) 
+function [report, actual_count, newdirs] = multi_doAll(dir_list, varargin) 
 default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1
@@ -42,8 +45,8 @@ end
 [computeflag] = default{:};
 
 report = cell(length(dir_list), 3);
+newdirs = {};
 actual_count = 0;
-succeed = 0;
 for i = 1:length(dir_list)
     wdir = dir_list(i).name;
     report{i, 1} = wdir; 
@@ -52,7 +55,7 @@ for i = 1:length(dir_list)
         if dir_list(i).isdir
             actual_count = actual_count+ 1;
             errormsg = ''; fail = 0;
-            [fail, errormsg] = doAllpp(wdir, computeflag);
+            [fail, errormsg, newdir] = doAllpp(wdir, computeflag);
             
             %update appropriate record of failures
             report{i, 2} = errormsg;
@@ -67,7 +70,7 @@ for i = 1:length(dir_list)
             elseif fail
                 report{i, 3} = 'Cause of failure unknown';
             else
-                succeed = succeed+1;
+                newdirs{length(newdirs)+1} = newdir;
                 report{i, 3} = 'Succeeded';
             end
         else
@@ -80,7 +83,3 @@ for i = 1:length(dir_list)
         report{i, 3} = 'Cause of failure unknown';
     end
 end
-
-disp([num2str(actual_count), ' entries out of the input list were actually']);
-disp(['directories. doAllpp processed ', num2str(succeed),'/',num2str(actual_count), ' of those directories.']);
-disp('See report struct for information on which days failed.');

@@ -36,15 +36,14 @@
 %           DEFAULT - 2
 %
 %       singlestep :: when enabled, only performs the single step selected (1),
-%           otherwise does rest of analysis process
+%           otherwise does rest of analysis process (0)
 %           DEFAULT - 0
 %       
 
-function [failedflag, err] = doAllpp(working_dir, varargin)
+function [failedflag, err, newdir, time] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
-disp(['Processing: ', working_dir]);
 default = {2, 0};
 numvarargs = length(varargin);
 if numvarargs > 2
@@ -53,7 +52,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [analysisflag, singlestep] = default{:};
 
-failedflag = 0; err='';
+failedflag = 0; err=''; newdir = '';
 try
     if (numel(working_dir)==0)
         working_dir = uigetdir(pwd);
@@ -74,7 +73,7 @@ end
 %% ppscript: generate combined matlab files
 if ~failedflag && ((analysisflag<=2 && ~singlestep) || analysisflag == 2)
     try
-        fileformatspec = '%f %f %s %s %s %s %s'; numfield = 7;
+        fileformatspec = '%f %f %s %s %s %s %s %s'; numfield = 7;
         ppscript(working_dir,fileformatspec,numfield);
     catch e
         failedflag = 2; err = getReport(e);
@@ -95,9 +94,11 @@ end
 if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
     try
         [failedflag, err] = doAllstats(working_dir);
+        newdir = working_dir;
     catch e
         failedflag = 4; err = getReport(e);
     end
 end
+time = toc; %end timing and display
 
-toc; %end timing and display
+err = [num2str(time), ' seconds elapsed: ', err];

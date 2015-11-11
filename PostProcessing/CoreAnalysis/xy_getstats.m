@@ -92,6 +92,8 @@ traj_pdf_jstrial= zeros(100,100);
 k=0;
 
 trialnum=0;
+d = fdesign.lowpass('N,F3db',8, 50, 1000);
+hd = design(d, 'butter');
 for struct_index=1:length(jstruct)
     traj_x = jstruct(struct_index).traj_x;
     traj_y = jstruct(struct_index).traj_y;    
@@ -140,6 +142,8 @@ for struct_index=1:length(jstruct)
                 post_start =  max(js_pairs_l(jt_js_temp,1)); 
                 % Post-touch offset
                 post_end = js_pairs_l((js_pairs_l(jt_js_temp,1)==post_start),2);
+                
+                %FIND END OF TRAJECTORY
                 %End of trajectory is min of nosepoke ending,joystick
                 %touch offset,or reward offset if a rewarded trial whichever comes first
                 stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
@@ -165,14 +169,19 @@ for struct_index=1:length(jstruct)
                     laser = 0;
                 end
                 
-                traj_x_t = traj_x(js_pairs_r(j,1):stop_p);
-                traj_y_t = traj_y(js_pairs_r(j,1):stop_p);
-                mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));
+                raw_x = traj_x(js_pairs_r(j,1):stop_p);
+                raw_y = traj_y(js_pairs_r(j,1):stop_p);                
+                [traj_x_t,traj_y_t] = ...
+                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), stop_p]);
+                mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
+                
                 %make sure nose poke occurs at point where joystick mag <50
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
                     
                     
+                    traj_struct(k).raw_x = raw_x;
+                    traj_struct(k).raw_y = raw_y;
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
                     vel_x = [0, diff(traj_x_t)];

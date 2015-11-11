@@ -1,37 +1,57 @@
-function pp_report = scheduled_analysis(varargin)
-disp('Performing scheduled post processing analysis');
-%Function to be called by a MATLAB timer object at a fixed rate to ensure
-%that analysis is scheduled and executed regularly
-default = {'K:\automationtest'};
-numvarargs = length(varargin);
-if numvarargs > 2
-    error('too many arguments (> 1), only one optional.');
-end
-[default{1:numvarargs}] = varargin{:};
-[experiment_directory] = default{:};
-%put the main directory containing experiment data here.
-%recipients of reports:
-recipients={'nitin.shyamkumar@gmail.com', ...
-            'glab.cornell@gmail.com', ...
-            };%add new recipients of daily reports here
+% scheduled_analyis(experiment_directory)
+%
+%   runs the entire core analysis pipeline on any subdirectories of
+%   experiment_directory containing raw, unprocessed data
+%
+% ARGUMENTS:
+%
+%   experiment_directory :: the desired experiment directory for running
+%       automated analysis
+%
+function pp_report = scheduled_analysis(experiment_directory)
+disp([datestr(now, 'HH:MM:SS'), ' Performing scheduled post processing analysis.']);
 
-%normal pellet count - anything outside of this range is specifically
-%highlighted in the mail notification
-normal_pellets = [110 300];
-
-time = now;
 toprocesslist = directories_to_do(experiment_directory);
-title = {'Analysis attempted on the following directories within ','', [experiment_directory, ':']};
+
+
 %attempt all analysis here
-[failure, actual, succeed] = multi_doAll(toprocesslist, 1);
-pp_report = [title; failure];
+[report, ~, newdirs] = multi_doAll(toprocesslist, 1);
+title = {'Analysis attempted on the following directories within ','',...
+    experiment_directory};
+pp_report = [title; report];
+
+%after analysis - generate report of pellet counts and success rates of new
+%data
 try
-    [bhvr_summary, bhvr_report] = behavior_report(toprocesslist, normal_pellets(1), normal_pellets(2));
-catch 
+    if length(newdirs)>0
+        [bhvr_report] = behavior_report(newdirs);
+    else
+        bhvr_report = {'', '', ''};
+    end
+catch e
+    bhvr_report = {getReport(e), '', ''};
 end
 
+%attempt to write data
+logname = write_analysis_log(experiment_directory, pp_report, bhvr_report);
+
+emailflag = 0;
+if emailflag
+    summary = ['Attempted processing on ', num2str(actual),...
+                ' directories within ', experiment_directory,...
+                ' and succeeded on ', num2str(length(newdirs)),' of them.', ...
+                ' Full report is attached.'];
+    attempt_email_delivery(summary, title, logname);
+end
+
+disp([datestr(now, 'HH:MM:SS'), ' Finished scheduled post processing analysis.']);
+end
+
+% Attempts to write a text log to the experiment_directory\AutomatedLogs
+% folder
+function logname = write_analysis_log(experiment_directory, pp_report, bhvr_report)
 try %attempting write of log report
-    title = ['Analysis_', datestr(time,'mm_dd_yyyy_HH_MM')];
+    title = ['Analysis_', datestr(now,'mm_dd_yyyy_HH_MM')];
     logdir = [experiment_directory, '\AutomatedLogs'];
     if exist(logdir, 'dir') == 0
         mkdir(logdir);
@@ -39,8 +59,8 @@ try %attempting write of log report
     logname = [logdir, '\', title, '.txt'];
     fileID = fopen(logname,'w');
     for i = 1:size(pp_report, 1)
-        formatspec = '%s\r\n %s\r\n\r\n';
-        fprintf(fileID, formatspec, pp_report{i, [1, 3]});
+        formatspec = '%s\r\n %s\r\n %s\r\n\r\n';
+        fprintf(fileID, formatspec, pp_report{i, [1, 3, 2]});
     end
     for i = 1:size(bhvr_report, 1)
         formatspec = '%s %s %s\r\n';
@@ -48,20 +68,28 @@ try %attempting write of log report
     end
     fclose(fileID);
 catch
-    disp('failed log write');
+    disp('Failed to write log');
 end
+end
+
+% This function handles email delivery - edit the recipients list here to
+% control who receives email notifications.
+function attempt_email_delivery(summary, title, logname)
+%% EDIT EMAIL RECIPIENTS HERE
+%recipients of reports:
+recipients={'nitin.shyamkumar@gmail.com', ...
+            'glab.cornell@gmail.com', ...
+            };%add new recipients of daily reports here
+%% file processing
 pp_summary = ['Attempted processing on ', num2str(actual),...
                 ' directories within ', experiment_directory,...
-                ' and succeeded on ', num2str(succeed),' of them.', ...
+                ' and succeeded on ', num2str(length(newdirs)),' of them.', ...
                 ' Full report is attached.'];
-summary = [pp_summary, bhvr_summary];
+%summary = [pp_summary, bhvr_summary];
 try
     matlabmail(recipients, summary, title, logname);
 catch
     disp('failed mail log');
 end
-
-
-
 end
 

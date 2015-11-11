@@ -2,8 +2,8 @@ function [handles] = save_gui_plots(handles)
 %helper function that handles all saving routines
 axeslst =[handles.axes1; handles.axes2; handles.axes3; handles.axes4; ...
             handles.axes5; handles.axes6];
-root = 'J:\Users\Administrator\Documents\PostProcessingGUIFigures';
-%root = 'C:\Users\GolderbergLab\Documents\PostProcessingGUIFigures';
+%root = 'J:\Users\Administrator\Documents\PostProcessingGUIFigures';
+root = 'C:\Users\GoldbergLab\Documents\PostProcessingGUIFigures';
 t = now; date = datestr(t, 'mm_dd_yyyy'); time = datestr(t, 'HH_MM_SS');
 if ~exist([root,'\',date], 'dir')
     mkdir(root, date);
@@ -24,7 +24,7 @@ elseif get(handles.saveplotssingle, 'Value')==1
     separate = 0;
 end
 
-if separate == 1
+if separate
     for i = 1:6
     fh = figure;
     copyobj(axeslst(i), fh);
@@ -46,6 +46,10 @@ else
     catch
     end %don't want failed rendering to prevent restoring visibility
     render_visible_items(handles, 'on');
+    if get(handles.saveplotssingle, 'Value') == 1
+        set(handles.saveplotsfig, 'Visible', 'off');
+        set(handles.saveplotspng, 'Value', 1);
+    end
 
 end
 

@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 05-Aug-2015 11:13:34
+% Last Modified by GUIDE v2.5 03-Sep-2015 16:07:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -127,8 +127,7 @@ catch
 end
 tempdirlist = uipickfiles('filter',startdir, 'output', 'struct');
 if ~isempty(tempdirlist)
-    [~, ind] = sort({tempdirlist.name});
-    handles.dirlist = tempdirlist(ind);
+    handles.dirlist = tempdirlist;
 try
     %update label of days being plotted;
     labeltxt = '';
@@ -919,4 +918,28 @@ function normalizecheck_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: get(hObject,'Value') returns toggle state of normalizecheck
+end
+
+
+% --- Executes on selection change in lasercomparemenu.
+function lasercomparemenu_Callback(hObject, eventdata, handles)
+% hObject    handle to lasercomparemenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns lasercomparemenu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from lasercomparemenu
+end
+
+% --- Executes during object creation, after setting all properties.
+function lasercomparemenu_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to lasercomparemenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
 end

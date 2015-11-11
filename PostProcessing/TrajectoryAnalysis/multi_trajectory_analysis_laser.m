@@ -1,10 +1,11 @@
-function [labels] = multi_trajectory_analysis(dirlist, varargin)
+function [labels] = multi_trajectory_analysis_laser(dirlist, varargin)
 %[labels] 
-% = multi_trajectory_analysis(dirlist, [derivative, plot_range, 
-%       hold_time_range, combineflag, smoothparam, axes_lst, traj_id])
+% = multi_trajectory_analysis_laser(dirlist, [derivative, plot_range, 
+%       hold_time_range, smoothparam, axes_lst, traj_id])
 %   
 %   multi_trajectory_analysis performs the analysis done by the function
 %   trajectory_analysis for multiple days/directories defined by dirlist
+%   and splits the data based on which trajectories were hit by laser
 %
 % ARGUMENTS: 
 %
@@ -31,10 +32,6 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %       [A, B] is analyzed
 %       DEFAULT: [400 1400]
 %
-%   combineflag :: flag indicating whether to combine all data and generate
-%       a single plot, or leave as separate days
-%       DEFAULT - 0
-%
 %   smoothparam :: parameter describing smoothing (parameter is the size of
 %       filter window - filter is moving average)
 %       DEFAULT - 5
@@ -48,7 +45,8 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %       all_trajectories  0
 %       laser only        1
 %       no laser          2
-%       no laser (resampled)  3
+%       both, separated   3
+%       both, separated, with resampling 4
     
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
 default = {0, 4,[400 1400], 0, 5, [], 0};
@@ -73,10 +71,9 @@ colors = 'rgbkmcyrgbkmcyrgbkmcy';
 %% Loading days and actual plotting
 [statslist, dates] = load_stats(dirlist, combineflag);
 
-statslist = get_stats_with_trajid(statslist,traj_id);
+statslist = get_stats_with_trajid(statslist,traj_id, varargin);
 contlflag = 1;
 %statflag - plot only medians if more than four days to be plotted
-
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
     [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
@@ -87,6 +84,8 @@ for i= 1:length(statslist)
 end
 axes(axeslst(PLOT_RANGE));
 legend(groupings,dates);
+
+
 
 
 

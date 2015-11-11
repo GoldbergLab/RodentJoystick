@@ -3,7 +3,10 @@
 %
 %   takes the stats structure, a target hold time, a target reward 
 %   percentage, and a distance threshold and computes a recommended hold
-%   threshold while also generating a distance distribution
+%   threshold while also generating a hold time distribution
+%   This hold time distribution looks only at the maximum length of a
+%   continuous segment under dist_thresh for a trial. This shows a
+%   distribution of hold times without the swats.
 %
 % ARGUMENTS: 
 %
@@ -31,7 +34,7 @@
 %       examines the hold time of the max contact.
 %       DEFAULT - 1
 %
-%   plotflag :: if plotflag == 1, function generates a plot, otherwise only
+%   plotflag :: if plotflag > 0, function generates a plot, otherwise only
 %       returns dist
 %       DEFAULT - 0
 %
@@ -47,9 +50,14 @@
 %       multi_js_touch_dist)
 %       DEFAULT - 'r'
 %
-% OUTPUT:
+% OUTPUTS:
 %
-%   dist - the recommended threshold for the distance
+%   set_dist :: the recommended threshold for the center hold threshold
+%
+%   holddist_vect :: the hold time distribution (histogram, vector of
+%       counts)
+%
+%   med_time :: the median hold time using the js_touch_dist 
 %   
 function [set_dist, holddist_vect, med_time] = js_touch_dist(stats, varargin)
 default = {20, 300, 0.25, 50, 1, 0, 1, [], 'r'};
@@ -115,13 +123,22 @@ holddist_vect = histc(holdlength,dist_time_hld);
 if normalize
     holddist_vect = holddist_vect./(sum(holddist_vect));
 end
+if plotflag == 1;
+    ext = '';
+elseif plotflag == 2;
+    ext = ' (Laser Only)';
+elseif plotflag == 3;
+    ext = ' (No Laser Only)';
+elseif plotflag == 4;
+    ext = ' (No Laser Only - Resampled)';
+end
 if plotflag
     axes(ax);
     hold on;
     stairs(dist_time_hld, smooth(holddist_vect, smoothparam),color,'LineWidth',1);
     xlabel('Hold Time');
     ylabel('Proportion');
-    title('JS Touch Hold Time Distr');
+    title(['JS Touch Hold Time Distr', ext]);
     hold off;
 end
 

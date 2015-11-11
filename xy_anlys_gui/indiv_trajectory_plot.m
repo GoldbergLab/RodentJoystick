@@ -32,6 +32,17 @@ elseif plottype == 6;
 elseif plottype == 7; 
     data = trajectory.velmag;
 end
+offset_index = get(handles.offset_menu,'Value');
+switch offset_index
+    case 1
+        offset = length(data);
+    case 2
+        [~, max_value_ind] = max(trajectory.magtraj);
+        offset = max_value_ind;
+    otherwise
+        offset = trajectory.rw_or_stop;
+end
+data = data(1:offset);
 
 smoothwindow = get(handles.indivfilter, 'String');
 smoothval = smoothwindow{get(handles.indivfilter, 'Value')};
@@ -39,6 +50,7 @@ smoothval = str2num(smoothval);
 data = smooth(data, smoothval);
 multiplyradius = [1; 2; 3];
 zerocenter = [2; 3; 4; 5; 6];
+
 if sum(multiplyradius == plottype)
     data = data*handles.RADIUS/100;
     LIMIT = handles.RADIUS*1.08;
