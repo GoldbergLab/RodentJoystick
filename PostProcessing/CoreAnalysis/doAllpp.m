@@ -35,12 +35,12 @@
 %           -> generate stats (4)
 %           DEFAULT - 2
 %
-%       singlestep :: when enabled, only performs the single step selected (1),
-%           otherwise does rest of analysis process (0)
+%       singlestep :: when enabled, only performs the step selected by
+%           analysisflag (1), otherwise does rest of analysis process (0)
 %           DEFAULT - 0
 %       
 
-function [failedflag, err, newdir, time] = doAllpp(working_dir, varargin)
+function [failedflag, err, newdir, skipped_dat, time] = doAllpp(working_dir, varargin)
 tic; %begin timing analysis
 
 %% Argument manipulation and check validity of working_dir
@@ -74,7 +74,7 @@ end
 if ~failedflag && ((analysisflag<=2 && ~singlestep) || analysisflag == 2)
     try
         fileformatspec = '%f %f %s %s %s %s %s %s'; numfield = 7;
-        ppscript(working_dir,fileformatspec,numfield);
+        skipped_dat = ppscript(working_dir,fileformatspec,numfield);
     catch e
         failedflag = 2; err = getReport(e);
     end
@@ -86,7 +86,8 @@ if ~failedflag && ((analysisflag<=3 && ~singlestep) || analysisflag == 3)
         [jstruct] =xy_makestruct(working_dir);
         save([working_dir,'/jstruct.mat'],'jstruct');
         clear jstruct;
-    catch e ; failedflag = 3; err = getReport(e);
+    catch e 
+        failedflag = 3; err = getReport(e);
     end
 end
 

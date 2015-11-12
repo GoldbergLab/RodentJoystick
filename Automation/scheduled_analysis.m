@@ -15,7 +15,7 @@ toprocesslist = directories_to_do(experiment_directory);
 
 
 %attempt all analysis here
-[report, ~, newdirs] = multi_doAll(toprocesslist, 1);
+[report,newdirs, skipped_dats] = multi_doAll(toprocesslist, 1);
 title = {'Analysis attempted on the following directories within ','',...
     experiment_directory};
 pp_report = [title; report];
@@ -33,16 +33,7 @@ catch e
 end
 
 %attempt to write data
-logname = write_analysis_log(experiment_directory, pp_report, bhvr_report);
-
-emailflag = 0;
-if emailflag
-    summary = ['Attempted processing on ', num2str(actual),...
-                ' directories within ', experiment_directory,...
-                ' and succeeded on ', num2str(length(newdirs)),' of them.', ...
-                ' Full report is attached.'];
-    attempt_email_delivery(summary, title, logname);
-end
+logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_dats);
 
 disp([datestr(now, 'HH:MM:SS'), ' Finished scheduled post processing analysis.']);
 end
@@ -65,6 +56,10 @@ try %attempting write of log report
     for i = 1:size(bhvr_report, 1)
         formatspec = '%s %s %s\r\n';
         fprintf(fileID, formatspec, bhvr_report{i, :});
+    end
+    for i = 1:length(skipped_data)
+        formatspec = '%s\r\n';
+        fprintf(fileID, formatspec, skipped_data{i});
     end
     fclose(fileID);
 catch

@@ -102,9 +102,9 @@ for struct_index=1:length(jstruct)
     js_pairs_r = jstruct(struct_index).js_pairs_r;
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
-    
     try
-        laser_on = jstruct(struct_index).laser_on;        
+        laser_on = jstruct(struct_index).laser_on;
+    catch
     end
     
     %% Process, and develop traj_struct
@@ -147,45 +147,48 @@ for struct_index=1:length(jstruct)
                 %End of trajectory is min of nosepoke ending,joystick
                 %touch offset,or reward offset if a rewarded trial whichever comes first
                 stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
-
+                
+                %FIND REWARD OR STOP (whichever came first)
                 if js_reward(j)
-                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)])-js_pairs_r(j,1); 
+                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,...
+                        rw_onset(onset_ind)])-js_pairs_r(j,1); 
                 else
-                rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]) - js_pairs_r(j,1); 
+                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]) ...
+                        - js_pairs_r(j,1); 
                 end              
                 
                 %If optogenetic expt was on, determine if "Hit" trial or
                 %"Catch" trial
                 try
-                if sum(...
+                    if sum(...
                         ((laser_on(:,1))> js_pairs_r(j,1))&...
                         ((laser_on(:,1))< js_pairs_r(j,2)) ...
-                    )>0
+                        )>0
                     laser = 1;
-                else
+                    else
                     laser = 0;
-                end
+                    end
                 catch
                     laser = 0;
                 end
                 
                 raw_x = traj_x(js_pairs_r(j,1):stop_p);
-                raw_y = traj_y(js_pairs_r(j,1):stop_p);                
+                raw_y = traj_y(js_pairs_r(j,1):stop_p);
+                
                 [traj_x_t,traj_y_t] = ...
                     filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), stop_p]);
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                 
-                %make sure nose poke occurs at point where joystick mag <50
+                %make sure trajectory starts within 50%
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
-                    
                     
                     traj_struct(k).raw_x = raw_x;
                     traj_struct(k).raw_y = raw_y;
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
-                    vel_x = [0, diff(traj_x_t)];
-                    vel_y = [0, diff(traj_y_t)];
+                    vel_x = diff(traj_x_t);
+                    vel_y = diff(traj_y_t);
                     traj_struct(k).vel_x = vel_x;
                     traj_struct(k).vel_y = vel_y;
                     traj_struct(k).magtraj = mag_traj;

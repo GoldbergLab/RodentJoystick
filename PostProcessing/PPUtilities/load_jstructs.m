@@ -1,12 +1,11 @@
-function [jstructlist, dates, days] = load_jstructs(dirlist, combineflag)
+function [jstructlist, dates, days, errlist] = load_jstructs(dirlist, combineflag)
 %[jstructlist, dates, days] = load_jstructs(dirlist, combineflag) 
 %
 %   attempts to load the jstructs from the directories in dirlist.
 %
 % OUTPUTS:
 %
-%   jstructlist :: cell array of jstructs - not structs containing
-%       filenames like it used to be defined:
+%   jstructlist :: cell array of jstructs 
 %       I.e. jstructlist{2} is an actual jstruct
 %
 %   dates :: a cell array of strings corresponding to the dates of each
@@ -15,12 +14,13 @@ function [jstructlist, dates, days] = load_jstructs(dirlist, combineflag)
 %   days :: a vector containing MATLAB real number representation of the
 %       day
 %
+%   errlist :: a list of MExceptions (can be empty)
+%
 % ARGS:
 %   
 %   dirlist :: struct representation of a list of directories (usually
-%       obtained using the utility rdir). All entries in the list must have
-%       been post processed. load_jstructs is not robust - if a single day
-%       fails to load, the function will crash.
+%       obtained using the utility rdir). if a single day
+%       fails to load, the function will(should) not crash.
 %   
 %   combineflag :: a flag 1/0 that instructs load_jstructs whether or not
 %       to combine all data from all directories into a single day
@@ -31,16 +31,17 @@ function [jstructlist, dates, days] = load_jstructs(dirlist, combineflag)
 if combineflag==0
 %% GET LIST of individual data
     jstructlist = cell(length(dirlist), 1);
+    errlist = cell(length(dirlist, 1));
     dates = cell(length(dirlist), 1);
     days = zeros(length(dirlist), 1);
     for i= 1:length(dirlist)
-        jsname = [dirlist(i).name, '\jstruct.mat'];
-        load(jsname);
-        jstructlist{i} = jstruct;
         try
+            load([dirlist(i).name, '\jstruct.mat']);
+            jstructlist{i} = jstruct;
             dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
             days(i) = floor(jstruct(2).real_time);
-        catch
+        catch e
+            errlist{i} = e;
             dates{i} = ''; days(i) = NaN;
         end
         clear jstruct;
@@ -48,16 +49,17 @@ if combineflag==0
 else
 %% FIND COMBINED DATA    
     combined = [];
+    errlist = cell(length(dirlist, 1));
     dates = cell(length(dirlist), 1);
     days = zeros(length(dirlist), 1);
     for i= 1:length(dirlist)
-        jsname = [dirlist(i).name, '\jstruct.mat'];
-        load(jsname);
-        combined = [combined, jstruct];
         try
+            load([dirlist(i).name, '\jstruct.mat']);
+            combined = [combined, jstruct];
             dates{i} = datestr(jstruct(2).real_time, 'mm/dd/yy');
             days(i) = floor(jstruct(2).real_time);
-        catch
+        catch e
+            errlist{i} = e;
             dates{i} = ''; days(i) = NaN;
         end
         clear jstruct;

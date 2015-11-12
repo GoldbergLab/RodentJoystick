@@ -1,4 +1,7 @@
 function varargout = calib_gui(varargin)
+%
+% calib_gui('Verbose', 1) will have calib_gui print out any errors and
+%   the corresponding full stack trace
 % CALIB_GUI MATLAB code for calib_gui.fig
 %      CALIB_GUI, by itself, creates a new CALIB_GUI or raises the existing
 %      singleton*.
@@ -54,7 +57,11 @@ function calib_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for calib_gui
 handles.output = hObject;
-
+if nargin<4
+    handles.verbose = 0;
+else
+    handles.verbose = varargin{1, 2};
+end
 % Update handles structure
 guidata(hObject, handles);
 
@@ -157,7 +164,11 @@ function update_Callback(hObject, eventdata, handles)
 % hObject    handle to update (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-plot_data(handles);
+try
+    plot_data(handles);
+catch e
+    if handles.verbose; disp(getReport(e)); end;
+end
 
 
 
@@ -169,14 +180,18 @@ function matflist_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns matflist contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from matflist
-contents = cellstr(get(hObject, 'String'));
-matfile = contents{get(hObject, 'Value')};
-load([handles.working_dir, '\comb\', matfile]);
-working_buff(:, 1) = medfilt1(working_buff(:, 1)); 
-working_buff(:, 2) = medfilt1(working_buff(:, 2));
-handles.working_buff = working_buff;
-set(handles.working_buff_length, 'String', num2str(length(working_buff)/1000));
-guidata(hObject, handles);
+try
+    contents = cellstr(get(hObject, 'String'));
+    matfile = contents{get(hObject, 'Value')};
+    load([handles.working_dir, '\comb\', matfile]);
+    working_buff(:, 1) = medfilt1(working_buff(:, 1)); 
+    working_buff(:, 2) = medfilt1(working_buff(:, 2));
+    handles.working_buff = working_buff;
+    set(handles.working_buff_length, 'String', num2str(length(working_buff)/1000));
+    guidata(hObject, handles);
+catch e
+    if handles.verbose; disp(getReport(e)); end
+end
 
 % --- Executes during object creation, after setting all properties.
 function matflist_CreateFcn(hObject, eventdata, handles)
@@ -196,17 +211,22 @@ function refresh_Callback(hObject, eventdata, handles)
 % hObject    handle to refresh (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ppscript(handles.working_dir, '%f %f %s %s %s %s %s %s', 8);
-datadir = [handles.working_dir, '\comb'];
-dirlist = dir(datadir);
-populate = cell(length(dirlist), 1);
-for i = 1:length(dirlist)
-    populate{i, 1} = dirlist(i).name;
+try
+    faillist = ppscript(handles.working_dir, '%f %f %s %s %s %s %s %s', 8);
+    datadir = [handles.working_dir, '\comb'];
+    dirlist = dir(datadir);
+    populate = cell(length(dirlist), 1);
+    for i = 1:length(dirlist)
+        populate{i, 1} = dirlist(i).name;
+    end
+    populate = populate(3:end, 1);
+    populate = flipud(populate);
+    set(handles.matflist, 'Value', 1);
+    set(handles.matflist, 'String', populate);
+    guidata(hObject, handles);
+catch e 
+    if handles.verbose; disp(getReport(e)); end;
 end
-populate = flipud(populate);
-set(handles.matflist, 'Value', 1);
-set(handles.matflist, 'String', populate);
-guidata(hObject, handles);
 
 
 % --- Executes on button press in selectdir.

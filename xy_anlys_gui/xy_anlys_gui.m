@@ -1,4 +1,22 @@
 function varargout = xy_anlys_gui(varargin)
+%   This GUI is a tool to analyze individual trajectories. 
+%   xy_anlys_gui displays raw data, and allows cycling through individual
+%   trajectories.
+%   Can be called as xy_anlys_gui
+%   xy_anlys_gui('Verbose', 1) will display both error stack traces and
+%       occasionally other text information
+%
+%   OVERVIEW:
+%       axes1 - axes5 : have different buttons for selecting raw
+%           data/sensor information
+%       axes6 : the large center square for plotting a specific trajectory
+%           plot_traj_xy is a helper function that handles this task (also
+%           updates the trajectory information)
+%       axes7 : the smaller bottom axes for plotting a single feature of a
+%           specific trajectory.
+%           indiv_trajectory_plot is a helper function that handles this
+%           task
+%
 % xy_anlys_gui MATLAB code for xy_anlys_gui.fig
 %      xy_anlys_gui, by itself, creates a new xy_anlys_gui or raises the existing
 %      singleton*.
@@ -61,8 +79,13 @@ axes(handles.axes4); zoom on
 axes(handles.axes5); zoom on
 linkaxes([handles.axes1 handles.axes2 handles.axes3 handles.axes4 handles.axes5],'x');
 
-axes(handles.axes6);
-axis equal; 
+axes(handles.axes6); axis equal; 
+
+if nargin<4
+    handles.verbose = 0;
+else
+    handles.verbose = varargin{1, 2};
+end
 
 % Update handles structure
 guidata(hObject, handles);
@@ -82,6 +105,7 @@ function varargout = xy_anlys_gui_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 % --- Executes on button press in selectdir_push.
+% callback when a directory is selected
 function selectdir_push_Callback(hObject, eventdata, handles)
 % hObject    handle to selectdir_push (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -106,6 +130,8 @@ function selectdir_push_Callback(hObject, eventdata, handles)
  guidata(hObject, handles);
 
 % --- Executes on selection change in filelist_box.
+% Callback when a specific .mat file is selected - plot all raw data from
+% the jstruct
 function filelist_box_Callback(hObject, eventdata, handles)
 % hObject    handle to filelist_box (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -122,9 +148,10 @@ handles.RADIUS = RADIUS;
 raw_x = (jstruct(struct_index).traj_x);
 raw_y = (jstruct(struct_index).traj_y);
 stats = xy_getstats(jstruct(struct_index));
+
 traj_x = (raw_x)*(RADIUS/100);
 traj_y = (raw_y)*(RADIUS/100);
-magtraj =sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
+magtraj = sqrt(raw_x.^2 + raw_y.^2).*RADIUS./100;
 if(numel(stats.traj_struct))>0
     js_onset = stats.traj_struct(1).js_onset;
     off_time = js_onset + stats.traj_struct(1).rw_or_stop;
@@ -190,37 +217,21 @@ traj_struct=stats.traj_struct;
 handles.traj_struct = traj_struct;
 handles.pl_index = ~isempty(traj_struct);
 
-handles = plot_indiv_traj(handles);
 try
-    handles = indiv_trajectory_plot(handles);
-catch
+    handles = plot_traj_xy(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end    
+end
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
 end
 
 guidata(hObject, handles);
 
-function handles = plot_indiv_traj(handles)
-% attempts to plot a trajectory if it exists
-try
-    axes(handles.axes6); cla; 
-    axis manual; hold on;
-    traj_struct = handles.traj_struct;
-    if get(handles.time_info_checkbox,'Value')
-        t_step = str2num(get(handles.timestep_edit,'String'));
-    else
-        t_step=0;
-    end
-    offset_index = get(handles.offset_menu,'Value');
-    pl_index = handles.pl_index;
-    set(handles.trajectory_indexcount, 'String', ...
-        [num2str(pl_index), '/',num2str(length(traj_struct))]);
-    if(numel(traj_struct))>0
-        plot_traj_xy(traj_struct,t_step,offset_index, ...
-           pl_index,handles);
-    end
-    hold off;
-catch e 
-    disp(getReport(e));
-end
+
  
 
 function filelist_box_CreateFcn(hObject, eventdata, handles)
@@ -235,8 +246,18 @@ function prev_plot_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.pl_index = max(handles.pl_index-1,1);
-handles = plot_indiv_traj(handles);
-handles = indiv_trajectory_plot(handles);
+try
+    handles = plot_traj_xy(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end    
+end
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
+
 guidata(hObject, handles);
 
 
@@ -247,13 +268,36 @@ function next_plot_button_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 handles.pl_index = min(handles.pl_index+1,numel(handles.traj_struct));
-handles = plot_indiv_traj(handles);
-handles = indiv_trajectory_plot(handles);
+try
+    handles = plot_traj_xy(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end    
+end
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
+
 guidata(hObject, handles);
 
 
 function selectdir_push_CreateFcn(hObject, eventdata, handles)
 function offset_menu_Callback(hObject, eventdata, handles)
+try
+    handles = plot_traj_xy(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end    
+end
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
+
+
 function offset_menu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -262,6 +306,19 @@ end
 function time_info_checkbox_Callback(hObject, eventdata, handles)
 
 function timestep_edit_Callback(hObject, eventdata, handles)
+try
+    handles = plot_traj_xy(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end    
+end
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
+
+
 function timestep_edit_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
@@ -425,79 +482,18 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-function indivfilter_Callback(hObject, eventdata, handles)
-    handles = indiv_trajectory_plot(handles);
-    guidata(hObject, handles);
-
-function indivfilter_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
 
 function indivselectplot_Callback(hObject, eventdata, handles)
-    handles = indiv_trajectory_plot(handles);
-    guidata(hObject, handles);
+
+try
+    [handles] = indiv_trajectory_plot(handles);
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
+guidata(hObject, handles);
 
 function indivselectplot_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
-
-% --- Executes on selection change in smoothindivtrajparam.
-function smoothindivtrajparam_Callback(hObject, eventdata, handles)
-% hObject    handle to smoothindivtrajparam (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns smoothindivtrajparam contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from smoothindivtrajparam
-
-
-% --- Executes during object creation, after setting all properties.
-function smoothindivtrajparam_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to smoothindivtrajparam (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: popupmenu controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-
-% --- Executes on button press in rdp_on.
-function rdp_on_Callback(hObject, eventdata, handles)
-% hObject    handle to rdp_on (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of rdp_on
-handles = plot_indiv_traj(handles);
-handles = indiv_trajectory_plot(handles);
-guidata(hObject, handles);
-
-
-function rdp_tolerance_Callback(hObject, eventdata, handles)
-% hObject    handle to rdp_tolerance (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: get(hObject,'String') returns contents of rdp_tolerance as text
-%        str2double(get(hObject,'String')) returns contents of rdp_tolerance as a double
-handles = plot_indiv_traj(handles);
-handles = indiv_trajectory_plot(handles);
-guidata(hObject, handles);
-
-% --- Executes during object creation, after setting all properties.
-function rdp_tolerance_CreateFcn(hObject, eventdata, handles)
-% hObject    handle to rdp_tolerance (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    empty - handles not created until after all CreateFcns called
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end

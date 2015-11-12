@@ -1,4 +1,4 @@
-function [thresh2, ht, thresh, minangle, maxangle] = extract_contingency_info(day_directory)
+function [thresh2, ht, thresh, minangle, maxangle, e] = extract_contingency_info(day_directory)
 %[out_thresh, ht, in_thresh, minangle, maxangle] = extract_contingency_info(day_directory)
 %
 %   returns the contingency information for the day represented by the
@@ -28,8 +28,7 @@ try
     ht = str2num(datecont{3});
     minangle = str2num(datecont{5});
     maxangle = str2num(datecont{6});
-catch e 
-    disp(getReport(e));
+catch e
     thresh2 = 0;
     thresh = 0;
     ht = 0;

@@ -1,4 +1,4 @@
-% [report, actual_count, succeed, newdirs] = multi_doAll(dir_list, varargin) 
+% [report, newdirs, skipped_dat] = multi_doAll(dir_list, varargin) 
 %
 %   a robust post processing function that can perform exactly
 %   what doAllpp does, but for a list of directories. It will not crash on
@@ -8,18 +8,15 @@
 %
 % OUTPUTS:
 %
-%       report :: n x 3 cell array. third column is status (failure type,
-%           success), second column is error message, if it exists, and 
-%           first column is directory name.
+%   report :: n x 3 cell array. third column is status (failure type,
+%       success), second column is error message, if it exists, and 
+%       first column is directory name.
 %
-%       actual_count :: count of entries in dir_list that were actually
-%           directories
-%   
-%       succeed :: number of entries in dir_list that multi_doAll succeeded
-%           in its analysis
+%   newdirs :: a list of the new directories containing successfully
+%       analyzed data
 %
-%       newdirs :: a list of the new directories containing successfully
-%           analyzed data
+%   skipped_dat :: a list of .dat files skipped in postprocessing (because
+%       of nosepoke issue) by ppscript
 %
 % ARGUMENTS:
 %       
@@ -35,7 +32,7 @@
 %           4 - create stats (and save into folder)
 
 
-function [report, actual_count, newdirs] = multi_doAll(dir_list, varargin) 
+function [report, actual_count, newdirs, allskipped_dat] = multi_doAll(dir_list, varargin) 
 default = {1};
 numvarargs = length(varargin);
 if numvarargs > 1
@@ -45,7 +42,7 @@ end
 [computeflag] = default{:};
 
 report = cell(length(dir_list), 3);
-newdirs = {};
+newdirs = {}; allskipped_dat = {};
 actual_count = 0;
 for i = 1:length(dir_list)
     wdir = dir_list(i).name;
@@ -55,8 +52,8 @@ for i = 1:length(dir_list)
         if dir_list(i).isdir
             actual_count = actual_count+ 1;
             errormsg = ''; fail = 0;
-            [fail, errormsg, newdir] = doAllpp(wdir, computeflag);
-            
+            [fail, errormsg, newdir, skipped_dat] = doAllpp(wdir, computeflag);
+            allskipped_dat = [allskipped_dat, skipped_dat];
             %update appropriate record of failures
             report{i, 2} = errormsg;
             if fail == 2
@@ -78,8 +75,8 @@ for i = 1:length(dir_list)
             report{i, 3} = 'Not a directory';
         end
     catch e
-        errormsg = getReport(e);
-        report{i, 2} = errormsg;
+        report{i, 2} = getReport(e);
         report{i, 3} = 'Cause of failure unknown';
     end
 end
+allskipped_dat = allskipped_dat';

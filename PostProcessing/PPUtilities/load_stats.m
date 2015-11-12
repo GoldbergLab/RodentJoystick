@@ -1,4 +1,4 @@
-function [statslist, dates, days] = load_stats(dirlist, combineflag, varargin)
+function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag, varargin)
 %[statslist, dates, days] = load_stats(dirlist, combineflag) attempts
 %   to load the stats structures from the directories in dirlist.
 %
@@ -23,8 +23,14 @@ function [statslist, dates, days] = load_stats(dirlist, combineflag, varargin)
 %   
 %   combineflag :: a flag 2/1/0 that instructs load_stats how to combine
 %       data
-%       If combine flag is 1, then load_stats combines all data into a
-%       single struct.
+%       load_stats either groups data by days* (2), combines all data into a
+%       single struct (1), or leaves as separate structs as loaded (0)
+%       
+%       *Note that currently, grouping by days only works as long as there
+%       are not more than 2 contingencies in a single day, otherwise it
+%       will miss some days.
+%
+%       When combining all (1):
 %       dates becomes a single cell string with the date range in the
 %       format 'mm/dd/yy - mm/dd/yy'
 %
@@ -37,114 +43,99 @@ function [statslist, dates, days] = load_stats(dirlist, combineflag, varargin)
 %       'np_js_post', 'traj_pdf_jstrial', 'numtraj', 'traj_struct',
 %       'trialnum', 'srate'
 %
+errlist = cell(length(dirlist), 1);
 
 if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data
-    dates = cell(length(dirlist), 1);
     days = zeros(length(dirlist), 1);
     for k= 1:length(dirlist)
-        statsname = [dirlist(k).name, '\stats.mat'];
-        try
-            [stats, dates{k}, days(k)] = load_fields(statsname, varargin);
-        catch e
-            disp(getReport(e));
-            %stats = xy_getstats(jstruct);
-        end
-        statslist(k) = stats;
-        clear stats;
+        [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, '\stats.mat'], varargin);
     end
 elseif combineflag == 1 % combine all days' stats
-    [statslist, dates, days] = combine_stats_struct(dirlist, 1, varargin);
+    [statslist, days, errlist] = combine_stats_struct(dirlist, 1, varargin);
 else %combine all alike days
-    statslistind = 1; dates = {}; days = [];
+    slistind = 1; days = [];
     for k = 1:length(dirlist)
         day = strsplit(dirlist(k).name, '\'); day = day{end};
-        test = (exist('prev_day', 'var'));
+
         if (exist('prev_day', 'var')) &&  (strcmp(day, prev_day))
-            statslistind = statslistind-1;
-            [stats, tmpdates, tmpdays] = combine_stats_struct(dirlist(k-1:k), 0, varargin);
-            statslist(statslistind) = stats;
-            dates{statslistind} = tmpdates{1};
-            days(statslistind) = tmpdays(1);
-            statslistind = statslistind+1;
+            slistind = slistind-1;
+            %currently assumes only max of two contingencies per day - this
+            %may need to be changed in the future
+            [statslist(slistind),tmpdays, errlist{k-1:k}] = combine_stats_struct(dirlist(k-1:k), varargin);
         else
-            statsname = [dirlist(k).name, '\stats.mat'];
-            try
-                [statslist(statslistind), dates{statslistind}, days(statslistind)] = load_fields(statsname, varargin);
-            catch e 
-                disp(getReport(e));
-            end
-            statslistind = statslistind+1;
-            prev_day = day;
+            [statslist(slistind),tmpdays, errlist{k}] = load_fields([dirlist(k).name, '\stats.mat'], varargin);            
         end
+        %store results
+        days(slistind) = tmpdays(1);
+        
+        %update for next iteration
+        slistind = slistind+1; prev_day = day;
     end
-    
 end
+
+dates = cellfun(@(d) datestr(d, 'mm/dd/yy'), num2cell(days));
+if combineflag == 1
+    dates = [dates{1},'-',dates{end}];
+end
+
 end
 
 %combines all stats in dirlist into a single stats struct
-function [statslist, dates, days] = combine_stats_struct(dirlist, combinedate, fieldlist)
-%% FIND COMBINED DATA    
-    dates = cell(length(dirlist), 1);
-    days = zeros(length(dirlist), 1);
-    for k= 1:length(dirlist)
-        statsname = [dirlist(k).name, '\stats.mat'];
-        try
-            [stats, dates{k}, days(k)] = load_fields(statsname, fieldlist);
-        catch e 
-            disp(getReport(e))
-            %jsname = [dirlist(k).name, '\jstruct.mat'];
-            %load(jsname); 
-            %stats = xy_getstats(jstruct);
-        end
-        if exist('statsaccum', 'var')
-            try; statsaccum.np_count = stats.np_count + statsaccum.np_count; end;
-            try; statsaccum.js_r_count = stats.js_r_count + statsaccum.js_r_count; end;
-            try; statsaccum.js_l_count = stats.js_l_count + statsaccum.js_l_count; end;
-            try; statsaccum.pellet_count = stats.pellet_count + statsaccum.pellet_count; end;
-            try; statsaccum.np_js = [statsaccum.np_js; stats.np_js]; end;
-            try; statsaccum.np_js_post = [stats.np_js_post; statsaccum.np_js_post]; end;
-            try; statsaccum.traj_struct = [statsaccum.traj_struct, stats.traj_struct]; end;
-            try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial + ...
-                    statsaccum.traj_pdf_jstrial; end;
-            try; statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
-            try; statsaccum.trialnum = stats.trialnum + statsaccum.trialnum; end;
-            try; statsaccum.srate = statsaccum.pellet_count/statsaccum.trialnum; end;
-        else
-            try; statsaccum.np_count = stats.np_count; end;
-            try; statsaccum.js_r_count = stats.js_r_count; end;
-            try; statsaccum.js_l_count = stats.js_l_count; end;
-            try; statsaccum.pellet_count = stats.pellet_count; end;
-            try; statsaccum.np_js = stats.np_js; end;
-            try; statsaccum.np_js_post = stats.np_js_post; end;
-            try; statsaccum.traj_struct = stats.traj_struct; end;
-            try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
-            try; statsaccum.numtraj = stats.numtraj; end;
-            try; statsaccum.trialnum = stats.trialnum; end;
-        end
-        clear stats;
+function [statslist, days, errlist] = combine_stats_struct(dirlist, fieldlist)
+%% FIND COMBINED DATA
+errlist = cell(length(dirlist), 1);
+days = zeros(length(dirlist), 1);
+for k= 1:length(dirlist)
+    statsname = [dirlist(k).name, '\stats.mat'];
+    [stats, days(k), e] = load_fields(statsname, fieldlist);
+    errlist{k} = e;
+    if exist('statsaccum', 'var')
+        try; statsaccum.np_count = stats.np_count + statsaccum.np_count; end;
+        try; statsaccum.js_r_count = stats.js_r_count + statsaccum.js_r_count; end;
+        try; statsaccum.js_l_count = stats.js_l_count + statsaccum.js_l_count; end;
+        try; statsaccum.pellet_count = stats.pellet_count + statsaccum.pellet_count; end;
+        try; statsaccum.np_js = [statsaccum.np_js; stats.np_js]; end;
+        try; statsaccum.np_js_post = [stats.np_js_post; statsaccum.np_js_post]; end;
+        try; statsaccum.traj_struct = [statsaccum.traj_struct, stats.traj_struct]; end;
+        try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial + ...
+                statsaccum.traj_pdf_jstrial; end;
+        try; statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
+        try; statsaccum.trialnum = stats.trialnum + statsaccum.trialnum; end;
+        try; statsaccum.srate = statsaccum.pellet_count/statsaccum.trialnum; end;
+    else
+        try; statsaccum.np_count = stats.np_count; end;
+        try; statsaccum.js_r_count = stats.js_r_count; end;
+        try; statsaccum.js_l_count = stats.js_l_count; end;
+        try; statsaccum.pellet_count = stats.pellet_count; end;
+        try; statsaccum.np_js = stats.np_js; end;
+        try; statsaccum.np_js_post = stats.np_js_post; end;
+        try; statsaccum.traj_struct = stats.traj_struct; end;
+        try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
+        try; statsaccum.numtraj = stats.numtraj; end;
+        try; statsaccum.trialnum = stats.trialnum; end;
     end
-    statslist = statsaccum;
-    if combinedate
-        dates={[dates{1}, ' - ', dates{end}]};
-    end
+    clear stats;
+end
+statslist = statsaccum;
 end
 
-function [stats, date, day] = load_fields(fname, fieldlist)
-    stats = struct();
-    for k = 1:length(fieldlist)
-        stats = add_field(stats, fname, fieldlist{k});
-    end
+function [stats, day, e] = load_fields(fname, fieldlist)
+stats = struct();
+e = [];
+try
     if isempty(fieldlist)
         stats = add_field(stats, fname, '');
+    else
+        for k = 1:length(fieldlist)
+            stats = add_field(stats, fname, fieldlist{k});
+        end
     end
-    try
-        load(fname, 'day');
-        date = datestr(day, 'mm/dd/yy');
-    catch e 
-        disp(getReport(e));
-        day = 0; date = '';
-    end
+    load(fname, 'day');
+catch e
+    day = 0;
+end
+
 end
 
 function [stats] = add_field(stats, fname, fieldname)

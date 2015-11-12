@@ -124,6 +124,9 @@ function selectstats_Callback(hObject, eventdata, handles)
 % hObject    handle to selectstats (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+statsloc = uigetdir(pwd);
+
+guidata(hObject, handles);
 
 function populate_plot_selector(hObject)
     plotlist = {'Radius of Curvature'; ...
@@ -131,6 +134,7 @@ function populate_plot_selector(hObject)
                 'Tangential Acceleration'; ...
                 'Normal Acceleration'; ...
                 'Tangential/Normal Accel'};
+    set(hObject, 'String', plotlist);
 
 
 % --- Executes on selection change in ax4select.
@@ -154,7 +158,8 @@ function ax4select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
+populate_plot_selector(hObject);
+set(hObject, 'Value', 1);
 
 % --- Executes on selection change in ax5select.
 function ax5select_Callback(hObject, eventdata, handles)
@@ -177,6 +182,8 @@ function ax5select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_plot_selector(hObject);
+set(hObject, 'Value', 2);
 
 
 % --- Executes on selection change in ax6select.
@@ -200,6 +207,8 @@ function ax6select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_plot_selector(hObject);
+set(hObject, 'Value', 5);
 
 
 % --- Executes on selection change in ax8select.
@@ -223,6 +232,8 @@ function ax8select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_plot_selector(hObject);
+set(hObject, 'Value', 1);
 
 
 % --- Executes on selection change in ax9select.
@@ -246,6 +257,9 @@ function ax9select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_plot_selector(hObject);
+set(hObject, 'Value', 2);
+
 
 
 % --- Executes on selection change in ax10select.
@@ -269,6 +283,8 @@ function ax10select_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+populate_plot_selector(hObject);
+set(hObject, 'Value', 5);
 
 
 % --- Executes on button press in prevsegment.

@@ -11,6 +11,10 @@ function [x_filt, y_filt] = filter_noise_traj(x, y, hd, range)
 %
 %   y :: raw y data
 %
+%   hd :: a filter argument, used for processing - because
+%       filter_noise_traj is called inside of a loop, recreating the filter
+%       inside this function is too costly.
+%
 %   range :: 2 element vector with range(1) indicating start time, and
 %       range(2) indicating end time
 %
@@ -21,13 +25,14 @@ function [x_filt, y_filt] = filter_noise_traj(x, y, hd, range)
 %   y_filt :: filtered y data
 
 OFFSET = 20;
-x = x(range(1)-OFFSET:range(2)+OFFSET);
+r1 = max(range(1)-OFFSET, 1);
+r2 = min(range(2)+OFFSET, length(x));
+x = x(r1:r2);
 x_filt = filter(hd, x);
-x_filt = x_filt(OFFSET:end-OFFSET);
+x_filt = x_filt((1+OFFSET):end-OFFSET);
 
-y = y(range(1)-OFFSET:range(2)+OFFSET);
+y = y(r1:r2);
 y_filt = filter(hd, y);
-y_filt = y_filt(OFFSET:end-OFFSET);
-
+y_filt = y_filt((1+OFFSET):end-OFFSET);
 end
 

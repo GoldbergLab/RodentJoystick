@@ -32,8 +32,8 @@ function sortedtraj = sort_traj_into_bins(tstruct, bins, varargin)
 %
 %   rwfilter :: a flag indicating whether or not to filter by reward - if
 %       on (1), then only trajectories in tstruct that have been rewarded
-%       will be sorted and added to the bins. Otherwise (0) bins all
-%       trajectories in tstruct
+%       will be sorted and added to the bins. Otherwise bins all
+%       trajectories in tstruct (0)
 %       DEFAULT - 0
 %
 %   ht_definition :: flag indicating which definition of hold time should
