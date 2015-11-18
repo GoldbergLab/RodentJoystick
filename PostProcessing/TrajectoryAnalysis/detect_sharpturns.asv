@@ -47,19 +47,17 @@ data.r_curv = r_c(1:10:end);
 data.r_curv_minima = round(r_curv_minima./10);
 data.speed_minima = round(speed_minima./10);
 
-redir_points = [0];
+redir_points = [];
 
 for kk=1:length(speed_minima)
    %check if the speed minimum is close to a radius of curvature change
    if (min(abs(r_curv_minima - speed_minima(kk))))<10 %&&  ...
            %(min(abs(theta_dot_cp - speed_minima(kk))))<100
-       if (speed_minima(kk) - redir_points(end))>30
-        redir_points = [redir_points speed_minima(kk)];
-       end
+       redir_points = [redir_points speed_minima(kk)];
    end
 end
 
 redir_points = round(redir_points./10);
 redir_points = redir_points(redir_points>0);
-
+redi
 end

@@ -62,7 +62,7 @@ jstruct_stats.np_count = np_count;
 jstruct_stats.js_r_count = js_r_count;
 jstruct_stats.js_l_count = js_l_count;
 jstruct_stats.pellet_count = pellet_count;
-    
+
 % Get Distribution of NP_JS
 list=[];
 for i=1:length(jstruct)
@@ -86,12 +86,13 @@ for i=1:length(jstruct)
 end
 jstruct_stats.np_js_post = list(find((list>-10000)&(list<10000)));
 
-%5 Get PDF of trajectories
+% Get PDF of trajectories
 traj_struct = [];
 traj_pdf_jstrial= zeros(100,100);
 k=0;
 
 trialnum=0;
+js_trialnum=0;
 d = fdesign.lowpass('N,F3db',8, 50, 1000);
 hd = design(d, 'butter');
 for struct_index=1:length(jstruct)
@@ -131,7 +132,9 @@ for struct_index=1:length(jstruct)
                 %count as new trial only if prev joystick attempt
                 %wasn't on the same nosepoke onset offset
                 if (start_p ~= start_temp)                   
-                    trialnum = trialnum+1;
+                    trialnum = trialnum+1;js_trialnum=0;
+                else
+                    js_trialnum = js_trialnum + 1;
                 end
                 start_temp = start_p;
                     
@@ -146,7 +149,7 @@ for struct_index=1:length(jstruct)
                 %FIND END OF TRAJECTORY
                 %End of trajectory is min of nosepoke ending,joystick
                 %touch offset,or reward offset if a rewarded trial whichever comes first
-                stop_p = min([js_pairs_r(j,2),np_end,post_end]); 
+                [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]); 
 
                 if js_reward(j)
                 rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)])-js_pairs_r(j,1); 
@@ -192,11 +195,17 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).velmag = sqrt(vel_x.^2 + vel_y.^2);
                     traj_struct(k).radvel = [0, diff(mag_traj)];
                     traj_struct(k).js_onset = js_pairs_r(j,1);
+                    traj_struct(k).js_offset = js_pairs_r(j,2);
+                    traj_struct(k).post_onset = post_start;
+                    traj_struct(k).post_offset = post_end;
                     traj_struct(k).start_p = start_p;
                     traj_struct(k).stop_p = stop_p;
                     traj_struct(k).rw = js_reward(j);
                     traj_struct(k).laser = laser;
                     traj_struct(k).rw_onset = 0;
+                    traj_struct(k).stop_index = stop_index;
+                    traj_struct(k).js_trialnum = js_trialnum;
+                    traj_struct(k).np_end = np_end;
                     
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
