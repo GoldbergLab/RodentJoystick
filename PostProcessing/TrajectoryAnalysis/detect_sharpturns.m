@@ -1,8 +1,8 @@
-function [redir_points, data] = detect_sharpturns(traj)
+function [redir_points, quality, data] = detect_sharpturns(traj)
 %take in a single trajectory, and fit a smoothing spline - then examine
 %redirection points.
 
-[redir_points, data] = zero_points(traj.traj_x, traj.traj_y);
+[redir_points,quality, data] = zero_points(traj.traj_x, traj.traj_y);
 
 end
 
@@ -19,7 +19,7 @@ end
 %
 %   r_scale :: a (1/0) flag indicating whether to scale data by the radius
 %       or leave as is.
-function [redir_points, data]= zero_points(x, y)
+function [redir_points, quality, data]= zero_points(x, y)
 cubic_x = fit((1:length(x))',x','cubicinterp');
 cubic_y = fit((1:length(y))',y','cubicinterp');
 
@@ -59,7 +59,11 @@ for kk=1:length(speed_minima)
    end
 end
 
-redir_points = round(redir_points./10);
 redir_points = redir_points(redir_points>0);
+
+[quality] = fit_speed_model(speed, redir_points);
+
+redir_points = round(redir_points./10);
+
 
 end
