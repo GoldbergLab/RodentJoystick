@@ -50,14 +50,19 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %       no laser          2
 %       no laser (resampled)  3
     
+%   lasercomparflag :: overlay laser hit trials with resampled/all others
+%       laser vs all non laser          2
+%       laser vs resampled non laser    3
+
+
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], 0, 5, [], 0};
+default = {0, 4,[400 1400], 0, 5, [], 0, 0};
 numvarargs = length(varargin);
-if numvarargs > 7
+if numvarargs > 8
     error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id, lasercompareflag] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -68,12 +73,23 @@ if length(axeslst)<1;
 elseif (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist_all, dates] = load_stats(dirlist, combineflag);
 
-statslist = get_stats_with_trajid(statslist,traj_id);
+if lasercompareflag==3 && combineflag==1
+    statslist(1) = get_stats_with_trajid(statslist_all,1);
+    statslist(2) = get_stats_with_trajid(statslist_all,3);
+    dates{2} = [dates{1} '-nonlaser'];
+elseif lasercompareflag==2 && combineflag==1
+    statslist(1) = get_stats_with_trajid(statslist_all,1);
+    statslist(2) = get_stats_with_trajid(statslist_all,2);
+    dates{2} = [dates{1} '-nonlaser'];
+else    
+    statslist = get_stats_with_trajid(statslist_all,traj_id);
+end
+
 contlflag = 1;
 %statflag - plot only medians if more than four days to be plotted
 

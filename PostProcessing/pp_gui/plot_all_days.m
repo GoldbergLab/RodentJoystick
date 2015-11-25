@@ -157,7 +157,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
         startcol = 2;
     end
     axestoplot = reshape(axes(startcol:startcol+1, 1:2), [4 1]);
-
+       
     info = 'Trajectory Analysis will overwrite 4 axes in a block pattern. Do you want to continue?';
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     if strcmp(button, 'Yes')
@@ -165,7 +165,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
             cla(axestoplot(i), 'reset');
         end
         multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
-            combineflag, smoothparam, axestoplot, traj_id);
+            combineflag, smoothparam, axestoplot, traj_id,lasercompareflag);
     end
 elseif strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;

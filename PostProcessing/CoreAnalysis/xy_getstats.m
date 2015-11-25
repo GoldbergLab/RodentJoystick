@@ -115,7 +115,7 @@ for struct_index=1:length(jstruct)
         for j=1:size(js_pairs_r,1)
             if(sum(((np_pairs(:,1)-js_pairs_r(j,1))<0)&((np_pairs(:,2)-js_pairs_r(j,1))>0))>0) 
             % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
-            if (sum(((js_pairs_l(:,1)-js_pairs_r(j,1))<0)&((js_pairs_l(:,2)-js_pairs_r(j,1))>0))>0) 
+            if (sum(((js_pairs_l(:,1)-js_pairs_r(j,1))<0)&((js_pairs_l(:,2)-js_pairs_r(j,1))>0))>0)
                 % And if the Joystick is in between an post-touch onset and offset pair
                 % This is now a valid trial
                     
@@ -173,9 +173,13 @@ for struct_index=1:length(jstruct)
                 end
                 
                 raw_x = traj_x(js_pairs_r(j,1):stop_p);
-                raw_y = traj_y(js_pairs_r(j,1):stop_p);                
+                raw_y = traj_y(js_pairs_r(j,1):stop_p);
+                try
                 [traj_x_t,traj_y_t] = ...
                     filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), stop_p]);
+                catch
+                    continue;
+                end
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                 
                 %make sure nose poke occurs at point where joystick mag <50
@@ -190,6 +194,7 @@ for struct_index=1:length(jstruct)
                     [seginfo,redir_pts] = get_segmentinfo(traj_struct(k));
                     traj_struct(k).seginfo =  seginfo;
                     traj_struct(k).redir_pts =  redir_pts;
+                    
                     vel_x = [0, diff(traj_x_t)];
                     vel_y = [0, diff(traj_y_t)];
                     traj_struct(k).vel_x = vel_x;
