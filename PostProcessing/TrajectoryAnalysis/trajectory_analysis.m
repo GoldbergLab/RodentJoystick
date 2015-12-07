@@ -1,6 +1,7 @@
 function [bin_summary, labels, lhandle] = trajectory_analysis(stats, varargin)
 %[bin_summary, labels, graphgroups] = 
-%   trajectory_analysis(stats, [derivflag, PLOT_RANGE,TIME_RANGE, CONTL, pflag, axeslst, color, multiflag])
+%   trajectory_analysis(stats, [derivflag, PLOT_RANGE,TIME_RANGE, CONTL, 
+%       pflag, axeslst, color, multiflag])
 %
 %   plots trajectory profiles from stats using the (optional)
 %   arguments for a hold time range, contigency lines, whether to actually 
@@ -163,61 +164,42 @@ for i = 1:PLOT_RANGE
 end
 end
 
-%bin_summary is a struct with length bin.lt 
-%   bin_summary has the following fields (for each time i)
-%       (different from the outputs!!!): 
-%       position := a vector of magnitudes corresponding to the various trajectories at time i.
-%       avg := single value corresponding to the average position at that
-%           time
-%       med := single value of median position at that time
-%       stdev := a single value that corresponds to the standard deviation
-%           at the time i
-%       numtraj := number of trajectories that lasted at least as long as
-%       time i.
-% mean, median, std are all numbers representing the statistic in a given
+% mean, median, std are all numbers representing the statistic fpr a given
 % time. upperbnd, lowerbnd are the 75th and 25th percentiles, respectively
-function [avg, med, stdev, numbers, ...
+%bin_summary is a large matrix representing each trajectory (number of rows
+%corresponds to maximum trajectory length, and number of columns is number
+%of trajectories)
+function [avg, med, stdev, numbers, ... 
     upperbnd, lowerbnd, bin_summary] = bin_stats(bin, derivflag)
-    for time = 1:(bin.lt-1) 
-        time_pos_ind = 0;
-        %iterate through all trajectories in the bin;
-        for i = 1:(length(bin.traj_struct))
-            try 
-                if derivflag == 0
-                    pos = bin.traj_struct(i).magtraj(time); 
-                elseif derivflag == 1
-                    pos = bin.traj_struct(i).magtraj(time); 
-                elseif derivflag == 2
-                    pos = bin.traj_struct(i).magtraj(time); 
-                end
-                %attempt to access the position of trajectory i at time
-            catch
-                pos = -10000; % error signal if trajectory doesn't go that far
-            end
-            if pos > -10000
-                time_pos_ind = time_pos_ind+1;
-                bin_summary(time).position(time_pos_ind) = pos;
-            end
-        end
-        try
-            positionvec = bin_summary(time).position;
-            bin_summary(time).numtraj = time_pos_ind;
-            bin_summary(time).avg = mean(positionvec);
-            bin_summary(time).med = median(positionvec);
-            bin_summary(time).stdev = std(positionvec);
-            bin_summary(time).upperbnd = prctile(positionvec,75);
-            bin_summary(time).lowerbnd = prctile(positionvec,25);
-            
-            numbers(time)= bin_summary(time).numtraj;
-            avg(time) = bin_summary(time).avg;
-            med(time) = bin_summary(time).med;
-            stdev(time) = bin_summary(time).stdev;
-            upperbnd(time) = bin_summary(time).upperbnd;
-            lowerbnd(time) = bin_summary(time).lowerbnd;
-        catch
-            avg(time) = 0; med(time) = 0; stdev(time) = 0; numbers(time) = 0; 
-            upperbnd(time)=0;
-            lowerbnd(time)=0; 
-        end
+tstruct = bin.traj_struct;
+datacell = arrayfun(@(tcell) extract_data(tcell, derivflag), tstruct, 'UniformOutput', 0);
+max_length = max(cellfun(@length, datacell));
+bin_summary = cellfun(@(tcell) [tcell, (-1)*ones(1, max_length-length(tcell))]', datacell, 'UniformOutput', 0);
+bin_summary = cell2mat(bin_summary);
+
+avg = zeros(max_length, 1); stdev = zeros(max_length, 1); numbers = zeros(max_length, 1);
+med = zeros(max_length, 1);
+upperbnd = zeros(max_length, 1); lowerbnd = zeros(max_length, 1);
+
+for i = 1:max_length
+    data = bin_summary(i, :);
+    data = data(data>0);
+    avg(i) = mean(data);
+    stdev(i) = std(data);
+    results = prctile(data, [75, 50, 25]);
+    upperbnd(i) = results(1);
+    med(i) = results(2);
+    lowerbnd(i) = results(3);
+    numbers(i) = length(data);
+end
+end 
+
+function pos =  extract_data(tcell, derivflag)
+    if derivflag == 0
+        pos = tcell.magtraj; 
+    elseif derivflag == 1
+        pos = tcell.velmag; 
+    elseif derivflag == 2
+        pos = tcell.magtraj(time); 
     end
 end

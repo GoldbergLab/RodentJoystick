@@ -1,85 +1,87 @@
-function [data, labels, summary] = rewarded_time_distr(dirlist, varargin )
+function [data, summary] = rewarded_time_distr(dirlist, varargin )
 %[data, labels, summary] 
-% = rewarded_time_distr(dirlist, [hist_int, TIME_RANGE, combineflag, ax, alldata])
-%rewarded_time_distr plots the distribution of rewarded trajectories' hold
-%times using intervals defined by hist_int for a range [0, TIME_RANGE].
-%OUTPUTS:
+%   = rewarded_time_distr(dirlist, [hist_int, TIME_RANGE, combineflag, ax, alldata])
+%   rewarded_time_distr plots the distribution of rewarded trajectories' hold
+%   times using intervals defined by hist_int for a range [0, TIME_RANGE].
+%
+% OUTPUTS:
 %   data :: cell array with a cell for each jstruct in dirlist containing
 %       histogram data for each cell has the format:
 %       [time, rew_ht] (rew_ht has already been binned)
-%   labels :: struct containing xlabel, ylabel, title, and legend
+%
 %   summary :: cell array with a cell for each jstruct in dirlist containing
 %       statistics describing rewarded hold time distribution for each day
 %       each cell has the format:
 %       [firstquartile median thirdquartile mean stdev]
-%ARGUMENTS:
+% ARGS:
+%
 %   dirlist :: list of directory structs (with name field)
-%   OPTIONAL
+%
+% OPTIONAL ARGS:
+%
 %   hist_int :: size of the bins for histogram generation (in ms)
 %       DEFAULT : 20
+%
+%   normalize :: 1/0 flag indicating whether to normalize to probability
+%       distribution (1) or leave as raw counts (0)
+%       DEFAULT : 1
+%
 %   TIME_RANGE :: number that tells end time range
 %       DEFAULT : 2000
+%
 %   combineflag :: tells whether to combine all data from all jstructs into
 %       a single plot (1), or plot each day separately (0)
 %       DEFAULT: 0
+%
 %   ax :: a vector containing axes handles for hold_time_distr to plot on
 %       if empty, hold_time_distr will generate a new figure
 %       DEFAULT : []
-%   alldata :: since data generation using get_rewardandht_times is costly,
-%       if other plots using this data are generated, you can just pass
-%       this data directly to avoid attempting to generate data multiple
-%       E.g. one such call might look like: 
-%       [data, dates, statistics] = get_rewardandht_times(dirlist)
-%       allstuff.data = data; allstuff.dates=dates;
-%       allstuff.statistics=statistics;
-%       hold_time_distr([], 20, 2000, 0, ax, data)
-%       Note that in this case, none of the other arguments except for ax
-%       will have any effect since it will simply plot the results from
-%       data
 
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {20, 2000, 0, [], []};
+default = {20, 2000, 0, 1, 3, []};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hist_int, TIME_RANGE, combineflag, ax, allstuff] = default{:};
+[hist_int, TIME_RANGE, combineflag,  normalize, smoothparam, ax] = default{:};
+
 if (length(ax)<1); figure; ax = gca(); end
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
-labels.xlabel = 'Hold Times (ms)';
-labels.ylabel = 'Probability';
-labels.title = 'Rewarded Trajectories Hold Time Distribution';
-if ~isempty(allstuff)
-    extradata = allstuff.data;
-    dates = allstuff.dates;
-    allstats = allstuff.stats;
-else
-    [extradata, dates, allstats] = get_rewardandht_times(dirlist, hist_int, TIME_RANGE, combineflag);
-end
-labels.legend = dates;
-data = cell(length(extradata), 1); summary = cell(length(extradata), 1);
-for i = 1:length(extradata)
-    datatmp = extradata{i};
-%REFERENCE: datatmp = [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist];
-    time = datatmp(:, 1);
-    rew_hist = datatmp(:, 4);
-    data{i} = [time, rew_hist];
-    summary{i} = allstats{i}.reward;
+if length(TIME_RANGE)<2; TIME_RANGE(2) = TIME_RANGE(1); TIME_RANGE(1) = 0; end;
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
+time_bins = TIME_RANGE(1):hist_int:TIME_RANGE(2);
+
+[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
+for i = 1:length(statslist)
+    tstruct = statslist(i).traj_struct;
+    holdtimes = arrayfun(@(tcell) tcell.rw_or_stop, tstruct);
+    rew = arrayfun(@(tcell) tcell.rw, tstruct);
+    rewardedht = holdtimes(rew>0);
+    
+    ht_hist = histc(rewardedht, time_bins);
+    if normalize; ht_hist = ht_hist./sum(ht_hist); end;
+    data{i} = ht_hist;
+    htstats = prctile(rewardedht, [25 50 75]);
+    htstats(4) = mean(rewardedht); htstats(5) = std(rewardedht);
+    summary{i} = htstats;
 end
 
 %% PLOT ALL DATA
 axes(ax(1));
 hold on;
-LINEWIDTH = 1; if length(extradata)==1; LINEWIDTH = 2; end;
+LINEWIDTH = 1; if length(data)==1; LINEWIDTH = 2; end;
 for i = 1:length(data)
-    datatmp = data{i};
-    stairs(datatmp(:, 1), datatmp(:, 2), colors(i), 'LineWidth', LINEWIDTH);
+    stairs(time_bins, smooth(data{i}, smoothparam), colors(i), 'LineWidth', LINEWIDTH);
 end
-xlabel(labels.xlabel); ylabel(labels.ylabel);
-title(labels.title);
-legend(labels.legend);
+xlabel('Hold Time (ms)');
+if normalize
+    ylabel('Probability');
+else
+    ylabel('Counts');
+end
+title('Hold Times Distribution');
+legend(dates);
 hold off;
 end
 

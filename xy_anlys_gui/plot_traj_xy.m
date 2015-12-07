@@ -30,10 +30,15 @@ function handles = plot_trajectory(handles)
 
 %ensure time step information is valid
 if get(handles.time_info_checkbox,'Value')
-    t_step = str2num(get(handles.timestep_edit,'String'));
+    try
+        t_step = str2num(get(handles.timestep_edit,'String'));
+        t_step = round(t_step);
+    catch
+        msgbox('Time Step (ms) not valid number');
+        t_step=0;
+    end
 else
-    msgbox('Time Step (ms) not valid number');
-    t_step=0;
+    t_step = 0;
 end
 
 %access fields
@@ -69,7 +74,7 @@ if numel(t_x) > 0
     plot(t_x(1),t_y(1),'bx','MarkerSize',10,'LineWidth',2);
     
     %Plot time markers
-    if t_step>1
+    if t_step>=1
         for i = t_step:t_step:offset
             plot(t_x(i),t_y(i), 'MarkerFaceColor', marker_color, ...
                 'Marker', 'O', 'MarkerSize', 5);
@@ -132,6 +137,10 @@ plot(x,y,'Color', [0 0 0],'LineWidth',2);
 %Plot Sector
 rw_fr = minangle;
 rw_to = maxangle;
+
+rw_fr(sign(rw_fr)==-1) = rw_fr(sign(rw_fr)==-1) + 360;
+rw_to(sign(rw_to)==-1) = rw_fr(sign(rw_to)==-1) + 360;
+
 x = cosd(1:1:360); y = sind(1:1:360);
 
 if abs(rw_fr-rw_to) < 360

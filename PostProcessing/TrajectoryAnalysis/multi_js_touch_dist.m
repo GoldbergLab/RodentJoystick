@@ -15,7 +15,7 @@
 %
 % ARGUMENTS
 %
-%   dirlist :: standard struct  representation of a list of directories
+%   dirlist :: standard struct representation of a list of directories
 %       from rdir
 %
 % OPTIONAL ARGS
@@ -45,6 +45,14 @@
 %   smoothparam :: parameter indicating whether and how much the
 %       plots should be smoothed (uses moving average technique)
 %       DEFAULT - 1 (no smoothing)
+%
+%   ax :: an axes handles for plotting. If left empty, generates a
+%       new figure automatically
+%       DEFAULT - []
+%
+%   traj_id :: parameter indicating which subset of trajectories to
+%       analyze - see get_stats_with_trajid documentation
+
 default = {20, 0.25, 50, 300, 0, 1, 1, [], 0};
 
 numvarargs = length(varargin);
@@ -60,7 +68,7 @@ if plotflag && isempty(ax);
 end
 
 [statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 set_distances = zeros(1, length(statslist));
 
 % Get only the selected trajectories 

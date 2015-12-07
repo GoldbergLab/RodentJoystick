@@ -43,13 +43,13 @@ function [data, dates, statistics] = get_rewardandht_times(dirlist, varargin )
 %       DEFAULT : 0
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {20, 2000, 0};
+default = {20, 2000, 0, 1};
 numvarargs = length(varargin);
-if numvarargs > 3
-    error('too many arguments (> 5), only 1 required and 3 optional.');
+if numvarargs > 4
+    error('too many arguments (> 5), only 1 required and 4 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hist_int, TIME_RANGE, combineflag] = default{:};
+[hist_int, TIME_RANGE, combineflag, normalize] = default{:};
 
 if length(TIME_RANGE)==1
     TIME_RANGE = [0 TIME_RANGE];
@@ -60,14 +60,14 @@ data = cell(length(statslist), 1);
 statistics = cell(length(statslist), 1);
 for i = 1:length(statslist)
     stats = statslist(i);
-    [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE);
+    [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE,normalize);
     statistics{i} = tmpstats;
     data{i}=[time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist];
 end
 
 end
 
-function [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE)
+function [time, ht_hist, rw_or_stop_hist, rew_hist, rewrate_hist, js2rew_hist, tmpstats] = generate_data(stats, hist_int, TIME_RANGE, normalize)
 tstruct = stats.traj_struct;
 time = TIME_RANGE(1):hist_int:TIME_RANGE(2);        
 holdtimes = zeros(length(tstruct), 1);
@@ -94,12 +94,15 @@ else
     js2rew_hist = histc(js2rew, time);
 end
 
-rewrate_hist = (rew_hist./ht_hist);
-
-ht_hist = (ht_hist./sum(ht_hist));
-rw_or_stop_hist = (rw_or_stop_hist./sum(rw_or_stop_hist));
-rew_hist = (rew_hist./sum(rew_hist));
-js2rew_hist = (js2rew_hist./sum(js2rew_hist));
+if normalize
+    rewrate_hist = (rew_hist./ht_hist);
+    ht_hist = (ht_hist./sum(ht_hist));
+    rw_or_stop_hist = (rw_or_stop_hist./sum(rw_or_stop_hist));
+    rew_hist = (rew_hist./sum(rew_hist));
+    js2rew_hist = (js2rew_hist./sum(js2rew_hist));
+else
+    rewrate_hist = rew_hist;
+end
 
 tmpstats.reward = prctile(rewtimes, [25 50 75]);
 tmpstats.reward(4) = mean(rewtimes);

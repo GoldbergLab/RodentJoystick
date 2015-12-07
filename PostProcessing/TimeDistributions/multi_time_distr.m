@@ -63,7 +63,7 @@ end
 %   of each jstruct in dirlist on its own figure, starting at sfignum and 
 %   incrementing by 1 each time
 function [data, labels] = multi_time_distr_single(dirlist, interval, combineflag, ax, normalize, rewonly)
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 if length(ax) <1; figure; ax(1) = gca(); end
 data = cell(length(dirlist), 1);
 [jslist, dates] = load_jstructs(dirlist, combineflag);

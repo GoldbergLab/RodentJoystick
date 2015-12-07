@@ -9,11 +9,12 @@
 %   stats :: standard stats structure
 %   
 %   trajid :: an id in [0, 3] indicating which set of trajectories to leave
-%       in
-%       0 - unchanged
+%       included
+%       0 : unchanged
 %       1 : laser only
 %       2 : catch only
 %       3 : catch only (resampled, only as many trajectories as lasers)
+%
 % OUTPUTS :
 %
 %   stats :: a standard stats structure with field traj_struct modified to

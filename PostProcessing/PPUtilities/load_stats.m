@@ -52,7 +52,7 @@ if combineflag==0 || length(dirlist) == 1
         [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, '\stats.mat'], varargin);
     end
 elseif combineflag == 1 % combine all days' stats
-    [statslist, days, errlist] = combine_stats_struct(dirlist, 1, varargin);
+    [statslist, days, errlist] = combine_stats_struct(dirlist, varargin);
 else %combine all alike days
     slistind = 1; days = [];
     for k = 1:length(dirlist)
@@ -73,10 +73,9 @@ else %combine all alike days
         slistind = slistind+1; prev_day = day;
     end
 end
-
-dates = cellfun(@(d) datestr(d, 'mm/dd/yy'), num2cell(days));
+dates = cellfun(@(d) datestr(d, 'mm/dd/yy'), num2cell(days), 'UniformOutput', 0);
 if combineflag == 1
-    dates = [dates{1},'-',dates{end}];
+    dates = {dates{1},'-',dates{end}};
 end
 
 end

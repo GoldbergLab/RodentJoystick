@@ -3,9 +3,10 @@ function [labels] = multi_trajectory_analysis_laser(dirlist, varargin)
 % = multi_trajectory_analysis_laser(dirlist, [derivative, plot_range, 
 %       hold_time_range, smoothparam, axes_lst, traj_id])
 %   
-%   multi_trajectory_analysis performs the analysis done by the function
+%   multi_trajectory_analysis_laser performs the analysis done by the function
 %   trajectory_analysis for multiple days/directories defined by dirlist
 %   and splits the data based on which trajectories were hit by laser
+%   (groups days together)
 %
 % ARGUMENTS: 
 %
@@ -36,26 +37,24 @@ function [labels] = multi_trajectory_analysis_laser(dirlist, varargin)
 %       filter window - filter is moving average)
 %       DEFAULT - 5
 %
+%   laser_comp :: only analyze a subset of all trajectories (see
+%       get_stats_with_trajid for more info)
+%       laser vs all catch 0
+%       laser vs catch resampled 1 (DEFAULT)
+%
 %   axeslst :: a list of axes handles of where to plot. If specified,
 %       length(axes_lst) >= plot_range. If empty, then generates a new
 %       figure
 %       DEFAULT - []
-
-%   traj_id :: choose to plot trajectories of a certain kind 
-%       all_trajectories  0
-%       laser only        1
-%       no laser          2
-%       both, separated   3
-%       both, separated, with resampling 4
-    
+%
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], 0, 5, [], 0};
+default = {0, 4,[400 1400], 5, 1, []};
 numvarargs = length(varargin);
 if numvarargs > 7
     error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, smoothparam, laser_comp, axeslst] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -66,24 +65,23 @@ if length(axeslst)<1;
 elseif (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
-
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 %% Loading days and actual plotting
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist, dates] = load_stats(dirlist, 1, 'traj_struct');
+stats_hit = get_stats_with_trajid(statslist, 1);
+stats_catch = get_stats_with_trajid(statslist,2+~(~laser_comp));
+statslist(1) = stats_hit;
+statslist(2) = stats_catch;
 
-statslist = get_stats_with_trajid(statslist,traj_id, varargin);
-contlflag = 1;
-%statflag - plot only medians if more than four days to be plotted
-statflag = ~(length(statslist) > 4);
+[outthresh, ht, innerthresh] = extract_contingency_info(dirlist(1).name);
 for i= 1:length(statslist)
-    [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
     stats = statslist(i);
     [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
-        TIME_RANGE, [ht outthresh innerthresh]*contlflag, 1, smoothparam, axeslst, colors(i), statflag);
+        TIME_RANGE, [ht outthresh innerthresh], 1, smoothparam, axeslst, colors(i), 1);
     groupings(i)=lhandle;
 end
 axes(axeslst(PLOT_RANGE));
-legend(groupings,dates);
+legend(groupings,{'Laser', 'Catch'});
 
 
 

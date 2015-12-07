@@ -45,7 +45,7 @@ function [data, labels] = np_js_distribution(dirlist, varargin)
 %   labels :: a struct containing the x, y, and title labels for plotting
 
 %% Argument Handling
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 default = {20, 1, 0, 1, 1, []};
 numvarargs = length(varargin);
 if numvarargs > 6

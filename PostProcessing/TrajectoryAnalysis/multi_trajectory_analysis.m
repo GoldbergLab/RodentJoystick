@@ -39,25 +39,26 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 %       filter window - filter is moving average)
 %       DEFAULT - 5
 %
-%   axeslst :: a list of axes handles of where to plot. If specified,
-%       length(axes_lst) >= plot_range. If empty, then generates a new
-%       figure
-%       DEFAULT - []
-
 %   traj_id :: choose to plot trajectories of a certain kind 
 %       all_trajectories  0
 %       laser only        1
 %       no laser          2
 %       no laser (resampled)  3
+%
+%   axeslst :: a list of axes handles of where to plot. If specified,
+%       length(axes_lst) >= plot_range. If empty, then generates a new
+%       figure
+%       DEFAULT - []
+
     
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-default = {0, 4,[400 1400], 0, 5, [], 0};
+default = {0, 4,[400 1400], 0, 5, 0, []};
 numvarargs = length(varargin);
 if numvarargs > 7
     error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, traj_id, axeslst] = default{:};
 
 %% axes/figure handling
 if length(axeslst)<1;
@@ -68,10 +69,10 @@ if length(axeslst)<1;
 elseif (length(axeslst) < PLOT_RANGE)
     error('Not enough axes handles provided for desired number of bins');
 end
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 
 %% Loading days and actual plotting
-[statslist, dates] = load_stats(dirlist, combineflag);
+[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
 
 statslist = get_stats_with_trajid(statslist,traj_id);
 contlflag = 1;

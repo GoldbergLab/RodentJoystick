@@ -13,7 +13,7 @@ catch
     msgbox('Attempted plotting without any days selected.', 'Error','error');
     error('Attempted plotting without any days selected.');
 end
-axes = [handles.axes1, handles.axes2, handles.axes3; ...
+axlist = [handles.axes1, handles.axes2, handles.axes3; ...
         handles.axes4, handles.axes5, handles.axes6]';
 plotselectors = [handles.ax1plotselect; handles.ax2plotselect; handles.ax3plotselect;
                 handles.ax4plotselect; handles.ax5plotselect;
@@ -40,7 +40,9 @@ lasercompareflag = get(handles.lasercomparemenu, 'Value');
 if strcmp(plotname, 'Activity Heat Map')
     statscombined = load_stats(dirlist, 1);
 end
-cla(axes(axnum), 'reset');
+cla(axlist(axnum), 'reset');
+colnum = axnum;
+if colnum > 3; colnum = colnum - 3; end;
 %% PLOTTING ROUTINES - EDIT HERE TO ADD NEW FUNCTIONS
 % The following are available to any function call
 %
@@ -62,92 +64,95 @@ cla(axes(axnum), 'reset');
 %       see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
-    np_js_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
+    np_js_distribution(dirlist, interv, normalize, combineflag, ...
+        smoothparam, 1, axlist(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     interv = str2num(arg1);
-    np_post_distribution(dirlist, interv, normalize, combineflag, smoothparam, 1, axes(axnum));
+    np_post_distribution(dirlist, interv, normalize, combineflag,...
+        smoothparam, 1, axlist(axnum));
 elseif strcmp(plotname, 'Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    hold_time_distr(dirlist, arg1, arg2, combineflag, smoothparam, axes(axnum), []);
+    interv = str2num(arg1);
+    endtime = str2num(arg2);
+    ht_def = 0;
+    hold_time_distr(dirlist, ht_def, interv, endtime, combineflag, normalize,...
+        smoothparam, axlist(axnum));
 elseif strcmp(plotname, 'Rewarded Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
-    arg1 = str2num(arg1);
-    arg2 = str2num(arg2);
-    rewarded_time_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
+    interv = str2num(arg1);
+    endtime = str2num(arg2);
+    rewarded_time_distr(dirlist, interv, endtime, combineflag, ...
+        normalize, smoothparam, axlist(axnum));
 elseif strcmp(plotname, 'Reward Rate by Hold Time Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    rewardrate_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
+    rewardrate_distr(dirlist, arg1, arg2, combineflag, axlist(axnum), []);
 elseif strcmp(plotname, 'Joystick Onset to Reward Distribution')
 %   arg1label = 'Interv'; %Histogram interval (ms)
 %   arg2label = 'End Time'; %what time range to plot
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    joystick_to_reward_distr(dirlist, arg1, arg2, combineflag, axes(axnum), []);
+    joystick_to_reward_distr(dirlist, arg1, arg2, combineflag, axlist(axnum), []);
 elseif strcmp(plotname, 'Nosepoke/Reward Activity Distribution')
 %   arg1label = 'Interv'; %Histogram interval (min)
     interv = str2num(arg1);
     norm = str2num(arg2);
     rewonly = str2num(arg3);
-    multi_time_distr(dirlist, interv, 'single', combineflag, norm, rewonly, inf, axes(axnum));
+    multi_time_distr(dirlist, interv, 'single', combineflag, norm, rewonly, inf, axlist(axnum));
 elseif strcmp(plotname, 'JS Touch Dist')
-    traj_id = str2num(arg1); holdtime = str2num(arg2); thresh = str2num(arg3);
+    traj_id = str2num(arg1); 
+    holdtime = str2num(arg2); 
+    thresh = str2num(arg3);
+    
     rewrate = 0.25; interv = 15; plotflag = 1;
     if lasercompareflag>1
-        colnum = axnum;
-        if colnum > 3; colnum = colnum - 3; end;
-        cla(axes(colnum, 1), 'reset'); cla(axes(colnum, 2), 'reset');
-        multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
-        holdtime, combineflag, plotflag, smoothparam, axes(colnum, 1),1);
-        
-        multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
-        holdtime, combineflag, plotflag, smoothparam, axes(colnum, 2),lasercompareflag);
-    else
-    [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
-        holdtime, combineflag, plotflag, smoothparam, axes(axnum),traj_id);
-    setdiststr = ['JS Touch Dist', setdiststr];
-    setdiststr = setdiststr';
-    handles = update_console(handles, setdiststr);
+        multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
+            holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1);
+    else %normal call
+        [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
+            holdtime, combineflag, plotflag, smoothparam, axlist(axnum),traj_id);
+        setdiststr = ['JS Touch Dist', setdiststr];
+        setdiststr = setdiststr';
+        handles = update_console(handles, setdiststr);
     end
 elseif strcmp(plotname, 'Activity Heat Map')
-    colnum = axnum;
-    if colnum > 3; colnum = colnum - 3; end;
     if lasercompareflag>1
-        cla(axes(colnum, 1), 'reset');
-        cla(axes(colnum, 2), 'reset');
-        activity_heat_map(statscombined, 1, [2 99], axes(colnum, 1),[1 100], 1);
-        activity_heat_map(statscombined, 1, [2 99], axes(colnum, 2),[1 100], lasercompareflag);
+        cla(axlist(colnum, 1), 'reset');
+        cla(axlist(colnum, 2), 'reset');
+        activity_heat_map(statscombined, 1, [2 99], axlist(colnum, 1),[1 100], 1);
+        activity_heat_map(statscombined, 1, [2 99], axlist(colnum, 2),[1 100], lasercompareflag);
     else
         trajid=str2num(arg2);
-        activity_heat_map(statscombined, 1, [2 99], axes(axnum),[1 100],trajid);
+        activity_heat_map(statscombined, 1, [2 99], axlist(axnum),[1 100],trajid);
     end
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = str2num(arg1);
-    velocity_heat_map(dirlist, axes(axnum), [], arg1);
+    velocity_heat_map(dirlist, axlist(axnum), [], arg1);
 elseif strcmp(plotname, 'Velocity Variation Heat Map')
     arg1 = str2num(arg1);
-    velocityvar_heat_map(dirlist, axes(axnum), [], arg1);
+    velocityvar_heat_map(dirlist, axlist(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Heat Map')
     arg1 = str2num(arg1);
-    accel_heat_map(dirlist, axes(axnum), [], arg1);
+    accel_heat_map(dirlist, axlist(axnum), [], arg1);
 elseif strcmp(plotname, 'Acceleration Variation Heat Map')
     arg1 = str2num(arg1);
-    accelvar_heat_map(dirlist, axes(axnum), [], arg1);
+    accelvar_heat_map(dirlist, axlist(axnum), [], arg1);
 elseif strcmp(plotname, 'Angle Distribution (Linear)')
 %     arg1label = 'Rew Rate'; %Desired reward rate
 %     arg2label = 'Thresh'; %Histogram interval (ms)
     arg1 = str2num(arg1);
     arg2 = str2num(arg2);
-    multi_sector_analysis(dirlist, arg1, arg2, combineflag, axes(axnum));
-elseif strcmp(plotname, 'Trajectory Analysis (4)')
+    multi_sector_analysis(dirlist, arg1, arg2, combineflag, axlist(axnum));
+elseif strcmp(plotname, 'Trajectory Analysis (4)') ||...
+        strcmp(plotname, 'Trajectory Analysis (6)')
 %   arg1label = 'Start'; %start time;
 %   arg2label = 'End'; %end time;
+    plotnum = str2num(plotname(end-1));
+    
     start = str2num(arg1);
     endt = str2num(arg2);
     traj_id = str2num(arg3);
@@ -156,33 +161,29 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)')
     else
         startcol = 2;
     end
-    axestoplot = reshape(axes(startcol:startcol+1, 1:2), [4 1]);
+    
+    if plotnum == 4
+        axestoplot = reshape(axlist(startcol:startcol+1, 1:2), [4 1]);
+    else
+        axestoplot = reshape(axlist, [6 1]);
+    end
 
-    info = 'Trajectory Analysis will overwrite 4 axes in a block pattern. Do you want to continue?';
+    info = sprintf(['Trajectory Analysis will overwrite %s axes in a block', ... 
+        ' pattern. Do you want to continue?'], plotnum);
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
+    
     if strcmp(button, 'Yes')
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        multi_trajectory_analysis(dirlist, 0, 4, [start endt], ...
-            combineflag, smoothparam, axestoplot, traj_id);
-    end
-elseif strcmp(plotname, 'Trajectory Analysis (6)')
-%   arg1label = 'Start'; %start time;
-%   arg2label = 'End'; %end time;
-    start = str2num(arg1);
-    endt = str2num(arg2);
-    traj_id = str2num(arg3);
-    info = 'Trajectory Analysis will plot over all 6 axes. Do you want to continue?';
-    button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
-    if strcmp(button, 'Yes')
-        for i = 1:length(axes)
-            cla(axes(i), 'reset');
+        if lasercompareflag==1
+            multi_trajectory_analysis(dirlist, 0, plotnum, [start endt], ...
+                combineflag, smoothparam, traj_id, axestoplot);
+        else
+            multi_trajectory_analysis_laser(dirlist, 0, plotnum, [start endt], ...
+                smoothparam, lasercompareflag-2, axestoplot);
         end
-        multi_trajectory_analysis(dirlist, 0, 6, [start endt], ...
-            combineflag, smoothparam, reshape(axes, [6 1]), traj_id);
-    end
-end
 
+    end
 end
 

@@ -40,7 +40,7 @@ if numvarargs > 5
 end
 [default{1:numvarargs}] = varargin{:};
 [targ_rate, thresh, combineflag, ax] = default{:};
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 if length(ax)<1; figure; ax = gca(); end;
 
 [statslist, dates] = load_stats(dir_list, combineflag, 'traj_struct');

@@ -35,7 +35,7 @@
 %       DEFAULT - 1
 %
 %   plotflag :: if plotflag > 0, function generates a plot, otherwise only
-%       returns dist
+%       returns dist.
 %       DEFAULT - 0
 %
 %   smoothparam :: smoothing parameter (only affects final plotting, not

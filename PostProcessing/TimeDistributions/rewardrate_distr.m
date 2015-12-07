@@ -43,7 +43,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [hist_int, TIME_RANGE, combineflag, ax, allstuff] = default{:};
 if (length(ax)<1); figure; ax = gca(); end
-colors = 'rgbkmcyrgbkmcyrgbkmcy';
+colors = 'rbkmcgyrbkmcgyrbkmcgy';
 labels.xlabel = 'Hold Times (ms)';
 labels.ylabel = 'Reward Rate';
 labels.title = 'Reward Rate by Interval';

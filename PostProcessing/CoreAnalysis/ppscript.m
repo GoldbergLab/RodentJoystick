@@ -23,8 +23,10 @@ if isempty(filelist)
 end
 
 %Remove all empty files from the list
-filelist = filelist([filelist.bytes]>0); 
-mkdir(strcat(working_dir,'/comb/'));
+filelist = filelist([filelist.bytes]>0);
+if ~exist(strcat(working_dir,'/comb/'), 'dir')
+    mkdir(strcat(working_dir,'/comb/'));
+end
 
 
 %% Iterate through all files, processing and saving combined versions

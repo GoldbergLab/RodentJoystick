@@ -26,7 +26,7 @@ allstuff.data = data; allstuff.dates=dates; allstuff.stats=statistics;
 
 %to make sure that it's actually plotting using the data and not attempting
 %to recompute, pass arguments that would fail the plot otherwise
-[~,~, summary] = hold_time_distr([], -1, -1, -1, ax1, allstuff);
+[~,~, summary] = hold_time_distr([], -1, -1, -1, -1, ax1, allstuff);
 rewarded_time_distr([], -1, -1, -1, ax2, allstuff);
 rewardrate_distr([], -1, -1, -1, ax3, allstuff);
 joystick_to_reward_distr([], -1, -1, -1, ax4, allstuff);

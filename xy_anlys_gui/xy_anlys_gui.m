@@ -40,7 +40,7 @@ function varargout = xy_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help xy_anlys_gui
 
-% Last Modified by GUIDE v2.5 08-Sep-2015 10:35:32
+% Last Modified by GUIDE v2.5 04-Dec-2015 17:23:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -192,7 +192,7 @@ end
 
 rw_vect = zeros(1,length(traj_x));
 for i=1:size(rw_onset,2)
-   rw_vect(rw_onset(i):(rw_onset(i)+50))=1;
+   rw_vect(rw_onset(i):min((rw_onset(i)+50), length(traj_x)))=1;
 end
 
 laser_vect = zeros(1,length(traj_x));
@@ -497,3 +497,24 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
+
+
+% --- Executes on button press in help.
+function help_Callback(hObject, eventdata, handles)
+% hObject    handle to help (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+msg = {'This GUI is a tool to analyze individual trajectories.',...
+    ['1. Begin by selecting a directory "Select Dir". This directory', ...
+    ' should contain a jstruct.mat file.'], ...
+    ['2. Once the directory is selected, a list of .mat file names should ',...
+    'appear on the listbox on the right. Each .mat file represents a "bout"',...
+    ' of data collection. '], ...
+    ['3. You should now see raw data plotted on the left hand side. At this ',...
+    'point you can select any of the toggles for raw digital and analog data.'], ...
+    ['4. For a given bout, there are possibly >= 0 trajectories.  You can ',...
+    'navigate these trajectories using the Prev/Next buttons. You can also ',...
+    'control offsets, change the colored time markers spacing, and view ',...
+    'other specific information about the trajectory']...
+    };
+msgbox(msg);
