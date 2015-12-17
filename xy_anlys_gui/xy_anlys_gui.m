@@ -17,6 +17,8 @@ function varargout = xy_anlys_gui(varargin)
 %           indiv_trajectory_plot is a helper function that handles this
 %           task
 %
+%       data is stored 
+%
 % xy_anlys_gui MATLAB code for xy_anlys_gui.fig
 %      xy_anlys_gui, by itself, creates a new xy_anlys_gui or raises the existing
 %      singleton*.
@@ -139,8 +141,12 @@ function filelist_box_Callback(hObject, eventdata, handles)
 struct_index=get(hObject,'Value');
 jstruct = handles.jstruct;
 
-set(handles.time_text, 'String', datestr(jstruct(struct_index).real_time, 'HH:MM:SS'));
-handles.start_time = jstruct(struct_index).real_time;
+try
+    set(handles.time_text, 'String', datestr(jstruct(struct_index).real_time, 'HH:MM:SS'));
+    handles.start_time = jstruct(struct_index).real_time;
+catch e
+    if (handles.verbose); disp(getReport(e)); end
+end
  
 RADIUS = 6.35;
 handles.RADIUS = RADIUS;

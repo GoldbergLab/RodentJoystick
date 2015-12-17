@@ -1,6 +1,6 @@
 function automated_analysis_timer = init_automated_analysis(expt_dir, varargin)
-%calling this script sets up the automated analysis timer - cleans
-%workspace after it's done.
+%this script generates an automated analysis timer that will handle
+%automatic automated analysis.
 
 %% MODIFY THESE DEFAULT PARAMETERS TO SCHEDULE ANALYSIS
 start_time = [01 00]; %time is currently set to 9AM (24 hour time)

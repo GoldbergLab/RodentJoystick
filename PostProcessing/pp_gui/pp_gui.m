@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 03-Sep-2015 16:07:44
+% Last Modified by GUIDE v2.5 17-Dec-2015 15:32:24
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -949,4 +949,23 @@ function lasercomparemenu_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+end
+
+
+% --- Executes on button press in saveguidirloc.
+function saveguidirloc_Callback(hObject, eventdata, handles)
+% hObject    handle to saveguidirloc (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+try
+    root = uigetdir(pwd);
+catch e
+    if (handles.report); disp(getReport(e)); end;
+end
+if root == 0 
+    root = 'C:\Users\GolderbergLab\Documents\PostProcessingGUIFigures';
+end
+set(handles.saveguidirlabel, 'String', root);
+handles.guisavedirloc = root;
+guidata(hObject, handles);
 end

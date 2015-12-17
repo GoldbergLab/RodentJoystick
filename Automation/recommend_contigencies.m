@@ -1,4 +1,3 @@
-
 %[thresh, holdtime, centerhold, sector, oldcont] 
 %   = recommend_contigencies(handles, exptdir, dirlist, boxnum)
 % takes in an experiment director, the list of directories for which to

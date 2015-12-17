@@ -1,6 +1,5 @@
 function multiday_pcolor(dirlist)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%A template for generating multiday_pcolor plots
 
 tmpdirlist = rdir([boxdir, '\*\*']);
 for i = 1:length(tmpdirlist)

@@ -1,17 +1,23 @@
 function [data, labels, summary] = joystick_to_reward_distr(dirlist, varargin )
 %[data, labels, summary] 
 % = joystick_to_reward_distr(dirlist, [hist_int, TIME_RANGE, combineflag, ax, alldata])
-%joystick_to_reward_distr plots the distribution of joystick onset to reward onset
+%
+% joystick_to_reward_distr plots the distribution of joystick onset to reward onset
 % times with intervals defined by hist_int for a range [0, TIME_RANGE];
-%OUTPUTS:
+%
+% OUTPUTS:
+%
 %   data :: cell array with a cell for each jstruct in dirlist containing
 %       histogram data for each cell has the format:
 %       [time, js2rew_ht] (js2rew_ht has already been binned)
+%
 %   labels :: struct containing xlabel, ylabel, title, and legend
+%
 %   summary :: cell array with a cell for each jstruct in dirlist containing
 %       statistics describing js onset to reward time distribution for each day
 %       each cell has the format:
 %       [firstquartile median thirdquartile mean stdev]
+%
 % ARGUMENTS:
 %   
 %   dirlist :: list of directory structs (with name field)

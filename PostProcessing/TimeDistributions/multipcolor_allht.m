@@ -1,6 +1,6 @@
 function medians = multipcolor_allht(boxdir)
-%UNTITLED Summary of this function goes here
-%   Detailed explanation goes here
+%this function generates a pcolor hold time distribution progression for
+%multiple days
 
 tmpdirlist = rdir([boxdir, '\*\*']);
 for i = 1:length(tmpdirlist)

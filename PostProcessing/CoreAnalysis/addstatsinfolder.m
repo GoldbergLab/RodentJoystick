@@ -1,3 +1,4 @@
+%No longer used - can be archived
 function addstatsinfolder(working_dir, varargin)
 try
 default = {'off'};

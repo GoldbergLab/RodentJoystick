@@ -2,6 +2,14 @@ function varargout = calib_gui(varargin)
 %
 % calib_gui('Verbose', 1) will have calib_gui print out any errors and
 %   the corresponding full stack trace
+%   
+%   Calib_gui is used for calibrating our joysticks - currently, it is
+%   dependent on ppscript, converting recorded data files to .mat files
+%   that are loaded into a filelist box.
+%   The user can then select the relevant .mat file and the appropriate
+%   subsection of the data
+%   
+%   
 % CALIB_GUI MATLAB code for calib_gui.fig
 %      CALIB_GUI, by itself, creates a new CALIB_GUI or raises the existing
 %      singleton*.

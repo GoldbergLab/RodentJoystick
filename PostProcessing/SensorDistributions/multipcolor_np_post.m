@@ -20,7 +20,7 @@ function [nppost_pairscount] = multipcolor_np_post(boxdir, offset)
 %   offset :: sometimes there isn't enough data for the first couple of
 %       days to work without failing - in that case, an offset can be given
 %       to plot `offset` day_directories after the start - not the same as
-%       days.
+%       days - defines a subset of directories
 %       To attempt plotting all days' data, set offset to 0.
 
 tmpdirlist = rdir([boxdir, '\*\*']);

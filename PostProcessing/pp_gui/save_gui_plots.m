@@ -2,8 +2,7 @@ function [handles] = save_gui_plots(handles)
 %helper function that handles all saving routines
 axeslst =[handles.axes1; handles.axes2; handles.axes3; handles.axes4; ...
             handles.axes5; handles.axes6];
-%root = 'J:\Users\Administrator\Documents\PostProcessingGUIFigures';
-root = 'C:\Users\GoldbergLab\Documents\PostProcessingGUIFigures';
+root = handles.guisavedirloc;
 t = now; date = datestr(t, 'mm_dd_yyyy'); time = datestr(t, 'HH_MM_SS');
 if ~exist([root,'\',date], 'dir')
     mkdir(root, date);

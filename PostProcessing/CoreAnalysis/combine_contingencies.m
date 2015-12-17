@@ -69,7 +69,7 @@ try
         newloc = [dir, '\', date];
         movefile([dir,'\*'], [newloc,'\'], 'f');
     end
-catch e
+catch
     %disp(getReport(e));
     if combexist
         try

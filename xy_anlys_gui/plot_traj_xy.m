@@ -1,6 +1,6 @@
 function [handles] = plot_traj_xy(handles)
 %This function plots the trajectory on x-y coordinate space on the large
-%square center axis. 
+%square center axis for xy_anlys_gui
 
 
 axes(handles.axes6); cla; axis manual; axis square;

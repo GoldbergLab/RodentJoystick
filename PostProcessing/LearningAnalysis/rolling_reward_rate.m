@@ -2,7 +2,8 @@ function rolling_reward_rate(dirlist, window, varargin)
 % rolling_reward_rate(dirlist, window, [filter_ht, ax])
 %
 %   rolling_reward_rate combines all data from dirlist, and then generates a
-%   rolling reward rate using <window> trajectories.
+%   rolling reward rate using <window> trajectories. seemed to have
+%   mediocre results - not sure if significant
 %
 % ARGUMENTS 
 %
@@ -16,7 +17,6 @@ function rolling_reward_rate(dirlist, window, varargin)
 %   rw_coding :: 0/1/2 flag indicating whether to use the trial to compute 
 %       reward time histogram (0), rolling reward 
 %       rate (1), or use trajectories to generate a rolling average (0)
-%   
 %   
 %   filter_ht :: a minimum hold time for all included trajectories - this
 %       is to avoid incorporating swats in the calculation

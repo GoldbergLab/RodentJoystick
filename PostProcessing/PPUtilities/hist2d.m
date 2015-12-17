@@ -15,6 +15,8 @@
 %   vXLabel = 0.5*(vXEdge(1:(nXBins-1))+vXEdge(2:nXBins));
 %   vYLabel = 0.5*(vYEdge(1:(nYBins-1))+vYEdge(2:nYBins));
 %   pcolor(vXLabel, vYLabel,mHist2d); colorbar
+%
+% Taken from MATLAB file exchange.
 function mHist = hist2d (mX, vYEdge, vXEdge)
 nCol = size(mX, 2);
 if nCol < 2

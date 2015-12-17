@@ -1,5 +1,7 @@
 function [handles] = indiv_trajectory_plot(handles)
-%plots 
+% for use in xy_anlys_gui - there's a small rectangular plot at the bottom
+% that can plot deviation, velocity, speed, acceleration,... for a specific
+% trajectory. This function is called to plot data on that axis.
 
 [success, retrieval] = retrieve_data(handles);
 if success
@@ -7,6 +9,7 @@ if success
 end
 end
 
+%given some data, and a plot type, handles the logic for plotting
 function handles = plot_data(data, plottype, handles)
 %plots desired data on axes 7 with appropriate limits according to plottype
 multiplyradius = [1; 2; 3];
