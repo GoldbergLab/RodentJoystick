@@ -170,6 +170,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)') ||...
 
     info = sprintf(['Trajectory Analysis will overwrite %s axes in a block', ... 
         ' pattern. Do you want to continue?'], plotnum);
+
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
     
     if strcmp(button, 'Yes')
