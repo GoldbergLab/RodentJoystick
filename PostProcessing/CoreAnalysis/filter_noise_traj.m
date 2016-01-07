@@ -24,12 +24,12 @@ OFFSET = 20;
 x = x(range(1)-OFFSET:range(2)+OFFSET);
 x_filt = filter(hd, x);
 x_filt = x_filt(OFFSET:end-OFFSET);
-x_filt = x_filt*(6.25)/100;
+%x_filt = x_filt*(6.25)/100;
 
 y = y(range(1)-OFFSET:range(2)+OFFSET);
 y_filt = filter(hd, y);
 y_filt = y_filt(OFFSET:end-OFFSET);
-y_filt = y_filt*(6.25)/100;
+%y_filt = y_filt*(6.25)/100;
 
 end
 

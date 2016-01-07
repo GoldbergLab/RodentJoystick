@@ -86,8 +86,8 @@ elseif lasercompareflag==2 && combineflag==1
     statslist(1) = get_stats_with_trajid(statslist_all,1);
     statslist(2) = get_stats_with_trajid(statslist_all,2);
     dates{2} = [dates{1} '-nonlaser'];
-else    
-    statslist = get_stats_with_trajid(statslist_all,traj_id);
+else
+    statslist(1) = get_stats_with_trajid(statslist_all,traj_id);
 end
 
 contlflag = 1;
@@ -95,7 +95,7 @@ contlflag = 1;
 
 statflag = ~(length(statslist) > 4);
 for i= 1:length(statslist)
-    [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(i).name);
+    [outthresh, ht, innerthresh] = extract_contingency_info(dirlist(ceil(i/2)).name);
     stats = statslist(i);
     [~, labels, lhandle] = trajectory_analysis(stats, derivative, PLOT_RANGE, ...
         TIME_RANGE, [ht outthresh innerthresh]*contlflag, 1, smoothparam, axeslst, colors(i), statflag);
