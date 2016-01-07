@@ -1,8 +1,8 @@
-function [redir_points, data] = detect_sharpturns(traj)
+function [redir_points, quality, data] = detect_sharpturns(traj)
 %take in a single trajectory, and fit a smoothing spline - then examine
 %redirection points.
 
-[redir_points, data] = zero_points(traj.traj_x, traj.traj_y, 0);
+[redir_points,quality, data] = zero_points(traj.traj_x, traj.traj_y);
 
 end
 
@@ -19,13 +19,7 @@ end
 %
 %   r_scale :: a (1/0) flag indicating whether to scale data by the radius
 %       or leave as is.
-function [redir_points, data]= zero_points(x, y, r_scale)
-
-%Scale by radius
-if r_scale
-    x = x*(6.25/100); y = y*(6.25/100);
-end
-
+function [redir_points, quality, data]= zero_points(x, y)
 cubic_x = fit((1:length(x))',x','cubicinterp');
 cubic_y = fit((1:length(y))',y','cubicinterp');
 
@@ -53,43 +47,22 @@ data.r_curv = r_c(1:10:end);
 data.r_curv_minima = round(r_curv_minima./10);
 data.speed_minima = round(speed_minima./10);
 
-redir_points = [];
+redir_points = [0];
 
 for kk=1:length(speed_minima)
    %check if the speed minimum is close to a radius of curvature change
-   if (min(abs(r_curv_minima - speed_minima(kk))))<5 %&&  ...
+   if (min(abs(r_curv_minima - speed_minima(kk))))<10 %&&  ...
            %(min(abs(theta_dot_cp - speed_minima(kk))))<100
-       redir_points = [redir_points speed_minima(kk)];
+       if (speed_minima(kk) - redir_points(end))>30
+        redir_points = [redir_points speed_minima(kk)];
+       end
    end
 end
 
+redir_points = redir_points(redir_points>0);
+
+[quality] = fit_speed_model(speed, redir_points);
+
 redir_points = round(redir_points./10);
-end
-
-function data = equi_affine_data(vx, vy, handles)
-vx = vx*handles.RADIUS/100;
-vy = vy*handles.RADIUS/100;
-
-
-ax = diff(vx);
-ay = diff(vy);
-
-x3dot = diff(ax);
-y3dot = diff(ay);
-
-vx = vx(2:end-1);
-vy = vy(2:end-1);
-ax = ax(1:end-1);
-ay = ay(1:end-1);
-
-secondterm = 1./((vx.*ay - ax.*vy).^(2/3));
-secondterm = diff(diff(secondterm));
-
-firstterm = (ax.*y3dot - x3dot.*ay)./((vx.*ay - ax.*vy).^(5/3));
-
-data = firstterm(2:end-1)-0.5*secondterm;
-
-
-%equi_affine_speed = (abs(vx.*ay - vy.*ax)).^(1/3);
 
 end

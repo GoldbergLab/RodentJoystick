@@ -136,9 +136,9 @@ plot(x,y,'Color', [0 0 0],'LineWidth',2);
 
 %Plot Sector
 rw_fr = minangle;
-rw_to = maxangle;
+rw_fr(sign(rw_fr)==-1) = 360 + rw_fr(sign(rw_fr)==-1);
 
-rw_fr(sign(rw_fr)==-1) = rw_fr(sign(rw_fr)==-1) + 360;
+rw_to = maxangle;
 rw_to(sign(rw_to)==-1) = rw_fr(sign(rw_to)==-1) + 360;
 
 x = cosd(1:1:360); y = sind(1:1:360);

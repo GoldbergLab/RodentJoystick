@@ -44,6 +44,9 @@ colors = 'rbkmcgyrbkmcgyrbkmcgy';
 if length(ax)<1; figure; ax = gca(); end;
 
 [statslist, dates] = load_stats(dir_list, combineflag, 'traj_struct');
+
+statslist = get_stats_with_trajid(statslist,3);
+
 if length(statslist)<2
     plotflag = 1;
 else 
