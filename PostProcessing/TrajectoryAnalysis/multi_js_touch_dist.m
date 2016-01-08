@@ -79,16 +79,17 @@ end
 
 alltrajflag = 0;
 for i= 1:length(statslist)
-    [set_dist] = js_touch_dist(statslist(i), interv, targ_time, ...
+    [set_dist,hold_vect,med_time] = js_touch_dist(statslist(i), interv, targ_time, ...
         targ_reward,dist_thresh, alltrajflag, plotflag, smoothparam, ax, colors(i));
     set_distances(i) = set_dist;
+    med_time(i) = med_time;
 end
 if plotflag
     axes(ax);
     legend(dates);
 end
 for i = 1:length(statslist);
-    set_distances_strings{i} = [dates{i},': ', num2str(set_distances(i))];
+    set_distances_strings{i} = [dates{i},': ', num2str(set_distances(i)),' Med time: ',num2str(med_time(i))];
 end 
 
 end

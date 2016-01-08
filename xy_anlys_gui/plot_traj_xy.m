@@ -47,8 +47,8 @@ pl_index = handles.pl_index;
 set(handles.trajectory_indexcount, 'String', ...
     [num2str(pl_index), '/',num2str(length(traj_struct))]);
 
-t_x = (traj_struct(pl_index).traj_x*(handles.RADIUS/100));
-t_y = (traj_struct(pl_index).traj_y*(handles.RADIUS/100));
+t_x = (traj_struct(pl_index).traj_x);%*(handles.RADIUS/100));
+t_y = (traj_struct(pl_index).traj_y);%*(handles.RADIUS/100));
 
 if numel(t_x) > 0
     end_color = hsv2rgb([1 1 1]); marker_color = hsv2rgb([0.6 1 1]);

@@ -57,18 +57,14 @@ function [labels] = multi_trajectory_analysis(dirlist, varargin)
 
 
 %% ARGUMENT MANIPULATION AND PRELIMINARY MANIPULATION
-<<<<<<< HEAD
 default = {0, 4,[400 1400], 0, 5, 0, []};
-=======
-default = {0, 4,[400 1400], 0, 5, [], 0, 0};
->>>>>>> c95a26f574753e6f209a1bf1794ae811d2d828d3
 numvarargs = length(varargin);
 if numvarargs > 8
     error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 
-[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, axeslst, traj_id, lasercompareflag] = default{:};
+[derivative, PLOT_RANGE, TIME_RANGE, combineflag, smoothparam, traj_id, axeslst, lasercompareflag] = default{:};
 
 
 %% axes/figure handling
@@ -95,7 +91,7 @@ elseif lasercompareflag==2 && combineflag==1
     statslist(2) = get_stats_with_trajid(statslist_all,2);
     dates{2} = [dates{1} '-nonlaser'];
 else
-    statslist(1) = get_stats_with_trajid(statslist_all,traj_id);
+    statslist = get_stats_with_trajid(statslist_all,traj_id);
 end
 
 contlflag = 1;

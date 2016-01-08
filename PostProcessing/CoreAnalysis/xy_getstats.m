@@ -187,6 +187,24 @@ for struct_index=1:length(jstruct)
                 end
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                 
+                %get angle at inner threshold crossing
+                index = find(mag_traj>30);
+                thresh_cross = min(index);
+                theta =[];
+                if numel(thresh_cross)
+                  [theta,rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
+                end
+                
+                % Pathlength
+                pathlen = sum((diff(traj_x_t.^2)+diff(traj_y_t.^2)).^(0.5));
+                
+                %Velocity
+                vel_x = [0, diff(traj_x_t)];
+                vel_y = [0, diff(traj_y_t)];
+                
+                % Instantaneous Speed
+                vel_mag = sqrt(vel_x.^2 + vel_y.^2);
+                                
                 %make sure trajectory starts within 50%
                 if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
                     k=k+1;
@@ -195,18 +213,27 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).raw_y = raw_y;
                     traj_struct(k).traj_x = traj_x_t;
                     traj_struct(k).traj_y = traj_y_t;
+                    traj_struct(k).duration = numel(traj_x_t);
+                    traj_struct(k).pathlen = pathlen;
+                    
                     
                     [seginfo,redir_pts] = get_segmentinfo(traj_struct(k));
+                    
                     traj_struct(k).seginfo =  seginfo;
                     traj_struct(k).redir_pts =  redir_pts;
                     
-                    vel_x = [0, diff(traj_x_t)];
-                    vel_y = [0, diff(traj_y_t)];
+                    if numel(seginfo)
+                        traj_struct(k).accpeaks = sum([seginfo(1:end).quality]);
+                    else
+                        traj_struct(k).accpeaks =[];
+                    end
 
                     traj_struct(k).vel_x = vel_x;
                     traj_struct(k).vel_y = vel_y;
                     traj_struct(k).magtraj = mag_traj;
-                    traj_struct(k).velmag = sqrt(vel_x.^2 + vel_y.^2);
+                    traj_struct(k).vel_mag = vel_mag;
+                    traj_struct(k).vel_max = max(vel_mag);
+                    traj_struct(k).vel_avg = mean(vel_mag);
                     traj_struct(k).radvel = [0, diff(mag_traj)];
                     traj_struct(k).js_onset = js_pairs_r(j,1);
                     traj_struct(k).js_offset = js_pairs_r(j,2);
@@ -220,11 +247,13 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).stop_index = stop_index;
                     traj_struct(k).js_trialnum = js_trialnum;
                     traj_struct(k).np_end = np_end;
+                    traj_struct(k).theta = theta;
                     
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
                         onset_ind = onset_ind + 1;                        
                     end
+                    
                     traj_struct(k).magatnp = ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5));
                     traj_struct(k).max_value_ind = find(mag_traj==max(mag_traj));
                     traj_struct(k).max_value = max(mag_traj);

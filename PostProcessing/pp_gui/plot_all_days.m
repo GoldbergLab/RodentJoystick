@@ -110,15 +110,16 @@ elseif strcmp(plotname, 'JS Touch Dist')
     
     rewrate = 0.25; interv = 15; plotflag = 1;
     if lasercompareflag>1
-        multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
+        [~, setdiststr] = multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
             holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1);
     else %normal call
         [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
             holdtime, combineflag, plotflag, smoothparam, axlist(axnum),traj_id);
+    end
         setdiststr = ['JS Touch Dist', setdiststr];
         setdiststr = setdiststr';
         handles = update_console(handles, setdiststr);
-    end
+        
 elseif strcmp(plotname, 'Activity Heat Map')
     if lasercompareflag>1
         cla(axlist(colnum, 1), 'reset');
@@ -168,7 +169,7 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)') ||...
         axestoplot = reshape(axlist, [6 1]);
     end
 
-    info = sprintf(['Trajectory Analysis will overwrite %s axes in a block', ... 
+    info = sprintf(['Trajectory Analysis will overwrite %d axes in a block', ... 
         ' pattern. Do you want to continue?'], plotnum);
 
     button = questdlg(info,'Warning: Trajectory Analysis','Yes','No','No');
@@ -177,13 +178,10 @@ elseif strcmp(plotname, 'Trajectory Analysis (4)') ||...
         for i = 1:length(axestoplot)
             cla(axestoplot(i), 'reset');
         end
-        if lasercompareflag==1
+      
             multi_trajectory_analysis(dirlist, 0, plotnum, [start endt], ...
-                combineflag, smoothparam, traj_id, axestoplot);
-        else
-            multi_trajectory_analysis_laser(dirlist, 0, plotnum, [start endt], ...
-                smoothparam, lasercompareflag-2, axestoplot);
-        end
+                combineflag, smoothparam, traj_id, axestoplot,lasercompareflag);
+
 
     end
 end

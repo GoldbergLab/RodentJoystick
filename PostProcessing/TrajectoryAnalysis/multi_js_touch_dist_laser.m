@@ -77,9 +77,11 @@ statslist(2) = statscatch;
 
 alltrajflag = 0;
 for i= 1:length(statslist)
-    [set_dist] = js_touch_dist(statslist(i), interv, targ_time, ...
+    [set_dist,hold_dist_vect,med_time,hold_len] = js_touch_dist(statslist(i), interv, targ_time, ...
         targ_reward,dist_thresh, alltrajflag, plotflag, smoothparam, ax, colors(i));
     set_distances(i) = set_dist;
+    med_time_vect(i) = med_time;
+    hold_dist_struct{i} = hold_len;
 end
 if plotflag
     axes(ax);
@@ -89,9 +91,10 @@ if plotflag
         legend('Laser', 'Catch (All)');
     end
 end
+[h,p] = kstest2(hold_dist_struct{1},hold_dist_struct{2});
 for i = 1:length(statslist);
-    set_distances_strings{i} = [dates{i},': ', num2str(set_distances(i))];
+    set_distances_strings{i} = [dates{i},': ', num2str(set_distances(i)),' Med time: ',num2str(med_time_vect(i))];
 end 
-
+set_distances_strings{end+1} = ['P value :',num2str(p)];
 end
 

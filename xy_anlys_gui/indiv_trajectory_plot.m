@@ -14,7 +14,7 @@ function handles = plot_data(data, plottype, handles)
 %plots desired data on axes 7 with appropriate limits according to plottype
 multiplyradius = [1; 2; 3];
 zerocenter = [2; 3; 4; 5; 6];
-data = data*handles.RADIUS/100;
+%data = data*handles.RADIUS/100;
 if sum(multiplyradius == plottype)
     LIMIT = handles.RADIUS*1.08;
 else

@@ -59,7 +59,7 @@
 %
 %   med_time :: the median hold time using the js_touch_dist 
 %   
-function [set_dist, holddist_vect, med_time] = js_touch_dist(stats, varargin)
+function [set_dist, holddist_vect, med_time, holdlength] = js_touch_dist(stats, varargin)
 default = {20, 300, 0.25, 50, 1, 0, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 9

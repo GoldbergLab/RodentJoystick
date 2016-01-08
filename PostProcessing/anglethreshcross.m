@@ -15,7 +15,7 @@ k=0;
 for i=1:length(tstruct)
     index = find(tstruct(i).magtraj>thresh);
     thresh_cross = min(index);
-   if index>100
+   if index>300
     if numel(thresh_cross)
         k=k+1;
         [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
