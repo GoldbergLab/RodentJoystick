@@ -72,6 +72,9 @@ set_distances = zeros(1, length(statslist));
 % Get only the selected trajectories 
 statshit = get_stats_with_trajid(statslist,1);
 statscatch = get_stats_with_trajid(statslist,lasercompareflag+1);
+dates{2} = strcat(dates{1},'-nl');
+dates{1} = strcat(dates{1},'-l');
+
 statslist(1) = statshit;
 statslist(2) = statscatch;
 
