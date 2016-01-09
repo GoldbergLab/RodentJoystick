@@ -75,7 +75,7 @@ else %combine all alike days
 end
 dates = cellfun(@(d) datestr(d, 'mm/dd/yy'), num2cell(days), 'UniformOutput', 0);
 if combineflag == 1
-    dates = {dates{1},'-',dates{end}};
+    dates = {[dates{1},'-',dates{end}]};
 end
 
 end

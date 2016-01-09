@@ -196,7 +196,7 @@ for struct_index=1:length(jstruct)
                 end
                 
                 % Pathlength
-                pathlen = sum((diff(traj_x_t.^2)+diff(traj_y_t.^2)).^(0.5));
+                pathlen = sum((diff(traj_x_t).^2+diff(traj_y_t).^2).^(0.5));
                 
                 %Velocity
                 vel_x = [0, diff(traj_x_t)];

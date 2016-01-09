@@ -191,6 +191,6 @@ elseif strcmp(plotname,'Pathlength')
 %   arg2label = 'Interv'; 
     plotflag=1;
     [consolestr] = multi_traj_pathlen(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
-    handles = update_console(handles, consolestr');
+    handles = update_console(handles, consolestr);
 end
 
