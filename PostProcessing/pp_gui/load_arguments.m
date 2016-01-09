@@ -106,6 +106,20 @@ elseif strcmp(plotname, 'Pathlength')
     arg2label = 'Interv(mm)'; 
     arg3 = 0;
     arg3label = '-';
+elseif strcmp(plotname, 'Duration')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '10'; 
+    arg2label = 'Interv(ms)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Average Velocity')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '10'; 
+    arg2label = 'Interv(mm/s)'; 
+    arg3 = 0;
+    arg3label = '-';
 end
 
 %% GUI Handling/Data manipulation;

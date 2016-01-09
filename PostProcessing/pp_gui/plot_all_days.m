@@ -192,5 +192,21 @@ elseif strcmp(plotname,'Pathlength')
     plotflag=1;
     [consolestr] = multi_traj_pathlen(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
     handles = update_console(handles, consolestr');
+elseif strcmp(plotname,'Duration')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_traj_duration(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');
+elseif strcmp(plotname,'Average Velocity')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_traj_avgvel(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');
 end
 

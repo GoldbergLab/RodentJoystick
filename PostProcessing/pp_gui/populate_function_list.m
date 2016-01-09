@@ -19,7 +19,9 @@ function_list = {'Nosepoke Joystick Onset Distribution';
                     'Angle Distribution (Linear)';
                     'Trajectory Analysis (4)';
                     'Trajectory Analysis (6)';
-                    'Pathlength'};
+                    'Pathlength';
+                    'Duration'
+                    'Average Velocity'};
 
 %% GUI UI interactions
 set(obj, 'String', function_list);
