@@ -1,14 +1,12 @@
-function [console_output] = multi_traj_pathlen(dirlist,varargin)
-%MULTI_TRAJ_PATHLEN Summary of this function goes here
-%   Detailed explanation goes here
+function [console_output] = multi_anglethreshcross(dirlist,varargin)
 
-default = {0,1,[],1,0,0};
+default = {30*(6.35/100),0,1,[],1,0,0};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('too many arguments (> 7), only 1 required and 6 optional.');
+if numvarargs > 8
+    error('too many arguments (> 9), only 1 required and 8 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[thresh,trajid,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
 
 if plotflag
     if numel(ax)<1
@@ -37,13 +35,13 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,pathlen{i}] = traj_pathlen(stats,0,interv,ax,plotflag,colors(i));    
-    console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([pathlen{i}]));
+    [~,theta{i}] = anglethreshcross(stats,thresh,0,interv,ax,plotflag,colors(i));    
+    console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([theta{i}]));
 end
 
-console_output{1} = 'Pathlen';
+console_output{1} = 'Angle at Thresh';
 if (lasercompareflag-1)
-    [h,p] = kstest2([pathlen{1}],[pathlen{2}]);
+    [h,p] = kstest2([theta{1}],[theta{2}]);
     console_output{end+1} = sprintf('P value: %f',p);
 end
 

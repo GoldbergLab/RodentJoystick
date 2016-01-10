@@ -23,8 +23,8 @@ function [thresh2, ht, thresh, minangle, maxangle, e] = extract_contingency_info
 try
     stuff = strsplit(day_directory, '\');
     datecont = strsplit(stuff{end-1}, '_');
-    thresh2 = str2num(datecont{2});
-    thresh = str2num(datecont{4});
+    thresh2 = str2num(datecont{2})*(6.35/100);
+    thresh = str2num(datecont{4})*(6.35/100);
     ht = str2num(datecont{3});
     minangle = str2num(datecont{5});
     maxangle = str2num(datecont{6});

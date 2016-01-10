@@ -25,7 +25,7 @@ if (lasercompareflag-1)
     
     [statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
     statshit = get_stats_with_trajid(statslist,1);
-    statscatch = get_stats_with_trajid(statslist,lasercompareflag+1);
+    statscatch = get_stats_with_trajid(statslist,lasercompareflag);
     dates{2} = strcat(dates{1},'-nl');
     dates{1} = strcat(dates{1},'-l');
     

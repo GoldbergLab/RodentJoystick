@@ -31,7 +31,7 @@ function [jstructlist, dates, days, errlist] = load_jstructs(dirlist, combinefla
 if combineflag==0
 %% GET LIST of individual data
     jstructlist = cell(length(dirlist), 1);
-    errlist = cell(length(dirlist, 1));
+    errlist = cell(length(dirlist), 1);
     dates = cell(length(dirlist), 1);
     days = zeros(length(dirlist), 1);
     for i= 1:length(dirlist)

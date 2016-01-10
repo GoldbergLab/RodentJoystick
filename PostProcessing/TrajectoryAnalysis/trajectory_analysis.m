@@ -111,7 +111,7 @@ totaltraj = length(tstruct);
 %perform processing
 sortedtraj = sort_traj_into_bins(tstruct, bins);
 labels.xlabel = 'Time(ms)';
-labels.ylabel = 'Joystick Magnitude (%)';
+labels.ylabel = 'Joystick Magnitude (mm)';
 
 
 %% ITERATE OVER BINS, STATS AND PLOTTING
@@ -158,7 +158,7 @@ for i = 1:PLOT_RANGE
             line([CONTL(1) CONTL(1)], [0 100], 'Color', CONTLINE_COLORS);
         end
         if derivflag || ~derivflag
-            axis(axeslst(i), [0, bin.lt, 0, 100]);
+            axis(axeslst(i), [0, bin.lt, 0, 6.35]);
         end
     end
 end

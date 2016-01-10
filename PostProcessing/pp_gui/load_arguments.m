@@ -65,7 +65,7 @@ elseif strcmp(plotname, 'JS Touch Dist')
     arg2 = '200';
     arg2label = 'Targ HT';
     arg3 = '50';
-    arg3label = 'Thresh';
+    arg3label = 'Thresh %';
 elseif strcmp(plotname, 'Activity Heat Map')
     arg1 = '2';
     arg2 = '0';
@@ -116,10 +116,45 @@ elseif strcmp(plotname, 'Duration')
 elseif strcmp(plotname, 'Average Velocity')
     arg1 = '0'; 
     arg1label = 'TrajID'; 
+    arg2 = '5'; 
+    arg2label = 'Interv(mm/s)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Maximum Velocity')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
     arg2 = '10'; 
     arg2label = 'Interv(mm/s)'; 
     arg3 = 0;
     arg3label = '-';
+elseif strcmp(plotname, 'Accleration Peaks')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '1'; 
+    arg2label = 'Interv(mm/s)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Segments in Trajectory')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '1'; 
+    arg2label = 'Interv(mm/s)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Angle at Thresh')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '10'; 
+    arg2label = 'Interv(Deg)'; 
+    arg3 = 30;
+    arg3label = 'Thresh %';
+elseif strcmp(plotname, 'Angle at Thresh after Hold')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '30'; 
+    arg2label = 'Thr_in %'; 
+    arg3 = '50';
+    arg3label = 'Thr_out %';    
 end
 
 %% GUI Handling/Data manipulation;

@@ -72,7 +72,7 @@ hold on;
 LINEWIDTH = 1; if length(statslist)==1; LINEWIDTH = 2; end;
 for i = 1:length(data)
     datatmp = data{i};
-    stairs(datatmp(:, 1),data{i}; , colors(i), 'LineWidth', LINEWIDTH);
+    stairs(time_bins,datatmp, colors(i), 'LineWidth', LINEWIDTH);
 end
 xlabel('JS to Reward Onset Time (ms)'); ylabel('Probability');
 title('Joystick Onset to Reward Time Distribution');

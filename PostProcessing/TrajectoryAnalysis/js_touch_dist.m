@@ -143,7 +143,7 @@ if plotflag
 end
 
 time_success = length(dist_distri)/k;
-c = histc(dist_distri,1:1:100);
+c = histc(dist_distri,(1:1:100)*(6.35/100));
 success_prob = cumsum(c)/sum(c);
 med_time = median(holdlength);
 targ_dist = find(success_prob>(targ_reward/time_success));

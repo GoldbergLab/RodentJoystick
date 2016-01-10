@@ -186,15 +186,7 @@ for struct_index=1:length(jstruct)
                     continue;
                 end
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
-                
-                %get angle at inner threshold crossing
-                index = find(mag_traj>30);
-                thresh_cross = min(index);
-                theta =[];
-                if numel(thresh_cross)
-                  [theta,rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
-                end
-                
+                               
                 % Pathlength
                 pathlen = sum((diff(traj_x_t).^2+diff(traj_y_t).^2).^(0.5));
                 
@@ -225,7 +217,7 @@ for struct_index=1:length(jstruct)
                     if numel(seginfo)
                         traj_struct(k).accpeaks = sum([seginfo(1:end).quality]);
                     else
-                        traj_struct(k).accpeaks =[];
+                        traj_struct(k).accpeaks = 0;
                     end
 
                     traj_struct(k).vel_x = vel_x;
@@ -247,7 +239,6 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).stop_index = stop_index;
                     traj_struct(k).js_trialnum = js_trialnum;
                     traj_struct(k).np_end = np_end;
-                    traj_struct(k).theta = theta;
                     
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
