@@ -154,7 +154,35 @@ elseif strcmp(plotname, 'Angle at Thresh after Hold')
     arg2 = '30'; 
     arg2label = 'Thr_in %'; 
     arg3 = '50';
-    arg3label = 'Thr_out %';    
+    arg3label = 'Thr_out %';
+elseif strcmp(plotname, 'Segment Pathlen')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '0.01'; 
+    arg2label = 'Interv(mm)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Segment Avg Vel')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '0.0001'; 
+    arg2label = 'Interv(mm)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Segment Peak Vel')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '0.0001'; 
+    arg2label = 'Interv(mm)'; 
+    arg3 = 0;
+    arg3label = '-';
+elseif strcmp(plotname, 'Segment Duration')
+    arg1 = '0'; 
+    arg1label = 'TrajID'; 
+    arg2 = '1';
+    arg2label = 'Interv(ms)'; 
+    arg3 = 0;
+    arg3label = '-';
 end
 
 %% GUI Handling/Data manipulation;

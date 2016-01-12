@@ -26,7 +26,11 @@ function_list = {'Nosepoke Joystick Onset Distribution';
                     'Accleration Peaks';
                     'Segments in Trajectory';
                     'Angle at Thresh';
-                    'Angle at Thresh after Hold'};
+                    'Angle at Thresh after Hold';
+                    'Segment Pathlen';
+                    'Segment Avg Vel';
+                    'Segment Peak Vel';
+                    'Segment Duration'};
 
 %% GUI UI interactions
 set(obj, 'String', function_list);

@@ -253,6 +253,38 @@ elseif strcmp(plotname,'Angle at Thresh after Hold')
     interv = 20;
     plotflag=1;
     [consolestr] = multi_anglethreshcrosshold(dirlist,thresh_in,thresh_out,hold_time,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');   
+elseif strcmp(plotname,'Segment Pathlen')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_seg_pathlen(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');
+elseif strcmp(plotname,'Segment Avg Vel')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_seg_avgvel(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');
+elseif strcmp(plotname,'Segment Peak Vel')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_seg_peakvel(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    handles = update_console(handles, consolestr');
+elseif strcmp(plotname,'Segment Duration')
+    trajid = str2num(arg1);
+    interv = str2num(arg2);
+%   arg1label = 'TrajID'; 
+%   arg2label = 'Interv'; 
+    plotflag=1;
+    [consolestr] = multi_seg_dur(dirlist,trajid,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
     handles = update_console(handles, consolestr');
 end
 
