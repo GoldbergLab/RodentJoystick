@@ -260,7 +260,7 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
                     traj_struct(k).rw_or_stop = rw_or_stop;
                     traj_pdf_jstrial = traj_pdf_jstrial + ...
-                        hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
+                        hist2d([traj_y_t',traj_x_t'],-6.35:0.127:6.35,-6.35:0.127:6.35);
                 end
             end    
             end  
