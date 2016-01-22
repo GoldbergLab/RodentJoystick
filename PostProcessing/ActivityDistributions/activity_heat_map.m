@@ -20,13 +20,13 @@ function [data, labels] = activity_heat_map(stats, varargin)
 %           plot
 %
 
-default = {1, [25 75], [], [1 100], 0};
+default = {1, [25 75], [], [1 100], 0, 1, 0};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only one required and 5 optional.');
+if numvarargs > 7
+    error('too many arguments (> 8), only one required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc, ax, radii, traj_id] = default{:};
+[logmapping, colorperc, ax, radii, traj_id, rwonly] = default{:};
 if (length(ax)<1)
     figure; 
     ax = gca();
@@ -45,7 +45,7 @@ elseif traj_id == 3;
 end
 
 stats = get_stats_with_trajid(stats,traj_id);
-data = trajectorypdf(stats);
+data = trajectorypdf(stats,rwonly);
 labels = draw_heat_map(data, ax, ['Activity Distribution',ext], logmapping, colorperc, radii);
 
 end

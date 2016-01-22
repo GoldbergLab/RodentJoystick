@@ -33,14 +33,15 @@ catch e
 end
 
 %attempt to write data
-logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_dats);
-
+try
+    logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_data);
+end
 disp([datestr(now, 'HH:MM:SS'), ' Finished scheduled post processing analysis.']);
 end
 
 % Attempts to write a text log to the experiment_directory\AutomatedLogs
 % folder
-function logname = write_analysis_log(experiment_directory, pp_report, bhvr_report)
+function logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_data)
 try %attempting write of log report
     title = ['Analysis_', datestr(now,'mm_dd_yyyy_HH_MM')];
     logdir = [experiment_directory, '\AutomatedLogs'];

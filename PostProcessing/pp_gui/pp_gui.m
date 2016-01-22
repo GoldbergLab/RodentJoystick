@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 17-Dec-2015 15:32:24
+% Last Modified by GUIDE v2.5 21-Jan-2016 13:22:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -969,3 +969,13 @@ set(handles.saveguidirlabel, 'String', root);
 handles.guisavedirloc = root;
 guidata(hObject, handles);
 end
+
+function rwtrial_check_Callback(hObject, eventdata, handles)
+% hObject    handle to lasercomparemenu (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns lasercomparemenu contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from lasercomparemenu
+end
+

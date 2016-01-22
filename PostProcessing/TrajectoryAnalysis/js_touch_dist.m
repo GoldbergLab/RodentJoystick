@@ -73,46 +73,68 @@ if plotflag>0 && length(ax)<1;
     ax = gca();
 end
 
-traj_struct=stats.traj_struct;
+tstruct=stats.traj_struct;
 start_prev=0;
+rw_only=0;
 
 holdlength=[];
-for i=1:length(traj_struct)
-    if (traj_struct(i).start_p == start_prev) && (all_traj_flag==0)
-        holdlentemp = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
+for stlen=1:length(tstruct)
+    
+    rw_onset = tstruct(stlen).rw_onset;
+    
+    if rw_onset == 0
+        if rw_only == 1
+            continue;
+        else
+            rw_onset = numel(tstruct(stlen).traj_y);
+        end
+    end
+    
+    if (tstruct(stlen).start_p == start_prev) && (all_traj_flag==0)
+        holdlentemp = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),dist_thresh);
         if holdlentemp>holdlength(end)
             holdlength(end) = holdlentemp;
         end
     else 
-        holdlength(end+1) = getmaxcontlength(traj_struct(i).magtraj,dist_thresh);
+        holdlength(end+1) = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),dist_thresh);
     end
-    start_prev = traj_struct(i).start_p;
+    start_prev = tstruct(stlen).start_p;
 end
 
 k=0;
 holdlength_prev=0;
-for i=1:length(traj_struct)
+for stlen=1:length(tstruct)
     
-    if traj_struct(i).start_p == start_prev
-        holdlentemp = getmaxcontlength(traj_struct(i).magtraj,150);
+    rw_onset = tstruct(stlen).rw_onset;
+    
+    if rw_onset == 0
+        if rw_only == 1
+            continue;
+        else
+            rw_onset = numel(tstruct(stlen).traj_y);
+        end
+    end
+        
+    if tstruct(stlen).start_p == start_prev
+        holdlentemp = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),150);
         if holdlentemp>holdlength_prev
             holdlength_prev = holdlentemp;
-            if traj_struct(i).posttouch>targ_time
-                dist_distri(k) = max(traj_struct(i).magtraj(1:targ_time));
+            if tstruct(stlen).posttouch>targ_time
+                dist_distri(k) = max(tstruct(stlen).magtraj(1:targ_time));
             else
                 dist_distri(k) = 0;
             end
         end
     else
         k=k+1;
-        holdlength_prev = getmaxcontlength(traj_struct(i).magtraj,150);
-        if traj_struct(i).posttouch>targ_time
-            dist_distri(k) = max(traj_struct(i).magtraj(1:targ_time));
+        holdlength_prev = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),150);
+        if tstruct(stlen).posttouch>targ_time
+            dist_distri(k) = max(tstruct(stlen).magtraj(1:targ_time));
         else
             dist_distri(k) = 0;
         end
     end
-    start_prev = traj_struct(i).start_p;
+    start_prev = tstruct(stlen).start_p;
 end
 
 dist_distri=dist_distri(dist_distri>0);

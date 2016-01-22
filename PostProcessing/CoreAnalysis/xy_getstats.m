@@ -103,6 +103,7 @@ for struct_index=1:length(jstruct)
     js_pairs_r = jstruct(struct_index).js_pairs_r;
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
+    
     try
         laser_on = jstruct(struct_index).laser_on;
     catch
@@ -151,14 +152,13 @@ for struct_index=1:length(jstruct)
                 %touch offset,or reward offset if a rewarded trial whichever comes first
                
                 %FIND REWARD OR STOP (whichever came first)
-                [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]); 
+                [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
 
                 if js_reward(j)
                     rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,...
-                        rw_onset(onset_ind)])-js_pairs_r(j,1); 
+                        rw_onset(onset_ind)]);
                 else
-                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]) ...
-                        - js_pairs_r(j,1); 
+                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]);
                 end              
                 
                 %If optogenetic expt was on, determine if "Hit" trial or
@@ -176,15 +176,18 @@ for struct_index=1:length(jstruct)
                     laser = 0;
                 end
                 
-                raw_x = traj_x(js_pairs_r(j,1):stop_p);
-                raw_y = traj_y(js_pairs_r(j,1):stop_p);
+                raw_x = traj_x(js_pairs_r(j,1):rw_or_stop);
+                raw_y = traj_y(js_pairs_r(j,1):rw_or_stop);
 
                 try
                 [traj_x_t,traj_y_t] = ...
-                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), stop_p]);
+                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), rw_or_stop]);
                 catch
                     continue;
                 end
+                
+             
+                
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                                
                 % Pathlength
@@ -196,9 +199,9 @@ for struct_index=1:length(jstruct)
                 
                 % Instantaneous Speed
                 vel_mag = sqrt(vel_x.^2 + vel_y.^2);
-                                
-                %make sure trajectory starts within 50%
-                if ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5))<50
+
+                
+
                     k=k+1;
 
                     traj_struct(k).raw_x = raw_x;
@@ -242,18 +245,17 @@ for struct_index=1:length(jstruct)
                     
                     if traj_struct(k).rw == 1
                         traj_struct(k).rw_onset = rw_onset(onset_ind)-js_pairs_r(j,1);
-                        onset_ind = onset_ind + 1;                        
+                        onset_ind = onset_ind + 1;
                     end
                     
                     traj_struct(k).magatnp = ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5));
                     traj_struct(k).max_value_ind = find(mag_traj==max(mag_traj));
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
-                    traj_struct(k).rw_or_stop = rw_or_stop;
+                    traj_struct(k).rw_or_stop = rw_or_stop-js_pairs_r(j,1);
                     traj_pdf_jstrial = traj_pdf_jstrial + ...
                         hist2d([traj_y_t',traj_x_t'],-100:2:100,-100:2:100);
-                end
-            end    
+                end    
             end  
         end
     end

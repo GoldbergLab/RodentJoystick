@@ -3,19 +3,24 @@ function [path_hist,pathlen] = traj_pathlen(stats,varargin)
 %TRAJ_PATHLEN Summary of this function goes here
 %   Detailed explanation goes here
 
-default = {0,1,[],1, 'r'};
+default = {0,1,1,[],1, 'r'};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,color] = default{:};
+[trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
 
 tstruct = stats.traj_struct;
-for i=1:numel(stats.traj_struct)
-    pathlen(i) = tstruct(i).pathlen;
+k=0;
+
+for stlen=1:numel(stats.traj_struct)    
+    if (tstruct(stlen).rw == rw_only) || ~rw_only
+        k=k+1;
+       pathlen(k) = tstruct(stlen).pathlen;
+    end
 end
 edges = 0:interv:40;
 path_hist = histc(pathlen,edges);

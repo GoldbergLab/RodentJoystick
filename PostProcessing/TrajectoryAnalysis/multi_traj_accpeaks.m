@@ -2,13 +2,13 @@ function [console_output] = multi_traj_accpeaks(dirlist,varargin)
 %MULTI_TRAJ_ACCPEAKS Summary of this function goes here
 %   Detailed explanation goes here
 
-default = {0,1,[],1,0,0};
+default = {0,0,1,[],1,0,0};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('too many arguments (> 7), only 1 required and 6 optional.');
+if numvarargs > 7
+    error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
 
 if plotflag
     if numel(ax)<1
@@ -37,7 +37,7 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,maxvel{i}] = traj_accpeaks(stats,0,interv,ax,plotflag,colors(i));    
+    [~,maxvel{i}] = traj_accpeaks(stats,0,rw_only,interv,ax,plotflag,colors(i));    
     console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([maxvel{i}]));
 end
 

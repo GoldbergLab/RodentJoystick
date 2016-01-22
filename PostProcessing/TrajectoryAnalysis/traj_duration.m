@@ -3,19 +3,23 @@ function [dur_hist,duration] = traj_duration(stats,varargin)
 %TRAJ_DURATION Summary of this function goes here
 %   Detailed explanation goes here
 
-default = {0,10,[],1, 'r'};
+default = {0,1,50,[],1, 'r'};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,color] = default{:};
+[trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
 
 tstruct = stats.traj_struct;
-for i=1:numel(stats.traj_struct)
-    duration(i) = tstruct(i).duration;
+k=0;
+for stlen = 1:numel(stats.traj_struct)
+    if (tstruct(stlen).rw == rw_only) || ~rw_only        
+        k=k+1;
+        duration(k) = tstruct(stlen).duration;
+    end
 end
 edges = 0:interv:1000;
 dur_hist = histc(duration,edges);

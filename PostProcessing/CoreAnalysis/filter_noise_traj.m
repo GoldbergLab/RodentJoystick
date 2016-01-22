@@ -25,16 +25,16 @@ function [x_filt, y_filt] = filter_noise_traj(x, y, hd, range)
 %   y_filt :: filtered y data
 
 OFFSET = 20;
-r1 = max(range(1)-OFFSET, 1);
-r2 = min(range(2)+OFFSET, length(x));
-x = x(r1:r2);
+r1 = max(range(1));
+r2 = min(range(2));
 x_filt = filter(hd, x);
 x_filt = x_filt((1+OFFSET):end-OFFSET);
+x_filt = x_filt(r1:r2);
 x_filt = x_filt*(6.35/100);
 
-y = y(r1:r2);
 y_filt = filter(hd, y);
 y_filt = y_filt((1+OFFSET):end-OFFSET);
+y_filt = y_filt(r1:r2);
 y_filt = y_filt*(6.35/100);
 
 

@@ -67,10 +67,12 @@ elseif strcmp(plotname, 'JS Touch Dist')
     arg3 = '50';
     arg3label = 'Thresh %';
 elseif strcmp(plotname, 'Activity Heat Map')
-    arg1 = '2';
+    arg1 = '-';
     arg2 = '0';
+    arg3 = '-';
+    arg1label = '-';
     arg2label = 'TrajID';
-    arg1label = 'Bin'; %Bin Size (min)
+    arg3label = '-';
 elseif strcmp(plotname, 'Velocity Heat Map')
     arg1 = '2'; 
     arg1label = 'Bin'; %Bin Size (min)
@@ -104,12 +106,12 @@ elseif strcmp(plotname, 'Pathlength')
     arg1label = 'TrajID'; 
     arg2 = '1'; 
     arg2label = 'Interv(mm)'; 
-    arg3 = 0;
+    arg3 = '-';
     arg3label = '-';
 elseif strcmp(plotname, 'Duration')
     arg1 = '0'; 
     arg1label = 'TrajID'; 
-    arg2 = '10'; 
+    arg2 = '50'; 
     arg2label = 'Interv(ms)'; 
     arg3 = 0;
     arg3label = '-';

@@ -3,19 +3,21 @@ function [avgvel_hist,avgvel] = seg_avgvel(stats,varargin)
 %SEG_PATHLEN Summary of this function goes here
 %   Detailed explanation goes here
 
-default = {0,0.01,[],1, 'r'};
+default = {0,0,0.01,[],1, 'r'};
 numvarargs = length(varargin);
-if numvarargs > 5
-    error('too many arguments (> 6), only 1 required and 5 optional.');
+if numvarargs > 6
+    error('too many arguments (> 7), only 1 required and 6 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,color] = default{:};
+[trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
 
 tstruct = stats.traj_struct;
 
 for i=1:numel(stats.traj_struct)
+   if (tstruct(i).rw == rw_only) || ~rw_only
+
     for j=1:numel(tstruct(i).seginfo)
         if (j>1)
          avgvel{i} = [avgvel{i} mean(tstruct(i).seginfo(j).velprofile)];
@@ -23,6 +25,7 @@ for i=1:numel(stats.traj_struct)
          avgvel{i} = mean(tstruct(i).seginfo(j).velprofile);
         end
     end
+   end
 end
 avgvel = [avgvel{:}];
 edges = 0:interv:.01;

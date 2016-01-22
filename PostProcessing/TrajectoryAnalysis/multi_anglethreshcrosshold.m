@@ -1,12 +1,12 @@
 function [console_output] = multi_anglethreshcrosshold(dirlist,varargin)
 
-default = {30*(6.35/100),50*(6.35/100),300,0,1,[],1,0,0};
+default = {30*(6.35/100),50*(6.35/100),300,0,0,1,[],1,0,0};
 numvarargs = length(varargin);
-if numvarargs > 10
-    error('too many arguments (> 11), only 1 required and 10 optional.');
+if numvarargs > 11
+    error('too many arguments (> 12), only 1 required and 11 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[thresh_in,thresh_out,hold_time,trajid,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[thresh_in,thresh_out,hold_time,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
 
 if plotflag
     if numel(ax)<1
@@ -35,7 +35,7 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,theta{i}] = anglethreshcrosshold(stats,thresh_in,thresh_out,hold_time,0,interv,ax,plotflag,colors(i));    
+    [~,theta{i}] = anglethreshcrosshold(stats,thresh_in,thresh_out,hold_time,0,rw_only,interv,ax,plotflag,colors(i));    
     console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([theta{i}]));
 end
 

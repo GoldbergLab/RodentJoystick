@@ -4,11 +4,11 @@ function [console_output] = multi_seg_avgvel(dirlist,varargin)
 
 default = {0,1,[],1,0,0};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error('too many arguments (> 7), only 1 required and 6 optional.');
+if numvarargs > 7
+    error('too many arguments (> 8), only 1 required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[trajid,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[trajid,rw_stop,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
 
 if plotflag
     if numel(ax)<1
@@ -37,7 +37,7 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,avgvel{i}] = seg_avgvel(stats,0,interv,ax,plotflag,colors(i));    
+    [~,avgvel{i}] = seg_avgvel(stats,0,rw_stop,interv,ax,plotflag,colors(i));    
     console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([avgvel{i}]));
 end
 

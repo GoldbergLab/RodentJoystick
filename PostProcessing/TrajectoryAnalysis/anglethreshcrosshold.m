@@ -1,19 +1,22 @@
 function [theta_hist,theta] = anglethreshcrosshold(stats,varargin)
 %% argument handling
 
-default = {30*(6.35/100),50*(6.35/100),300,0,1,[],1, 'r'};
+default = {30*(6.35/100),50*(6.35/100),400,0,1,[],1, 'r'};
 numvarargs = length(varargin);
-if numvarargs > 8
-    error('too many arguments (> 9), only 1 required and 8 optional.');
+if numvarargs > 9
+    error('too many arguments (> 10), only 1 required and 9 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[thresh_in,thresh_out,hold_time,trajid,interv,ax,plotflag,color] = default{:};
+[thresh_in,thresh_out,hold_time,trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
 tstruct = stats.traj_struct;
-
+theta = [];
 k=0;
+
 for i=1:length(tstruct)
+  if (tstruct(i).rw == rw_only) || ~rw_only
+
     index_in = find(tstruct(i).magtraj>thresh_in);
     thresh_in_cross = min(index_in);    
     if numel(thresh_in_cross)
@@ -26,6 +29,7 @@ for i=1:length(tstruct)
             end
         end
     end
+  end
 end
 
 theta = theta*(180/pi);
@@ -46,6 +50,6 @@ if plotflag
     end
     axes(ax);
     hold on;
-    plot(edges,theta_hist,color);
+    stairs(edges,theta_hist,color);
     hold off;
 end
