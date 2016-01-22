@@ -255,7 +255,6 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).rw_or_stop = rw_or_stop-js_pairs_r(j,1);
                     traj_pdf_jstrial = traj_pdf_jstrial + ...
                         hist2d([traj_y_t',traj_x_t'],-6.35:0.127:6.35,-6.35:0.127:6.35);
-                end
             end    
             end  
         end
