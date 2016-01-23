@@ -11,8 +11,7 @@ for i = 1:length(list)
     date = datestr(now, 'mmddyy');
     if list(i).isdir && ~(strcmp(date, folderday(1:6)))
         testlist = rdir([list(i).name, '\*.dat']);
-        testlist_comb = rdir([list(i).name, '\comb']);
-        if ~isempty(testlist) || isempty(testlist_comb)
+        if ~isempty(testlist)
            toprocesslist(k).name = list(i).name; 
            toprocesslist(k).isdir = list(i).isdir;
            k = k+1;
