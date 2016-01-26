@@ -78,66 +78,28 @@ start_prev=0;
 rw_only=0;
 
 holdlength=[];
+
 for stlen=1:length(tstruct)
-    
-    rw_onset = tstruct(stlen).rw_onset;
-    
-    if rw_onset == 0
-        if rw_only == 1
-            continue;
-        else
-            rw_onset = numel(tstruct(stlen).traj_y);
-        end
+    if (tstruct(stlen).rw == rw_only) || ~rw_only
+            holdlength(end+1) = getmaxcontlength(tstruct(stlen).magtraj,dist_thresh);
     end
-    
-    if (tstruct(stlen).start_p == start_prev) && (all_traj_flag==0)
-        holdlentemp = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),dist_thresh);
-        if holdlentemp>holdlength(end)
-            holdlength(end) = holdlentemp;
-        end
-    else 
-        holdlength(end+1) = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),dist_thresh);
-    end
-    start_prev = tstruct(stlen).start_p;
 end
 
 k=0;
 holdlength_prev=0;
+
 for stlen=1:length(tstruct)
-    
-    rw_onset = tstruct(stlen).rw_onset;
-    
-    if rw_onset == 0
-        if rw_only == 1
-            continue;
-        else
-            rw_onset = numel(tstruct(stlen).traj_y);
-        end
-    end
-        
-    if tstruct(stlen).start_p == start_prev
-        holdlentemp = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),150);
-        if holdlentemp>holdlength_prev
-            holdlength_prev = holdlentemp;
-            if tstruct(stlen).posttouch>targ_time
-                dist_distri(k) = max(tstruct(stlen).magtraj(1:targ_time));
-            else
-                dist_distri(k) = 0;
-            end
-        end
-    else
+    if (tstruct(stlen).rw == rw_only) || ~rw_only
         k=k+1;
-        holdlength_prev = getmaxcontlength(tstruct(stlen).magtraj(1:rw_onset),150);
-        if tstruct(stlen).posttouch>targ_time
+        if tstruct(stlen).rw_or_stop>targ_time            
             dist_distri(k) = max(tstruct(stlen).magtraj(1:targ_time));
         else
-            dist_distri(k) = 0;
+            dist_distri(k) = 6.35;
         end
     end
-    start_prev = tstruct(stlen).start_p;
 end
 
-dist_distri=dist_distri(dist_distri>0);
+%dist_distri=dist_distri(dist_distri>0);
 end_time_range = 1000;
 dist_time_hld = 0:interv:end_time_range;
 normalize = 1;

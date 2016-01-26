@@ -109,7 +109,7 @@ elseif strcmp(plotname, 'JS Touch Dist')
     holdtime = str2num(arg2); 
     thresh = str2num(arg3)*(6.35/100);
     
-    rewrate = 0.25; interv = 15; plotflag = 1;
+    rewrate = 0.05; interv = 15; plotflag = 1;
     if lasercompareflag>1
         [~, setdiststr] = multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
             holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1);

@@ -103,7 +103,7 @@ for struct_index=1:length(jstruct)
     js_pairs_r = jstruct(struct_index).js_pairs_r;
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
-    
+    trials = jstruct(struct_index).trial_live;
     try
         laser_on = jstruct(struct_index).laser_on;
     catch
@@ -112,11 +112,11 @@ for struct_index=1:length(jstruct)
     %% Process, and develop traj_struct
     start_temp =0;
     onset_ind = 1;
-    if numel(js_pairs_r)>0 && numel(np_pairs)>0 && numel(js_pairs_l)>0
+    if numel(trials)>0
         for j=1:size(js_pairs_r,1)
-            if(sum(((np_pairs(:,1)-js_pairs_r(j,1))<0)&((np_pairs(:,2)-js_pairs_r(j,1))>0))>0) 
+            if(sum(((trials(:,1)-js_pairs_r(j,1))<3)&((trials(:,2)-js_pairs_r(j,1))>0))>0) 
             % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
-            if (sum(((js_pairs_l(:,1)-js_pairs_r(j,1))<0)&((js_pairs_l(:,2)-js_pairs_r(j,1))>0))>0)
+            
                 % And if the Joystick is in between an post-touch onset and offset pair
                 % This is now a valid trial
                     
@@ -126,10 +126,16 @@ for struct_index=1:length(jstruct)
                 start_p = max(np_pairs(np_js_temp,1));
                 %Nose poke before the Joystick touch is the most recent
                 %touch (largest time) out of all preceding np ons
-                np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2); 
+                np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2);
                 %corresponding nose poke offset
-                    
-                %FIND TRIAL NUMBER
+                
+                %FIND TRIAL ONSET/OFFSET
+                trial_js_temp = (trials(:,1)-js_pairs_r(j,1))<2; 
+                start_trial = max(trials(trial_js_temp,1));
+                trial_end = trials((trials(trial_js_temp,1)==start_trial),2);
+                
+                
+                %FIND JSCONTACT NUMBER WITHIN NOSEPOKE
                 %count as new trial only if prev joystick attempt
                 %wasn't on the same nosepoke onset offset
                 if (start_p ~= start_temp)                   
@@ -152,14 +158,15 @@ for struct_index=1:length(jstruct)
                 %touch offset,or reward offset if a rewarded trial whichever comes first
                
                 %FIND REWARD OR STOP (whichever came first)
-                [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
+                
 
                 if js_reward(j)
-                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end,...
-                        rw_onset(onset_ind)]);
+                    rw_or_stop = min([trial_end,rw_onset(onset_ind)]);
+                    [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]);
                 else
-                    rw_or_stop = min([js_pairs_r(j,2),np_end,post_end]);
-                end              
+                    [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
+                    rw_or_stop = trial_end;
+                end
                 
                 %If optogenetic expt was on, determine if "Hit" trial or
                 %"Catch" trial
@@ -255,8 +262,7 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).rw_or_stop = rw_or_stop-js_pairs_r(j,1);
                     traj_pdf_jstrial = traj_pdf_jstrial + ...
                         hist2d([traj_y_t',traj_x_t'],-6.35:0.127:6.35,-6.35:0.127:6.35);
-            end    
-            end  
+            end     
         end
     end
 end

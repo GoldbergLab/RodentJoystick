@@ -78,7 +78,7 @@ dates{1} = strcat(dates{1},'-l');
 statslist(1) = statshit;
 statslist(2) = statscatch;
 
-alltrajflag = 0;
+alltrajflag = 1;
 for i= 1:length(statslist)
     [set_dist,hold_dist_vect,med_time,hold_len] = js_touch_dist(statslist(i), interv, targ_time, ...
         targ_reward,dist_thresh, alltrajflag, plotflag, smoothparam, ax, colors(i));
