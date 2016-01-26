@@ -69,7 +69,10 @@ for i=1:length(filelist)
     if size(working_buff,1)>7
         lick = sensor_on_off_times(working_buff(8,:));
     end
-    
+    if size(working_buff,1)>7
+        triallive = sensor_on_off_times(working_buff(9,:));
+    end
+        
     %mark reward times
     reward_del = working_buff(6,:);
     reward_logical = (reward_del>0.5);
@@ -102,6 +105,7 @@ for i=1:length(filelist)
     try
         jstruct(i).laser_on = laser_on;
         jstruct(i).lick_on = lick;
+        jstruct(i).trial_live = triallive;
     catch
     end
 
