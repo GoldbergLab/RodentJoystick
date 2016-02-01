@@ -41,13 +41,13 @@
 %           posttouch :: onset of post touch
 %           rw_or_stop :: minimum of trajectory reward time and nosepoke release
 function jstruct_stats = xy_getstats(jstruct,varargin)
-default = {''};
+default = {'',0};
 numvarargs = length(varargin);
-if numvarargs > 1
+if numvarargs > 2
     error('too many arguments (> 2), only one required and 1 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[savedir] = default{:};
+[savedir,to_stop_p] = default{:};
 
 %Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
 %and Number of Pellets dispensed
@@ -104,6 +104,7 @@ for struct_index=1:length(jstruct)
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
     trials = jstruct(struct_index).trial_live;
+    
     try
         laser_on = jstruct(struct_index).laser_on;
     catch
@@ -121,9 +122,12 @@ for struct_index=1:length(jstruct)
                 % This is now a valid trial
                     
                 %FIND NP ONSET/OFFSET
-                np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<0; 
+                np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<=1; 
                 %set of nose poke onsets preceding the js onset
                 start_p = max(np_pairs(np_js_temp,1));
+                if numel(start_p)<1
+                    break;
+                end
                 %Nose poke before the Joystick touch is the most recent
                 %touch (largest time) out of all preceding np ons
                 np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2);
@@ -181,6 +185,10 @@ for struct_index=1:length(jstruct)
                     end
                 catch
                     laser = 0;
+                end
+                
+                if to_stop_p
+                    rw_or_stop = stop_p;                  
                 end
                 
                 raw_x = traj_x(js_pairs_r(j,1):rw_or_stop);
@@ -260,8 +268,11 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
                     traj_struct(k).rw_or_stop = rw_or_stop-js_pairs_r(j,1);
+                    traj_struct(k).trial_end = trial_end;
+                    traj_struct(k).trial_end = trial_end-stop_p;
                     traj_pdf_jstrial = traj_pdf_jstrial + ...
                         hist2d([traj_y_t',traj_x_t'],-6.35:0.127:6.35,-6.35:0.127:6.35);
+                    
             end     
         end
     end
@@ -271,11 +282,17 @@ jstruct_stats.traj_pdf_jstrial = traj_pdf_jstrial./sum(sum(traj_pdf_jstrial));
 jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
 jstruct_stats.trialnum = trialnum;
-jstruct_stats.srate = jstruct_stats.pellet_count/trialnum;
+jstruct_stats.srate = get_srate(traj_struct);
 jstruct_stats.day = floor(jstruct(1).real_time);
 
+if to_stop_p
+    savestr = '\stats_ts.mat';
+else
+    savestr = '\stats.mat';
+end
+
 if ~isempty(savedir)
-    save([savedir,'\stats.mat'], '-struct', 'jstruct_stats', 'np_count', ...
+    save([savedir,savestr], '-struct', 'jstruct_stats', 'np_count', ...
     'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
     'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
 end

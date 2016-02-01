@@ -23,7 +23,7 @@ if isempty(filelist)
 end
 
 %Remove all empty files from the list
-filelist = filelist([filelist.bytes]>0);
+ %filelist = filelist([filelist.bytes]>0);
 if ~exist(strcat(working_dir,'/comb/'), 'dir')
     mkdir(strcat(working_dir,'/comb/'));
 end
@@ -35,6 +35,7 @@ fname = [working_dir,'/',filelist(1).name];
 frame_number = str2num(filelist(1).name(1:10));
 start_frame = frame_number; 
 mat_fname = [working_dir,'/comb/',filelist(1).name(1:end-4),'.mat'];
+frame_run =1;
 
 for i = 2:(length(filelist))
     fname = [working_dir,'/',filelist(i).name];
@@ -44,19 +45,19 @@ for i = 2:(length(filelist))
     if ((framenumber_prev+1)==frame_number)
         %Because of hardware bug, remove 'odd' files that have > 25
         %nosepoke pairs
+        frame_run = frame_run + 1;
         np = [0; record_list(:, 5); 0]>0.5; np = (diff(np) ~= 0);
-        if sum(np)<50
-            working_buff = [working_buff;record_list];
-        else
-            faillist{end+1} = fname;
-        end
+        working_buff = [working_buff;record_list];
     else
         if numel(working_buff)>0
-            save(mat_fname,'start_frame','working_buff');
+            if frame_run == (size(working_buff,1)/1000)
+                save(mat_fname,'start_frame','working_buff');
+            end
         end
         working_buff=record_list;
-        start_frame = frame_number; 
-        mat_fname = [working_dir,'/comb/',filelist(i).name(1:end-4),'.mat'];
+        start_frame = frame_number;
+        frame_run = 1;
+        mat_fname = [working_dir,'/comb/',filelist(i).name(1:end-4),'.mat'];        
     end
 end
 

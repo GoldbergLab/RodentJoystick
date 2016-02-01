@@ -37,9 +37,10 @@ smoothparam = str2num(smoothparam);
 normalize = get(handles.normalizecheck, 'Value');
 rw_only = get(handles.rwtrial_check, 'Value');
 lasercompareflag = get(handles.lasercomparemenu, 'Value');
+to_stop = get(handles.checkbox_ts,'value');
 
 if strcmp(plotname, 'Activity Heat Map')
-    statscombined = load_stats(dirlist, 1);
+    statscombined = load_stats(dirlist,1,to_stop);
 end
 cla(axlist(axnum), 'reset');
 colnum = axnum;
@@ -109,7 +110,7 @@ elseif strcmp(plotname, 'JS Touch Dist')
     holdtime = str2num(arg2); 
     thresh = str2num(arg3)*(6.35/100);
     
-    rewrate = 0.05; interv = 15; plotflag = 1;
+    rewrate = 0.1; interv = 15; plotflag = 1;
     if lasercompareflag>1
         [~, setdiststr] = multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
             holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1);
@@ -191,7 +192,7 @@ elseif strcmp(plotname,'Pathlength')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_pathlen(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_pathlen(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Duration')
     trajid = str2num(arg1);
@@ -199,7 +200,7 @@ elseif strcmp(plotname,'Duration')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_duration(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_duration(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Average Velocity')
     trajid = str2num(arg1);
@@ -207,7 +208,7 @@ elseif strcmp(plotname,'Average Velocity')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_avgvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_avgvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Maximum Velocity')
     trajid = str2num(arg1);
@@ -215,7 +216,7 @@ elseif strcmp(plotname,'Maximum Velocity')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_maxvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_maxvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Accleration Peaks')
     trajid = str2num(arg1);
@@ -223,7 +224,7 @@ elseif strcmp(plotname,'Accleration Peaks')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_accpeaks(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_accpeaks(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Segments in Trajectory')
     trajid = str2num(arg1);
@@ -231,7 +232,7 @@ elseif strcmp(plotname,'Segments in Trajectory')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_traj_numseg(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_traj_numseg(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Angle at Thresh')
     trajid = str2num(arg1);
@@ -261,7 +262,7 @@ elseif strcmp(plotname,'Segment Pathlen')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_seg_pathlen(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_seg_pathlen(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Segment Avg Vel')
     trajid = str2num(arg1);
@@ -269,7 +270,7 @@ elseif strcmp(plotname,'Segment Avg Vel')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_seg_avgvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_seg_avgvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Segment Peak Vel')
     trajid = str2num(arg1);
@@ -277,7 +278,7 @@ elseif strcmp(plotname,'Segment Peak Vel')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_seg_peakvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_seg_peakvel(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Segment Duration')
     trajid = str2num(arg1);
@@ -285,7 +286,7 @@ elseif strcmp(plotname,'Segment Duration')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv'; 
     plotflag=1;
-    [consolestr] = multi_seg_dur(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_seg_dur(dirlist,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,to_stop);
     handles = update_console(handles, consolestr');
 end
 

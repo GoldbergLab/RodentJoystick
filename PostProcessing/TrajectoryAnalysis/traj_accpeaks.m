@@ -17,9 +17,11 @@ tstruct = stats.traj_struct;
 k=0;
 for i=1:numel(stats.traj_struct)
     if (tstruct(i).rw == rw_only) || ~rw_only
-    if numel(tstruct(i).accpeaks)
+    if numel(tstruct(i).accpeaks) 
+       if(tstruct(i).accpeaks>0)
         k=k+1;
         accpeaks(k) = tstruct(i).accpeaks;
+       end
     end
     end
 end

@@ -1,4 +1,4 @@
-function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag, varargin)
+function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag,to_stop,varargin)
 %[statslist, dates, days] = load_stats(dirlist, combineflag) attempts
 %   to load the stats structures from the directories in dirlist.
 %
@@ -44,12 +44,17 @@ function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag, va
 %       'trialnum', 'srate'
 %
 errlist = cell(length(dirlist), 1);
-
+if to_stop
+    statstr = '/stats_ts.mat';
+else
+    statstr = '/stats.mat';
+end
 if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data
     days = zeros(length(dirlist), 1);
+    
     for k= 1:length(dirlist)
-        [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, '\stats.mat'], varargin);
+        [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, statstr], varargin);
     end
 elseif combineflag == 1 % combine all days' stats
     [statslist, days, errlist] = combine_stats_struct(dirlist, varargin);
@@ -64,7 +69,7 @@ else %combine all alike days
             %may need to be changed in the future
             [statslist(slistind),tmpdays, errlist{k-1:k}] = combine_stats_struct(dirlist(k-1:k), varargin);
         else
-            [statslist(slistind),tmpdays, errlist{k}] = load_fields([dirlist(k).name, '\stats.mat'], varargin);            
+            [statslist(slistind),tmpdays, errlist{k}] = load_fields([dirlist(k).name, statstr], varargin);            
         end
         %store results
         days(slistind) = tmpdays(1);
@@ -86,7 +91,7 @@ function [statslist, days, errlist] = combine_stats_struct(dirlist, fieldlist)
 errlist = cell(length(dirlist), 1);
 days = zeros(length(dirlist), 1);
 for k= 1:length(dirlist)
-    statsname = [dirlist(k).name, '\stats.mat'];
+    statsname = [dirlist(k).name, statstr];
     [stats, days(k), e] = load_fields(statsname, fieldlist);
     errlist{k} = e;
     if exist('statsaccum', 'var')

@@ -23,7 +23,7 @@
 %
 %   targ_reward :: target reward, decimal representation of desired 
 %       percentage of trials to be rewarded
-%       DEFAULT - 0.25
+%       DEFAULT - 0.05
 %
 %   dist_thresh :: the contingency used for the mice training - only looks
 %       at trajectories to 
@@ -60,7 +60,7 @@
 %   med_time :: the median hold time using the js_touch_dist 
 %   
 function [set_dist, holddist_vect, med_time, holdlength] = js_touch_dist(stats, varargin)
-default = {20, 300, 0.25, 50, 1, 0, 1, [], 'r'};
+default = {20, 300, 0.05, 50, 1, 0, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');

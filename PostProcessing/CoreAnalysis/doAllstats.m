@@ -31,10 +31,8 @@ end
 try
     load(list(1).name);
     stats = xy_getstats(jstruct, wdir);
+    stats = xy_getstats(jstruct, wdir ,1);
     clear jstruct;
-    [velaccel, velaccelraw] = compute_vel_accel_distr(stats);
-    save(strcat(wdir,'\velaccel.mat'), 'velaccel');
-    save(strcat(wdir,'\velaccelraw.mat'), 'velaccelraw');
 catch e
     failure = 4; err = getReport(e);
 end

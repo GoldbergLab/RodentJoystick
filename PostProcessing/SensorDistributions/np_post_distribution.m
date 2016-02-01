@@ -67,7 +67,7 @@ elseif combineflag == 0
 end
 dist_time = -1000:interv:1000;
 
-[statslist, dates] = load_stats(dirlist, combineflag, 'np_js_post');
+[statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js_post');
 labels.legend = dates;
 for i=1:length(statslist)
     stats = statslist(i);

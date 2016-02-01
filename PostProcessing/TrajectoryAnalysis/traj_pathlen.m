@@ -18,8 +18,10 @@ k=0;
 
 for stlen=1:numel(stats.traj_struct)    
     if (tstruct(stlen).rw == rw_only) || ~rw_only
+     if tstruct(stlen).pathlen>0
         k=k+1;
        pathlen(k) = tstruct(stlen).pathlen;
+     end
     end
 end
 edges = 0:interv:40;

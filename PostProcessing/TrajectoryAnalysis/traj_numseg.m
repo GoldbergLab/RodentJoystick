@@ -16,12 +16,14 @@ stats=get_stats_with_trajid(stats,trajid);
 tstruct = stats.traj_struct;
 k=0;
 for i=1:numel(stats.traj_struct)
-     if numel(tstruct(i).accpeaks) &&((tstruct(i).rw == rw_only) || ~rw_only)
+     if numel(tstruct(i).accpeaks) &&((tstruct(i).rw == rw_only) || ~rw_only) 
+       if tstruct(i).accpeaks>0  
         k=k+1;
         numseg(k) = numel(tstruct(i).seginfo);
+       end
      end
 end
-edges = 1:interv:60;
+edges = 1:interv:30;
 numseg_hist = histc(numseg,edges);
 
 %normalize

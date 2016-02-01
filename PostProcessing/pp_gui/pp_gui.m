@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 21-Jan-2016 13:22:58
+% Last Modified by GUIDE v2.5 31-Jan-2016 13:49:46
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -54,6 +54,13 @@ function pp_gui_OpeningFcn(hObject, eventdata, handles, varargin) %#ok<*INUSL>
 
 % Choose default command line output for pp_gui
 handles.output = hObject;
+
+axes(handles.axes1); zoom on
+axes(handles.axes2); zoom on
+axes(handles.axes3); zoom on
+axes(handles.axes4); zoom on
+axes(handles.axes5); zoom on
+axes(handles.axes6); zoom on
 
 % Update handles structure
 guidata(hObject, handles);
@@ -150,8 +157,9 @@ try
     startdir = dirlist(end).name; startdir = strsplit(startdir, '\'); 
     startdir = startdir(1:end-1); startdir = strjoin(startdir, '\');
     handles.startdir = startdir;
+    to_stop = get(handles.checkbox_ts,'Value');
     
-    [statslist, dates] = load_stats(dirlist, 0, 'pellet_count', ...
+    [statslist, dates] = load_stats(dirlist, 0, to_stop,'pellet_count', ...
         'srate', 'trialnum');
     disp(length(statslist));
     pellets = 0; trialnum = 0;
@@ -159,7 +167,7 @@ try
     for i = 1:length(statslist);
         stats = statslist(i);
         pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
-        sr = [dates{i},' success rate: ', num2str(stats.srate)];
+        sr = [dates{i},' success rate: ', num2str(stats.srate.total)];
         tmptext = {pc; sr};
         text = [text; tmptext];
         pellets = pellets + stats.pellet_count;
@@ -979,3 +987,13 @@ function rwtrial_check_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from lasercomparemenu
 end
 
+
+
+% --- Executes on button press in checkbox_ts.
+function checkbox_ts_Callback(hObject, eventdata, handles)
+% hObject    handle to checkbox_ts (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of checkbox_ts
+end
