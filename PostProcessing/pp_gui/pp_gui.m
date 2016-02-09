@@ -160,7 +160,7 @@ try
     to_stop = get(handles.checkbox_ts,'Value');
     
     [statslist, dates] = load_stats(dirlist, 0, to_stop,'pellet_count', ...
-        'srate', 'trialnum');
+        'srate', 'numtraj');
     disp(length(statslist));
     pellets = 0; trialnum = 0;
     text = {};
@@ -168,7 +168,10 @@ try
         stats = statslist(i);
         pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
         sr = [dates{i},' success rate: ', num2str(stats.srate.total)];
-        tmptext = {pc; sr};
+        sr_l = [dates{i},' success rate_l: ', num2str(stats.srate.laser_succ)];
+        sr_nl = [dates{i},' success rate_nl: ', num2str(stats.srate.catch_succ)];
+        nt = [dates{i},' num trials: ', num2str(stats.numtraj)];
+        tmptext = {pc; sr; sr_l; sr_nl; nt};
         text = [text; tmptext];
         pellets = pellets + stats.pellet_count;
         trialnum = trialnum + stats.trialnum;

@@ -104,6 +104,9 @@ for struct_index=1:length(jstruct)
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
     trials = jstruct(struct_index).trial_live;
+    if struct_index ==239
+       temp_flag=0; 
+    end
     
     try
         laser_on = jstruct(struct_index).laser_on;
@@ -117,7 +120,7 @@ for struct_index=1:length(jstruct)
         for j=1:size(js_pairs_r,1)
             if(sum(((trials(:,1)-js_pairs_r(j,1))<3)&((trials(:,2)-js_pairs_r(j,1))>0))>0) 
             % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
-            
+                
                 % And if the Joystick is in between an post-touch onset and offset pair
                 % This is now a valid trial
                     
@@ -125,9 +128,7 @@ for struct_index=1:length(jstruct)
                 np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<=1; 
                 %set of nose poke onsets preceding the js onset
                 start_p = max(np_pairs(np_js_temp,1));
-                if numel(start_p)<1
-                    break;
-                end
+
                 %Nose poke before the Joystick touch is the most recent
                 %touch (largest time) out of all preceding np ons
                 np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2);

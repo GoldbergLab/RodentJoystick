@@ -220,7 +220,7 @@ function refresh_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 try
-    faillist = ppscript(handles.working_dir, '%f %f %s %s %s %s %s %s', 8);
+    faillist = ppscript(handles.working_dir, '%f %f %s %s %s %s %s %s %s', 9);
     datadir = [handles.working_dir, '\comb'];
     dirlist = dir(datadir);
     populate = cell(length(dirlist), 1);

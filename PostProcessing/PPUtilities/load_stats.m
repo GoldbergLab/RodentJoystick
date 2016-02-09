@@ -57,7 +57,7 @@ if combineflag==0 || length(dirlist) == 1
         [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, statstr], varargin);
     end
 elseif combineflag == 1 % combine all days' stats
-    [statslist, days, errlist] = combine_stats_struct(dirlist, varargin);
+    [statslist, days, errlist] = combine_stats_struct(dirlist, [], statstr);
 else %combine all alike days
     slistind = 1; days = [];
     for k = 1:length(dirlist)
@@ -67,7 +67,7 @@ else %combine all alike days
             slistind = slistind-1;
             %currently assumes only max of two contingencies per day - this
             %may need to be changed in the future
-            [statslist(slistind),tmpdays, errlist{k-1:k}] = combine_stats_struct(dirlist(k-1:k), varargin);
+            [statslist(slistind),tmpdays, errlist{k-1:k}] = combine_stats_struct(dirlist(k-1:k), [], statstr);
         else
             [statslist(slistind),tmpdays, errlist{k}] = load_fields([dirlist(k).name, statstr], varargin);            
         end
@@ -86,7 +86,7 @@ end
 end
 
 %combines all stats in dirlist into a single stats struct
-function [statslist, days, errlist] = combine_stats_struct(dirlist, fieldlist)
+function [statslist, days, errlist] = combine_stats_struct(dirlist, fieldlist, statstr)
 %% FIND COMBINED DATA
 errlist = cell(length(dirlist), 1);
 days = zeros(length(dirlist), 1);
