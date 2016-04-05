@@ -54,18 +54,18 @@
 default = {20, 0.25, 50, 300, 1, 1, [], 0};
 
 numvarargs = length(varargin);
-if numvarargs > 9
-    error('too many arguments (> 10), only 1 required and 9 optional.');
+if numvarargs > 10
+    error('too many arguments (> 11), only 1 required and 10 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [interv, targ_reward, dist_thresh, targ_time, plotflag, ...
-    smoothparam, ax, lasercompareflag] = default{:};
+    smoothparam, ax, lasercompareflag,to_stop] = default{:};
 if plotflag && isempty(ax);
     figure;
     ax = gca();
 end
 
-[statslist, dates] = load_stats(dirlist,1,0, 'traj_struct');
+[statslist, dates] = load_stats(dirlist,1,to_stop, 'traj_struct');
 colors = 'rbkmcgyrbkmcgyrbkmcgy';
 set_distances = zeros(1, length(statslist));
 

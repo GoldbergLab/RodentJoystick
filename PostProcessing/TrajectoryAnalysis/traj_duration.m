@@ -3,7 +3,7 @@ function [dur_hist,duration] = traj_duration(stats,varargin)
 %TRAJ_DURATION Summary of this function goes here
 %   Detailed explanation goes here
 
-default = {0,1,50,[],1, 'r'};
+default = {0,0,5,[],1, 'r'};
 numvarargs = length(varargin);
 if numvarargs > 6
     error('too many arguments (> 7), only 1 required and 6 optional.');

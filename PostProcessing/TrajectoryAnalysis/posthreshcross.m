@@ -1,4 +1,4 @@
-function [theta_hist,theta] = anglethreshcross(stats,varargin)
+function [pos_cross_hist,pos_cross] = posthreshcross(stats,varargin)
 %% argument handling
 
 default = {30*(6.35/100),0,0,1,[],1, 'r'};
@@ -9,28 +9,25 @@ end
 [default{1:numvarargs}] = varargin{:};
 [thresh,trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
-stats=get_stats_with_trajid(stats,trajid);
 tstruct = stats.traj_struct;
-theta=[];
+pos_cross=[];
 
 k=0;
 for i=1:length(tstruct)
     if (tstruct(i).rw == rw_only) || ~rw_only
     index = find(tstruct(i).magtraj>thresh);
     thresh_cross = min(index);
-    if numel(thresh_cross) && thresh_cross>50
+    if numel(thresh_cross)
         k=k+1;
-        [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
+        pos_cross(k) = thresh_cross;
     end
     end
 end
 
-theta = theta*(180/pi);
-
 % theta(sign(theta)==-1) = 2*pi + theta(sign(theta)==-1);
-edges = -180:interv:180;
-theta_hist = histc(theta,edges);
-theta_hist = theta_hist./(sum(theta_hist));
+edges = 0:10:1000;
+pos_cross_hist = histc(pos_cross,edges);
+pos_cross_hist = pos_cross_hist./(sum(pos_cross_hist));
 
 % x_pl = dist_theta.*(cosd(0:10:360));
 % y_pl = dist_theta.*(sind(0:10:360));
@@ -43,6 +40,6 @@ if plotflag
     end
     axes(ax);
     hold on;
-    stairs(edges,theta_hist,color);
+    stairs(edges,pos_cross_hist,color);
     hold off;
 end

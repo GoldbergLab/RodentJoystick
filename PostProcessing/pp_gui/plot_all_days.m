@@ -113,10 +113,10 @@ elseif strcmp(plotname, 'JS Touch Dist')
     rewrate = 0.1; interv = 15; plotflag = 1;
     if lasercompareflag>1
         [~, setdiststr] = multi_js_touch_dist_laser(dirlist, interv, rewrate, thresh, ...
-            holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1);
+            holdtime, plotflag, smoothparam, axlist(axnum), lasercompareflag-1,to_stop);
     else %normal call
         [~, setdiststr] = multi_js_touch_dist(dirlist, interv, rewrate, thresh, ...
-            holdtime, combineflag, plotflag, smoothparam, axlist(axnum),traj_id);
+            holdtime, combineflag, plotflag, smoothparam, axlist(axnum),traj_id,to_stop);
     end
         setdiststr = ['JS Touch Dist', setdiststr];
         setdiststr = setdiststr';
@@ -251,7 +251,7 @@ elseif strcmp(plotname,'Angle at Thresh after Hold')
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv';
 %   arg3label = 'Thresh';
-    hold_time = 100;
+    hold_time = 200;
     interv = 20;
     plotflag=1;
     [consolestr] = multi_anglethreshcrosshold(dirlist,thresh_in,thresh_out,hold_time,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);

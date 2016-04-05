@@ -1,7 +1,7 @@
 function [theta_hist,theta] = anglethreshcrosshold(stats,varargin)
 %% argument handling
 
-default = {30*(6.35/100),50*(6.35/100),400,0,1,[],1, 'r'};
+default = {30*(6.35/100),45*(6.35/100),200,0,0,10,[],1, 'r'};
 numvarargs = length(varargin);
 if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');

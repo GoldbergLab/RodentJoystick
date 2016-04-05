@@ -153,7 +153,7 @@ handles.RADIUS = RADIUS;
 
 raw_x = (jstruct(struct_index).traj_x);
 raw_y = (jstruct(struct_index).traj_y);
-stats = xy_getstats(jstruct(struct_index));
+stats = xy_getstats(jstruct(struct_index),[],1);
 
 traj_x = (raw_x)*(RADIUS/100);
 traj_y = (raw_y)*(RADIUS/100);

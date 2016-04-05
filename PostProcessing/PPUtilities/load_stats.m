@@ -45,9 +45,9 @@ function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag,to_
 %
 errlist = cell(length(dirlist), 1);
 if to_stop
-    statstr = '/stats_ts.mat';
+    statstr = '\stats_ts.mat';
 else
-    statstr = '/stats.mat';
+    statstr = '\stats.mat';
 end
 if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data

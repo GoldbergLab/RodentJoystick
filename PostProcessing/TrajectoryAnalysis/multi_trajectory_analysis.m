@@ -80,7 +80,7 @@ end
 colors = 'rbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
-[statslist_all, dates] = load_stats(dirlist, combineflag);
+[statslist_all, dates] = load_stats(dirlist, combineflag, 0);
 
 if lasercompareflag==3 && combineflag==1
     statslist(1) = get_stats_with_trajid(statslist_all,1);

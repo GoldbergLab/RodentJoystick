@@ -53,21 +53,21 @@
 %   traj_id :: parameter indicating which subset of trajectories to
 %       analyze - see get_stats_with_trajid documentation
 
-default = {20, 0.25, 50, 300, 0, 1, 1, [], 0};
+default = {20, 0.25, 50, 300, 0, 1, 1, [], 0,0};
 
 numvarargs = length(varargin);
-if numvarargs > 9
-    error('too many arguments (> 10), only 1 required and 9 optional.');
+if numvarargs > 10
+    error('too many arguments (> 11), only 1 required and 10 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
 [interv, targ_reward, dist_thresh, targ_time, combineflag, plotflag, ...
-    smoothparam, ax, traj_id] = default{:};
+    smoothparam, ax, traj_id,to_stop] = default{:};
 if plotflag && isempty(ax);
     figure;
     ax = gca();
 end
 
-[statslist, dates] = load_stats(dirlist, combineflag, 'traj_struct');
+[statslist, dates] = load_stats(dirlist, combineflag,to_stop,'traj_struct');
 colors = 'rbkmcgyrbkmcgyrbkmcgy';
 set_distances = zeros(1, length(statslist));
 

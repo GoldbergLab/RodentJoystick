@@ -60,7 +60,7 @@
 %   med_time :: the median hold time using the js_touch_dist 
 %   
 function [set_dist, holddist_vect, med_time, holdlength] = js_touch_dist(stats, varargin)
-default = {20, 300, 0.05, 50, 1, 0, 1, [], 'r'};
+default = {20, 400, 0.05, 30*6.35/100, 1, 0, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');
@@ -81,7 +81,13 @@ holdlength=[];
 
 for stlen=1:length(tstruct)
     if (tstruct(stlen).rw == rw_only) || ~rw_only
-            holdlength(end+1) = getmaxcontlength(tstruct(stlen).magtraj,dist_thresh);
+        thresh_cross = (tstruct(stlen).magtraj)>dist_thresh;
+        if sum(thresh_cross)>0
+         [index] = find(thresh_cross == 1);
+        else
+          index = numel(thresh_cross);
+        end
+            holdlength(end+1) = index(1);
     end
 end
 

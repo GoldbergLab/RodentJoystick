@@ -166,6 +166,7 @@ try
     text = {};
     for i = 1:length(statslist);
         stats = statslist(i);
+        try
         pc = [dates{i},' pellets: ', num2str(stats.pellet_count)];
         sr = [dates{i},' success rate: ', num2str(stats.srate.total)];
         sr_l = [dates{i},' success rate_l: ', num2str(stats.srate.laser_succ)];
@@ -175,6 +176,7 @@ try
         text = [text; tmptext];
         pellets = pellets + stats.pellet_count;
         trialnum = trialnum + stats.trialnum;
+        end
     end
     handles = update_console(handles, text);
     if length(statslist) > 1

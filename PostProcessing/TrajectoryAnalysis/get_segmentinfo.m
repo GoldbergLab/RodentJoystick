@@ -22,12 +22,16 @@ kk=0;
                 peakvel = max(data.speed(redir_points(jj):redir_points(jj+1)));
                 dur = (redir_points(jj+1)-redir_points(jj));
                 pathlen = sum((diff(tstruct.traj_x(redir_points(jj):redir_points(jj+1)))).^2 + (diff(tstruct.traj_y(redir_points(jj):redir_points(jj+1))).^2)).^(0.5);
+                disp_x = tstruct.traj_x(redir_points(jj+1))-tstruct.traj_x(redir_points(jj)); 
+                disp_y = tstruct.traj_y(redir_points(jj+1))-tstruct.traj_y(redir_points(jj)); 
+                displacement = (disp_x^2+disp_y^2)^(0.5);     
                 kk=kk+1;
                 seginfo_vect(kk).peakvel = peakvel;
                 seginfo_vect(kk).dur = dur;
                 seginfo_vect(kk).pathlen = pathlen;
                 seginfo_vect(kk).quality = quality(jj);
                 seginfo_vect(kk).velprofile = data.speed(redir_points(jj):redir_points(jj+1));
+                seginfo_vect(kk).disp =  displacement;
             end
         end
     end

@@ -18,6 +18,6 @@ for ii=1:maxtime
 end
 
 figure;
-pcolor(vel_time);
+pcolor(log(vel_time));
 shading flat
 

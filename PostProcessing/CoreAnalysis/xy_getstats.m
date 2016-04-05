@@ -104,9 +104,7 @@ for struct_index=1:length(jstruct)
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
     trials = jstruct(struct_index).trial_live;
-    if struct_index ==239
-       temp_flag=0; 
-    end
+    struct_index
     
     try
         laser_on = jstruct(struct_index).laser_on;
@@ -128,7 +126,11 @@ for struct_index=1:length(jstruct)
                 np_js_temp = (np_pairs(:,1)-js_pairs_r(j,1))<=1; 
                 %set of nose poke onsets preceding the js onset
                 start_p = max(np_pairs(np_js_temp,1));
-
+                
+                if numel(start_p)<1
+                    break
+                end
+                
                 %Nose poke before the Joystick touch is the most recent
                 %touch (largest time) out of all preceding np ons
                 np_end = np_pairs((np_pairs(np_js_temp,1)==start_p),2);
@@ -166,7 +168,7 @@ for struct_index=1:length(jstruct)
                 
 
                 if js_reward(j)
-                    rw_or_stop = min([trial_end,rw_onset(onset_ind)]);
+                    rw_or_stop = rw_onset(onset_ind)+100;
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]);
                 else
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
@@ -264,16 +266,18 @@ for struct_index=1:length(jstruct)
                         onset_ind = onset_ind + 1;
                     end
                     
+                    try
                     traj_struct(k).magatnp = ((traj_x(start_p)^2+traj_y(start_p)^2)^(0.5));
+                    catch
+                        flag;
+                    end
                     traj_struct(k).max_value_ind = find(mag_traj==max(mag_traj));
                     traj_struct(k).max_value = max(mag_traj);
                     traj_struct(k).posttouch = stop_p-js_pairs_r(j,1);
                     traj_struct(k).rw_or_stop = rw_or_stop-js_pairs_r(j,1);
                     traj_struct(k).trial_end = trial_end;
-                    traj_struct(k).trial_end = trial_end-stop_p;
-                    traj_pdf_jstrial = traj_pdf_jstrial + ...
-                        hist2d([traj_y_t',traj_x_t'],-6.35:0.127:6.35,-6.35:0.127:6.35);
-                    
+                    traj_struct(k).trial_diff = trial_end-stop_p;
+                    traj_struct(k).real_time = jstruct(struct_index).real_time + js_pairs_r(j,1)/(1000*60*60*24);
             end     
         end
     end

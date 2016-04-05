@@ -42,8 +42,8 @@ traj_struct = handles.traj_struct;
 plottype = get(handles.indivselectplot, 'Value');
 working_dir = get(handles.working_dir_text,'String');
 [thresh2, holdtime, thresh] = extract_contingency_info(working_dir);
-thresh2 = thresh2*(handles.RADIUS)/100;
-thresh = thresh*(handles.RADIUS)/100;
+thresh2 = thresh2;%*(handles.RADIUS)/100;
+thresh = thresh;%*(handles.RADIUS)/100;
 trajectory = traj_struct(handles.pl_index);
 axes(handles.axes7); cla;
 if numel(trajectory)>0

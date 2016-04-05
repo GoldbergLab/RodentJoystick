@@ -2,7 +2,6 @@ function [handles] = plot_traj_xy(handles)
 %This function plots the trajectory on x-y coordinate space on the large
 %square center axis for xy_anlys_gui
 
-
 axes(handles.axes6); cla; axis manual; axis square;
 % only continue if actually if there are trajectories
 if(numel(handles.traj_struct))>0
@@ -107,8 +106,8 @@ set(handles.rewardinfo,'String', rwinfo);
 %% Contingency Information
 working_dir = get(handles.working_dir_text,'String');
 [thresh2, holdtime, thresh, minangle, maxangle] = extract_contingency_info(working_dir);
-thresh2 = thresh2*handles.RADIUS/100;
-thresh = thresh*handles.RADIUS/100;
+thresh2 = thresh2;%*handles.RADIUS/100;
+thresh = thresh;%*handles.RADIUS/100;
 if pl_index == 1
     set(handles.innerthresh, 'String', num2str(thresh));
     set(handles.ht, 'String', num2str(holdtime));
