@@ -104,7 +104,7 @@ for struct_index=1:length(jstruct)
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
     trials = jstruct(struct_index).trial_live;
-    struct_index
+%     struct_index;
     
     try
         laser_on = jstruct(struct_index).laser_on;
