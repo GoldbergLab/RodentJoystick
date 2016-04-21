@@ -1,4 +1,4 @@
-function [console_output] = multi_anglethreshcross(dirlist,varargin)
+function [console_output,fig_handle] = multi_anglethreshcross(dirlist,varargin)
 
 default = {30*(6.35/100),0,0,1,[],1,0,0};
 numvarargs = length(varargin);
@@ -7,10 +7,11 @@ if numvarargs > 9
 end
 [default{1:numvarargs}] = varargin{:};
 [thresh,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+fig_handle= [];
 
 if plotflag
     if numel(ax)<1
-        figure;
+        fig_handle = figure;
         ax = gca;
     end
 end
@@ -48,6 +49,7 @@ end
 if plotflag
     axes(ax);
     legend(dates);
+    title(strcat('Angle at threshold Crossing :',num2str(thresh)));
 end
 
 

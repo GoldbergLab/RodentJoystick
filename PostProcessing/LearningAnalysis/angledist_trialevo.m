@@ -1,4 +1,4 @@
-function [theta_all_l,theta_all_nl,theta_hist_l,theta_hist_nl] = angledist_trialevo(dirlist,varargin)
+function [theta_all_l,theta_all_nl,theta_hist_l,theta_hist_nl,h] = angledist_trialevo(dirlist,varargin)
 
 default = {45,1};
 numvarargs = length(varargin);
@@ -21,8 +21,8 @@ for i = 1:length(dirlist)
     stats_l = get_stats_with_trajid(stats,1);
     stats_nl = get_stats_with_trajid(stats,2);
     try
-    [~,theta_l_t] = anglethreshcross(stats_l,dist*(6.35/100),0,0,1,10,[],0);
-    [~,theta_nl_t] = anglethreshcross(stats_nl,dist*(6.35/100),0,0,1,10,[],0);
+    [~,theta_l_t] = anglethreshcross(stats_l,dist*(6.35/100),0,0,1,[],0);
+    [~,theta_nl_t] = anglethreshcross(stats_nl,dist*(6.35/100),0,0,1,[],0);
     catch
     end
 %     [~,theta_l_t] = anglethreshcrosshold(stats_l,30*(6.35/100),dist*(6.35/100),400,0,0,10,[],0);
@@ -33,11 +33,11 @@ for i = 1:length(dirlist)
     
     contingency_angle = strsplit(pathstr_rule,'_');
     
-    out_thresh = str2num(contingency_angle{2});
-    hold_time(i) = str2num(contingency_angle{3});
-    hold_thresh(i) = str2num(contingency_angle{4});
-    angle1(i) = str2num(contingency_angle{5});
-    angle2(i) = str2num(contingency_angle{6});
+    out_thresh = str2num(contingency_angle{end-5});
+    hold_time(i) = str2num(contingency_angle{end-4});
+    hold_thresh(i) = str2num(contingency_angle{end-3});
+    angle1(i) = str2num(contingency_angle{end-2});
+    angle2(i) = str2num(contingency_angle{end-1});
     theta_l = [theta_l theta_l_t];
     theta_nl = [theta_nl theta_nl_t];
     angle_index_nl(i) = numel(theta_nl);
@@ -81,8 +81,10 @@ for i = 1:((numel(theta_nl)-ratio*windowSize)/10)
 end
 
 holdtime_changes = find(abs(diff(hold_time))>0);
+angle_changes = find(abs(diff(angle1))>0);
 
-h1 = figure;
+h(1) = figure;
+try
 imagesc(theta_hist_l');
 axis xy;
 hold on;
@@ -99,7 +101,13 @@ for i=1:length(holdtime_changes)
     plot(ceil(angle_index_l(holdtime_changes(i))/10)*ones(1,72),1:72,'w','linewidth',1);
 end
 
-h2 = figure;
+title('Theta (Laser)')
+catch
+end
+
+
+h(2) = figure;
+try
 plot(median(theta_all_l),'b');
 hold on;
 plot(prctile(theta_all_l,25),'r');
@@ -115,8 +123,14 @@ for i=1:length(holdtime_changes)
     plot(ceil(angle_index_l(holdtime_changes(i))/10)*ones(1,73),-180:5:180,'k','linewidth',1);
 end
 axis([1 length(median(theta_all_l)) -180 180]);
+title('Theta (Laser) Med + 25-75 percentile')
 
-h3= figure;
+catch
+end
+
+
+h(3)= figure;
+try
 imagesc(theta_hist_nl');
 axis xy;
 hold on;
@@ -132,8 +146,14 @@ set(gca,'yticklabel',['-180';'-120';'-60 ';'0   ';'60  ';'120 ';'180 ']);
 for i=1:length(holdtime_changes)
     plot(ceil(angle_index_nl(holdtime_changes(i))/10)*ones(1,72),1:72,'w','linewidth',1);
 end
+title('Theta (Non-Laser)')
 
-h4 = figure;
+catch
+end
+
+
+h(4) = figure;
+try
 plot(median(theta_all_nl),'b');
 hold on;
 plot(prctile(theta_all_nl,25),'r');
@@ -150,8 +170,15 @@ for i=1:length(holdtime_changes)
     plot(ceil(angle_index_nl(holdtime_changes(i))/10)*ones(1,73),-180:5:180,'k','linewidth',1);
 end
 axis([1 length(median(theta_all_nl)) -180 180]);
+title('Theta (Non-Laser) Med + 25-75 percentile')
 
-h5 = figure;
+catch
+end
+
+
+
+h(5) = figure;
+try
 plot(median(theta_all_nl),'b');
 hold on;
 time_ser = 1:(length(theta_all_nl)/length(theta_all_l)):length(theta_all_nl);
@@ -163,9 +190,15 @@ for i=1:(length(angle_index_nl)-1)
 end
 axis([1 length(median(theta_all_nl)) -180 180]);
 
-angle_changes = find(abs(diff(angle1))>0);
 
-h6 = figure;
+title('Theta (Non-Laser) & (Laser) Overlay - Median')
+
+catch
+end
+
+
+h(6) = figure;
+try
 plot(std(theta_all_nl),'b');
 hold on;
 time_ser = 1:(length(theta_all_nl)/length(theta_all_l)):length(theta_all_nl);
@@ -176,7 +209,9 @@ for i=1:length(angle_changes)
 end
 
 axis([1 length(var(theta_all_nl)) 0 100]);
-
+title('Theta (Non-Laser) & (Laser) Overlay - StdDev')
+catch
+end
 
 if save_flag
     
@@ -186,10 +221,10 @@ if save_flag
         mkdir(save_dir);
     end
      
-      savefig(h1,strcat(save_dir,'/laser_all.fig'));
-      savefig(h2,strcat(save_dir,'/laser_median.fig'));
-      savefig(h3,strcat(save_dir,'/nonlaser_all.fig'));
-      savefig(h4,strcat(save_dir,'/nonlaser_median.fig'));
-      savefig(h5,strcat(save_dir,'/median_overlay.fig'));
-      savefig(h6,strcat(save_dir,'/variance_overlay.fig'));
+      savefig(h(1),strcat(save_dir,'/laser_all.fig'));
+      savefig(h(2),strcat(save_dir,'/laser_median.fig'));
+      savefig(h(3),strcat(save_dir,'/nonlaser_all.fig'));
+      savefig(h(4),strcat(save_dir,'/nonlaser_median.fig'));
+      savefig(h(5),strcat(save_dir,'/median_overlay.fig'));
+      savefig(h(6),strcat(save_dir,'/variance_overlay.fig'));
 end

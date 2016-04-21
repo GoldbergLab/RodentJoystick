@@ -1,4 +1,4 @@
-function [data, labels] = np_post_distribution(dirlist, varargin)
+function [data, labels, fig_handle] = np_post_distribution(dirlist, varargin)
 %[data, labels] = np_post_distribution(dirlist, [interv, normalize, 
 %   combineflag, smoothparam, plotflag, ax]) 
 %   
@@ -56,8 +56,8 @@ end
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
 labels.title = 'Nosepoke Post Distribution';
-if plotflag == 1 && length(ax) <1
-        figure;
+if length(ax) <1
+        fig_handle = figure;
         ax(1) = gca();
 end
 if combineflag == 1
@@ -94,5 +94,4 @@ if plotflag == 1
     legend(labels.legend);
     hold off;
 end
-
 

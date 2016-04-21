@@ -100,6 +100,20 @@ if ~failedflag && ((analysisflag<=4 && ~singlestep) || analysisflag == 4)
         failedflag = 4; err = getReport(e);
     end
 end
+
+%% Create PPT report
+if ~failedflag && ((analysisflag<=5 && ~singlestep) || analysisflag == 5)
+    try
+        dirlist(1).name = working_dir;
+        create_ppt_report(dirlist);
+        newdir = working_dir;
+    catch e
+        failedflag = 5; err = getReport(e);
+    end
+end
+
 time = toc; %end timing and display
+
+
 
 err = [num2str(time), ' seconds elapsed: ', err];

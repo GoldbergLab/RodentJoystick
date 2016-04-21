@@ -1,4 +1,4 @@
-function [data, labels] = activity_heat_map(stats, varargin)
+function [data, labels, fig_handle] = activity_heat_map(stats, varargin)
 % [data, labels] = activity_heat_map(stats, [ax, logmapping, colorperc])
 %   
 %   plots the probability distribution given by stats.traj_pdf_jstrial onto
@@ -20,16 +20,19 @@ function [data, labels] = activity_heat_map(stats, varargin)
 %           plot
 %
 
-default = {1, [25 75], [], [1 100], 0, 1, 0};
+default = {1, [25 75], [], [1 100], 0, 1, 1};
 numvarargs = length(varargin);
-if numvarargs > 7
-    error('too many arguments (> 8), only one required and 7 optional.');
+if numvarargs > 8
+    error('too many arguments (> 9), only one required and 7 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[logmapping, colorperc, ax, radii, traj_id, rwonly] = default{:};
-if (length(ax)<1)
-    figure; 
-    ax = gca();
+[logmapping, colorperc, ax, radii, traj_id, rwonly,plot_flag] = default{:};
+
+if plot_flag==1
+    if (length(ax)<1)
+        fig_handle = figure;
+        ax = gca();
+    end
 end
 
 if logmapping == 1
@@ -43,10 +46,12 @@ elseif traj_id == 2;
 elseif traj_id == 3;
     ext = ' (No Laser Only - Resampled)';
 end
-
-stats = get_stats_with_trajid(stats,traj_id);
-data = trajectorypdf(stats,rwonly);
-labels = draw_heat_map(data, ax, ['Activity Distribution',ext], logmapping, colorperc, radii);
-
+if plot_flag==1
+    stats = get_stats_with_trajid(stats,traj_id);
+    data = trajectorypdf(stats,rwonly);
+    labels = draw_heat_map(data, ax, ['Activity Distribution',ext], logmapping, colorperc, radii);
 end
+
+
+
 

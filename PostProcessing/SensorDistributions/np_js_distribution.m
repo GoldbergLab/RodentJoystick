@@ -1,4 +1,4 @@
-function [data, labels] = np_js_distribution(dirlist, varargin)
+function [data, labels,fig_handle] = np_js_distribution(dirlist, varargin)
 % [data, labels ] = np_js_distribution(dirlist, [interv, normalize, 
 %   combineflag, smoothparam, plotflag, ax])
 % 
@@ -59,10 +59,12 @@ clear varargin; clear default; clear numvarargs;
 labels.xlabel = 'Time (ms)';
 labels.ylabel = 'Probability';
 labels.title = 'Nosepoke Joystick Touch Distribution';
-if plotflag == 1 && length(ax) <1
-        figure;
+
+if length(ax) <1
+        fig_handle = figure;
         ax(1) = gca();
 end
+
 if combineflag == 1
     data = cell(1, 1);
 elseif combineflag == 0

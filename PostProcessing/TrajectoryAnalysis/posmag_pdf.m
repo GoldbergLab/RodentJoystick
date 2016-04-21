@@ -21,7 +21,7 @@ for ii=1:maxtime
 end
 
 figure;
-%pos_time = log(pos_time);
+pos_time = log(pos_time);
 pcolor(pos_time);
 shading flat
 % vel_time(isinf(vel_time))=0;

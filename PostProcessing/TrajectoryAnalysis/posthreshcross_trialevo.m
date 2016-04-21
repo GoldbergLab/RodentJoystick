@@ -1,4 +1,4 @@
-function [dur_hist_l,dur_hist_nl,dur_all_l,dur_all_nl] = posthreshcross_trialevo(dirlist,varargin) 
+function [dur_hist_l,dur_hist_nl,dur_all_l,dur_all_nl,fig_handle] = posthreshcross_trialevo(dirlist,varargin) 
 
 default = {30,1};
 numvarargs = length(varargin);
@@ -12,7 +12,7 @@ dur_nl = [];
 dur_all_l = [];
 dur_all_nl = [];
 edges = 50:50:1000;
-windowSize = 200;
+windowSize = 50;
 for i = 1:length(dirlist)
 %   i
     stats = load_stats(dirlist(i),0,1);
@@ -32,11 +32,11 @@ for i = 1:length(dirlist)
     
     contingency_angle = strsplit(pathstr_rule,'_');
     
-    out_thresh = str2num(contingency_angle{2});
-    hold_time(i) = str2num(contingency_angle{3});
-    hold_thresh(i) = str2num(contingency_angle{4});
-    angle1(i) = str2num(contingency_angle{5});
-    angle2(i) = str2num(contingency_angle{6});
+    out_thresh = str2num(contingency_angle{end-5});
+    hold_time(i) = str2num(contingency_angle{end-4});
+    hold_thresh(i) = str2num(contingency_angle{end-3});
+    angle1(i) = str2num(contingency_angle{end-2});
+    angle2(i) = str2num(contingency_angle{end-1});
     dur_l = [dur_l dur_l_t];
     dur_nl = [dur_nl dur_nl_t];
     angle_index_nl(i) = numel(dur_nl);
@@ -60,7 +60,7 @@ for i=1:length(angle_changes)
     plot(ceil(angle_index_l(angle_changes(i))/10)*ones(1,200),1:200,'w','linewidth',2);
 end
 
-figure
+fig_handle(1) = figure;
 imagesc(dur_hist_l');
 axis xy
 hold on;
@@ -77,7 +77,7 @@ end
 set(gca,'ytick',[1 10 20]);
 set(gca,'yticklabel',['  50';' 500';'1000']);
 
-figure
+fig_handle(2) = figure;
 imagesc(dur_hist_nl');
 axis xy
 hold on;

@@ -1,4 +1,4 @@
-function [pos_cross_hist,pos_cross] = posthreshcross(stats,varargin)
+function [pos_cross_hist,pos_cross,real_time] = posthreshcross(stats,varargin)
 %% argument handling
 
 default = {30*(6.35/100),0,0,1,[],1, 'r'};
@@ -20,6 +20,7 @@ for i=1:length(tstruct)
     if numel(thresh_cross)
         k=k+1;
         pos_cross(k) = thresh_cross;
+        real_time(k) = tstruct(i).real_time;
     end
     end
 end
