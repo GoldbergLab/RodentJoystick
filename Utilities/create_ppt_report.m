@@ -66,7 +66,7 @@ try
     
 [dirlist_all,name,ext] = fileparts(dirlist(1).name);
 [dirlist_all,name,ext] = fileparts(dirlist_all);
-dirlist_all = rdir(strcat(dirlist_all,'.\*\'),'isdir');
+dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
 
 [~,~,~,~,fig_handle] = angledist_trialevo(dirlist_all(65:end),45,1);
 exportfigpptx(pptname,fig_handle,[2 3]);
