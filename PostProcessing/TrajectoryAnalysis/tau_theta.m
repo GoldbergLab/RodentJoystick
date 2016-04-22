@@ -39,7 +39,7 @@ if plot_flag
     end
     axes(ax);
     hold on
-    scatter(theta,tau,3,color,'fill');
-    axis([-180 180 0 1000]);
+    scatter(tau,theta,3,color,'fill');
+    axis([0 1000 -180 180]);
     hold off
 end
