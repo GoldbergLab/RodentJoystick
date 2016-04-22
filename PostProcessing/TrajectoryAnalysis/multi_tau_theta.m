@@ -22,7 +22,7 @@ if (lasercompareflag - 1)>0
     combineflag=1;
     trajid=0;
     
-    [statslist, dates] = load_stats(dirlist, combineflag,0, 'traj_struct');
+    [statslist, dates] = load_stats(dirlist, combineflag,1, 'traj_struct');
     statshit = get_stats_with_trajid(statslist,1);
     statscatch = get_stats_with_trajid(statslist,lasercompareflag);
     
@@ -32,7 +32,7 @@ if (lasercompareflag - 1)>0
     statslist(2) = statshit;
     statslist(1) = statscatch;
 else
-    [statslist, dates] = load_stats(dirlist, combineflag,0, 'traj_struct');
+    [statslist, dates] = load_stats(dirlist, combineflag,1, 'traj_struct');
 end
 
 for i= 1:length(statslist)
