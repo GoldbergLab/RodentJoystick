@@ -60,7 +60,7 @@ end
 
 clear fig_handle;
 try
-[~,~,~,~,fig_handle] = angledist_trialevo(dirlist,45,1);
+[~,~,~,~,fig_handle] = angledist_trialevo(dirlist,45,0);
 exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
@@ -69,7 +69,7 @@ end
 
 clear fig_handle;
 try
-[~,~,~,~,fig_handle] = angledist_timeevo(dirlist,45,1);
+[~,~,~,~,fig_handle] = angledist_timeevo(dirlist,45,0);
 exportfigpptx(pptname,fig_handle,[1 1]);
 close(fig_handle);
 catch
@@ -100,7 +100,7 @@ try
 [dirlist_all,name,ext] = fileparts(dirlist_all);
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
 
-[~,~,~,~,fig_handle] = angledist_trialevo(dirlist_all(65:end),45,1);
+[~,~,~,~,fig_handle] = angledist_trialevo(dirlist_all(65:end),45,0);
 exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
@@ -114,7 +114,7 @@ try
 [dirlist_all,name,ext] = fileparts(dirlist_all);
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
     
-[~,~,~,~,fig_handle] = angledist_timeevo(dirlist_all(65:end),45,1);
+[~,~,~,~,fig_handle] = angledist_timeevo(dirlist_all(65:end),45,0);
 exportfigpptx(pptname,fig_handle,[1 1]);
 close(fig_handle);
 catch
