@@ -20,7 +20,8 @@ if sum(multiplyradius == plottype)
 else
     LIMIT = Inf;
 end
-
+% figure;
+% handles.axes7 = gca;
 axes(handles.axes7);
 hold on;
 plot(handles.axes7, 0:1:(length(data)-1), data);

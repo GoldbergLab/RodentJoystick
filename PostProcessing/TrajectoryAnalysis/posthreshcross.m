@@ -20,13 +20,17 @@ for i=1:length(tstruct)
     if numel(thresh_cross)
         k=k+1;
         pos_cross(k) = thresh_cross;
+        try
         real_time(k) = tstruct(i).real_time;
+        catch
+        real_time(k) = 0;
+        end
     end
     end
 end
 
 % theta(sign(theta)==-1) = 2*pi + theta(sign(theta)==-1);
-edges = 0:10:1000;
+edges = 0:20:1000;
 pos_cross_hist = histc(pos_cross,edges);
 pos_cross_hist = pos_cross_hist./(sum(pos_cross_hist));
 

@@ -106,7 +106,7 @@ for stlen=1:length(tstruct)
 end
 
 %dist_distri=dist_distri(dist_distri>0);
-end_time_range = 1000;
+end_time_range = 2000;
 dist_time_hld = 0:interv:end_time_range;
 normalize = 1;
 holddist_vect = histc(holdlength,dist_time_hld);

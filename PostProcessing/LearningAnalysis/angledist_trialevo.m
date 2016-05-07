@@ -14,6 +14,7 @@ theta_all_nl = [];
 edges = -180:5:180;
 windowSize = 100;
 
+try
 for i = 1:length(dirlist)
 %   i
     stats = load_stats(dirlist(i),0,1);
@@ -43,7 +44,9 @@ for i = 1:length(dirlist)
     angle_index_nl(i) = numel(theta_nl);
     angle_index_l(i) = numel(theta_l);
 end
-
+catch
+    display(dirlist(i).name);
+end
 ratio = (angle_index_nl(end)/angle_index_l(end));
 angle_index_nl(end) = angle_index_nl(end)-windowSize*ratio;
 angle_index_l(end) = angle_index_l(end)-windowSize;

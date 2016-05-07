@@ -103,7 +103,12 @@ for struct_index=1:length(jstruct)
     js_pairs_r = jstruct(struct_index).js_pairs_r;
     js_pairs_l = jstruct(struct_index).js_pairs_l;
     js_reward = jstruct(struct_index).js_reward;
-    trials = jstruct(struct_index).trial_live;
+    
+    try
+        trials = jstruct(struct_index).trial_live;
+    catch
+        trials = np_pairs;
+    end
 %     struct_index;
     
     try
