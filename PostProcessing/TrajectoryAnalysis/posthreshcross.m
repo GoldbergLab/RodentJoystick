@@ -9,6 +9,7 @@ end
 [default{1:numvarargs}] = varargin{:};
 [thresh,trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
+stats = get_stats_with_len(stats,50);
 tstruct = stats.traj_struct;
 pos_cross=[];
 

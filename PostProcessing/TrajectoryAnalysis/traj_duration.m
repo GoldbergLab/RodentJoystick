@@ -12,6 +12,7 @@ end
 [trajid,rw_only,interv,ax,plotflag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
+stats=get_stats_with_len(stats,50);
 
 tstruct = stats.traj_struct;
 k=0;

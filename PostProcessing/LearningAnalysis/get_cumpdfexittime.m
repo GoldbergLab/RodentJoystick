@@ -1,14 +1,30 @@
-function [] = get_cumpdfexittime(stats,dist)
+function [] = get_cumpdfexittime(stats,dist1,dist2)
 
-stats_new = get_stats_trialsendduetoexit(stats);
-stats_l = get_stats_with_trajid(stats_new,1);
-stats_nl = get_stats_with_trajid(stats_new,2);
-stats_lt = get_stats_with_trajid(stats,1);
-stats_nlt = get_stats_with_trajid(stats,2);
+stats = get_stats_with_len(stats,50);
+stats_reach = get_stats_with_reach(stats,dist2*(6.35/100));
 
-ratio2 = numel(stats_l.traj_struct)/numel(stats_lt.traj_struct);
-ratio1 = numel(stats_nl.traj_struct)/numel(stats_nlt.traj_struct);
-[a1,b1,c1,d1] = js_touch_dist(stats_nl,20,400,0.05,dist*(6.35/100));
-[a2,b2,c2,d2] = js_touch_dist(stats_l,20,400,0.05,dist*(6.35/100));
-figure;plot(cumsum(b1)*ratio1,'b');
-hold on;plot(cumsum(b2)*ratio2,'r');
+stats_l = get_stats_with_trajid(stats_reach,1);
+stats_nl = get_stats_with_trajid(stats_reach,2);
+
+
+
+if numel(stats_nl.traj_struct)>0
+[~,tau] = tau_theta(stats_nl,dist1*(6.35/100));
+tau_dist = histc(tau,0:1:500);
+tau_dist = tau_dist/(sum(tau_dist));
+tau_cumdist = cumsum(tau_dist);
+h = figure;
+plot(0:1:500,tau_cumdist,'b');
+end
+
+if numel(stats_l.traj_struct)>0
+[~,tau] = tau_theta(stats_l,dist1*(6.35/100));
+tau_dist = histc(tau,0:1:500);
+tau_dist = tau_dist/(sum(tau_dist));
+tau_cumdist = cumsum(tau_dist);
+figure(h)
+hold on
+plot(0:1:500,tau_cumdist,'r');
+hold off;
+end
+

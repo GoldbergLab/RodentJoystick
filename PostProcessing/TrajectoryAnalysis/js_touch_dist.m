@@ -60,7 +60,7 @@
 %   med_time :: the median hold time using the js_touch_dist 
 %   
 function [set_dist, holddist_vect, med_time, holdlength] = js_touch_dist(stats, varargin)
-default = {20, 400, 0.05, 30*6.35/100, 1, 0, 1, [], 'r'};
+default = {20, 400, 0.05, 30*6.35/100, 1, 1, 1, [], 'r'};
 numvarargs = length(varargin);
 if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');
@@ -72,6 +72,8 @@ if plotflag>0 && length(ax)<1;
     figure;
     ax = gca();
 end
+
+stats = get_stats_with_len(stats,50);
 
 tstruct=stats.traj_struct;
 start_prev=0;
@@ -106,7 +108,7 @@ for stlen=1:length(tstruct)
 end
 
 %dist_distri=dist_distri(dist_distri>0);
-end_time_range = 2000;
+end_time_range = 500;
 dist_time_hld = 0:interv:end_time_range;
 normalize = 1;
 holddist_vect = histc(holdlength,dist_time_hld);

@@ -18,7 +18,7 @@ for i=1:length(tstruct)
     if (tstruct(i).rw == rw_only) || ~rw_only
     index = find(tstruct(i).magtraj>thresh);
     thresh_cross = min(index);
-    if numel(thresh_cross)
+    if numel(thresh_cross) 
         k=k+1;
         [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
         theta_realtime(k) = tstruct(i).real_time;

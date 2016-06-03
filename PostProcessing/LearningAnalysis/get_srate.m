@@ -6,6 +6,9 @@ laser_trials_s = 0;
 catch_trials = 0;
 catch_trials_s = 0;
 
+stats.traj_struct = tstruct;
+stats = get_stats_with_len(stats,50);
+tstruct = stats.traj_struct;
 
 for tlen=1:length(tstruct)
    if tstruct(tlen).laser

@@ -15,11 +15,12 @@ edges = 50:50:1000;
 windowSize = 50;
 for i = 1:length(dirlist)
 %   i
+    try
     stats = load_stats(dirlist(i),0,1);
     stats = get_stats_with_len(stats,50);
     stats_l = get_stats_with_trajid(stats,1);
     stats_nl = get_stats_with_trajid(stats,2);
-    try
+    
     [~,dur_l_t] = posthreshcross(stats_l,dist*(6.35/100),0,0,1,10,[],0);
     [~,dur_nl_t] = posthreshcross(stats_nl,dist*(6.35/100),0,0,1,10,[],0);
     catch

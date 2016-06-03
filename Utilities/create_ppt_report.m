@@ -2,7 +2,7 @@ function [] = create_ppt_report(dirlist)
 
 stats = load_stats(dirlist,0,0);
 stats_ts = load_stats(dirlist,0,1);
-pptname = strcat(dirlist(1).name,'\analysis.ppt');
+pptname = strcat(dirlist(1).name,'\analysis.pptx');
 
 
 clear fig_handle;
@@ -60,7 +60,7 @@ end
 
 clear fig_handle;
 try
-[~,~,~,~,fig_handle] = angledist_trialevo(dirlist,45,0);
+[~,fig_handle] = angledist_trialevo(dirlist);
 exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
@@ -69,7 +69,7 @@ end
 
 clear fig_handle;
 try
-[~,~,~,~,fig_handle] = angledist_timeevo(dirlist,45,0);
+[~,~,~,~,fig_handle] = angledist_timeevo(dirlist);
 exportfigpptx(pptname,fig_handle,[1 1]);
 close(fig_handle);
 catch
@@ -78,7 +78,7 @@ end
 
 clear fig_handle;
 try
-[~,~,~,~,fig_handle] = posthreshcross_trialevo(dirlist);
+[~,fig_handle] = timetothreshcross_trialevo(dirlist);
 exportfigpptx(pptname,fig_handle,[1 2]);
 close(fig_handle);
 catch
@@ -100,7 +100,7 @@ try
 [dirlist_all,name,ext] = fileparts(dirlist_all);
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
 
-[~,~,~,~,fig_handle] = angledist_trialevo(dirlist_all(65:end),45,0);
+[~,fig_handle] = angledist_trialevo(dirlist_all(65:end));
 exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
@@ -126,7 +126,7 @@ try
 [dirlist_all,name,ext] = fileparts(dirlist_all);
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');  
     
-[~,~,~,~,fig_handle] = posthreshcross_trialevo(dirlist_all(65:end));
+[~,fig_handle] = timetothreshcross_trialevo(dirlist_all(65:end));
 exportfigpptx(pptname,fig_handle,[1 2]);
 close(fig_handle);
 catch
