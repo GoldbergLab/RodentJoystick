@@ -1,12 +1,12 @@
 function [out,h] = angledist_trialevo(dirlist,varargin)
 
-default = {45,1};
+default = {1};
 numvarargs = length(varargin);
-if numvarargs > 2
+if numvarargs > 1
     error('too many arguments (> 3), only 1 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[dist,save_flag] = default{:};
+[save_flag] = default{:};
 theta = [];
 laser_vect = [];
 edges = -180:5:180;
@@ -19,17 +19,18 @@ try
         [pathstr_rule,name,ext] = fileparts(dirlist(i).name);
         contingency_angle = strsplit(pathstr_rule,'_');
         
-        out_thresh(i) = str2num(contingency_angle{end-5});
-        hold_time(i) = str2num(contingency_angle{end-4});
-        hold_thresh(i) = str2num(contingency_angle{end-3});
-        angle1(i) = str2num(contingency_angle{end-2});
-        angle2(i) = str2num(contingency_angle{end-1});
+        out_thresh(i) = str2num(contingency_angle{2});
+        hold_time(i) = str2num(contingency_angle{3});
+        hold_thresh(i) = str2num(contingency_angle{4});
+        angle1(i) = str2num(contingency_angle{5});
+        angle2(i) = str2num(contingency_angle{6});
         
         try
             stats = load_stats(dirlist(i),0,1);
             stats = get_stats_with_len(stats,50);
+            stats = get_stats_startatzero(stats,hold_thresh(i));
             stats = get_stats_with_reach(stats,out_thresh(i)*(6.35/100));
-            [~,theta_t] = anglethreshcross(stats,hold_thresh(i)*(6.35/100),0,0,1,[],0);
+            [~,theta_t] = anglethreshcross(stats,out_thresh(i)*(6.35/100),0,0,1,[],0);
             laser_vect_t = [stats.traj_struct.laser];
         catch
         end

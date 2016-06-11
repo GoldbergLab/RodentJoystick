@@ -56,8 +56,8 @@ end
 
 clear fig_handle;
 try
-[~,fig_handle(1)] = multi_tau_theta(dirlist(end),30*(6.35/100),45*(6.35/100),0,0,[],1,0,2);
-[~,fig_handle(2)] = multi_tau_theta(dirlist(end),30*(6.35/100),45*(6.35/100),0,0,[],1,0,3);
+[~,fig_handle(1)] = multi_tau_theta(dirlist(end),30*(6.35/100),0,0,[],1,0,2);
+[~,fig_handle(2)] = multi_tau_theta(dirlist(end),30*(6.35/100),0,0,[],1,0,3);
 exportfigpptx(pptname,fig_handle,[1 2]);
 close(fig_handle);
 catch
@@ -106,7 +106,7 @@ try
 [dirlist_all,name,ext] = fileparts(dirlist_all);
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
 
-[~,fig_handle] = angledist_trialevo(dirlist_all(65:end),0);
+[~,fig_handle] = angledist_trialevo(dirlist_all(65:end));
 exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch

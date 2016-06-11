@@ -15,22 +15,23 @@ theta_nl_rt = [];
 
 for i = 1:length(dirlist)
 %   i
-    [pathstr_rule,name,ext] = fileparts(dirlist(i).name);  
+    [pathstr_rule,name,ext] = fileparts(dirlist(i).name);
+    
     contingency_angle = strsplit(pathstr_rule,'_');
     
-    out_thresh = str2num(contingency_angle{2});
-    hold_time(i) = str2num(contingency_angle{3});
-    hold_thresh(i) = str2num(contingency_angle{4});
-    angle1(i) = str2num(contingency_angle{5});
-    angle2(i) = str2num(contingency_angle{6});
+    out_thresh = str2num(contingency_angle{end-5});
+    hold_time(i) = str2num(contingency_angle{end-4});
+    hold_thresh(i) = str2num(contingency_angle{end-3});
+    angle1(i) = str2num(contingency_angle{end-2});
+    angle2(i) = str2num(contingency_angle{end-1});
     
     try
     stats = load_stats(dirlist(i),0,1);
     stats = get_stats_with_len(stats,50);
     stats_l = get_stats_with_trajid(stats,1);
     stats_nl = get_stats_with_trajid(stats,2);
-    [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,out_thresh*(6.35/100),0,0,1,10,[],0);
-    [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,out_thresh*(6.35/100),0,0,1,10,[],0);
+    [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,dist*(6.35/100),0,0,1,10,[],0);
+    [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,dist*(6.35/100),0,0,1,10,[],0);
     catch
     end
    

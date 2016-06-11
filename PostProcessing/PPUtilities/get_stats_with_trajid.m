@@ -34,7 +34,8 @@ if traj_id
          indices = 1:length(tstruct);
          catchindices = indices(output); %indices of trajectories not hit
          permuteind = randperm(length(catchindices)); %permutation of unhit traj
-         permuteind = permuteind(1:lasercount); %truncate to minimum
+         catchcount = min(lasercount,length(catchindices));
+         permuteind = permuteind(1:catchcount); %truncate to minimum
          sort(permuteind);
          output = catchindices(permuteind); %still chronological order, but
             %will be resampled each time
