@@ -27,10 +27,11 @@ for i = 1:length(dirlist)
     try
     stats = load_stats(dirlist(i),0,1);
     stats = get_stats_with_len(stats,50);
+    stats = get_stats_startatzero(stats,hold_thresh(i));
     stats_l = get_stats_with_trajid(stats,1);
     stats_nl = get_stats_with_trajid(stats,2);
-    [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,out_thresh*(6.35/100),0,0,1,10,[],0);
-    [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,out_thresh*(6.35/100),0,0,1,10,[],0);
+    [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
+    [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
     catch
     end
    
