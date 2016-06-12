@@ -85,7 +85,7 @@ end
 clear fig_handle;
 try
 [~,fig_handle] = timetothreshcross_trialevo(dirlist);
-exportfigpptx(pptname,fig_handle,[1 2]);
+exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
 end
@@ -133,7 +133,7 @@ try
 dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');  
     
 [~,fig_handle] = timetothreshcross_trialevo(dirlist_all(65:end));
-exportfigpptx(pptname,fig_handle,[1 2]);
+exportfigpptx(pptname,fig_handle,[2 3]);
 close(fig_handle);
 catch
 end

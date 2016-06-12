@@ -15,8 +15,9 @@ theta_nl_rt = [];
 
 for i = 1:length(dirlist)
 %   i
-    [pathstr_rule,name,ext] = fileparts(dirlist(i).name);  
-    contingency_angle = strsplit(pathstr_rule,'_');
+    [pathstr,name,ext] = fileparts(dirlist(i).name);
+    [pathstr_rule,name,ext] = fileparts(pathstr);
+    contingency_angle = strsplit(name,'_');
     
     out_thresh = str2num(contingency_angle{2});
     hold_time(i) = str2num(contingency_angle{3});

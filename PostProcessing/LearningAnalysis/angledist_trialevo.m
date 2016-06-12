@@ -16,8 +16,8 @@ try
     for i = 1:length(dirlist)
         %   i
         [pathstr,name,ext] = fileparts(dirlist(i).name);
-        [pathstr_rule,name,ext] = fileparts(dirlist(i).name);
-        contingency_angle = strsplit(pathstr_rule,'_');
+        [pathstr_rule,name,ext] = fileparts(pathstr);
+        contingency_angle = strsplit(name,'_');
         
         out_thresh(i) = str2num(contingency_angle{2});
         hold_time(i) = str2num(contingency_angle{3});

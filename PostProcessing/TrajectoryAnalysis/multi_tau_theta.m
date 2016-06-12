@@ -45,7 +45,7 @@ console_output{1} = 'Angle at Thresh vs Time at exit';
 if plotflag
     axes(ax);
     legend(dates);
-    title(strcat('Angle at threshold Crossing vs Time at exit:',num2str(thresh)));
+    title(strcat('Angle at threshold Crossing vs Time at exit:',num2str(thresh1),',',num2str(thresh2)));
 end
 
 

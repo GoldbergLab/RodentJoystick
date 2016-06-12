@@ -81,27 +81,37 @@ angle2(angle2>36) = angle2(angle2>36) - 72;angle2 = angle2 + 36;
 
 
 
-c_minmax = [0 0.4];
+c_minmax = [0 0.2];
 
 h(1) =  figure;
 imagesc(tau_hist_l');
 axis xy
+set(gca,'ytick',0:10:100);
+set(gca,'yticklabel',['0   ';'100 ';'200 ';'300 ';'400 ';'500 ';'600 ';'700 ';'800 ';'900 ';'1000']);
 hold on
 caxis([c_minmax(1) c_minmax(2)]);
 for i=1:(length(thresh_index)-1)
     edges = thresh_index(i):thresh_index(i+1);
     plot(edges,hold_time(i)*ones(numel(edges),1)/10,'w','linewidth',2);
 end
+title(strcat('Tau at hold threshold (Inactivated)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
 
 h(2) = figure;
 imagesc(tau_hist_nl');
 axis xy
+set(gca,'ytick',0:10:100);
+set(gca,'yticklabel',['0   ';'100 ';'200 ';'300 ';'400 ';'500 ';'600 ';'700 ';'800 ';'900 ';'1000']);
 hold on;
 caxis([c_minmax(1) c_minmax(2)]);
 for i=1:(length(thresh_index)-1)
     edges = thresh_index(i):thresh_index(i+1);
     plot(edges,hold_time(i)*ones(numel(edges),1)/10,'w','linewidth',2);
 end
+title(strcat('Tau at hold threshold (Intact)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
 
 h(3) = figure;
 plot(tau_mean_l,'b'); hold on;
@@ -113,6 +123,10 @@ for i=1:(length(thresh_index)-1)
     plot(edges,hold_time(i)*ones(numel(edges),1),'k','linewidth',2);
 end
 axis([0 numel(tau_mean_l) 0 1000]);
+title(strcat('Tau at hold threshold mean+stddev (Inactivated)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
+
 
 h(4) = figure;
 plot(tau_mean_nl,'b'); hold on;
@@ -124,6 +138,9 @@ for i=1:(length(thresh_index)-1)
     plot(edges,hold_time(i)*ones(numel(edges),1),'k','linewidth',2);
 end
 axis([0 numel(tau_mean_nl) 0 1000]);
+title(strcat('Tau at hold threshold mean+stddev (Intact)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
 
 h(5) = figure;
 plot(tau_mean_l,'r'); hold on;
@@ -134,6 +151,9 @@ for i=1:(length(thresh_index)-1)
     plot(edges,hold_time(i)*ones(numel(edges),1),'k','linewidth',2);
 end
 axis([0 numel(tau_mean_l) 0 1000]);
+title(strcat('Mean Tau at hold threshold (Intact vs Inactivated)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
 
 h(6) = figure;
 plot(tau_std_l,'r'); hold on;
@@ -143,6 +163,9 @@ for i=1:(length(thresh_index)-1)
     plot(edges,hold_time(i)*ones(numel(edges),1),'k','linewidth',2);
 end
 axis([0 numel(tau_std_l) 0 1000]);
+title(strcat('Stddev Tau at hold threshold (Intact vs Inactivated)'));
+xlabel('Trial Number');
+ylabel('Time (ms)');
 
 % h(7) = figure;
 % plot(sig_vect,'r'); hold on;
