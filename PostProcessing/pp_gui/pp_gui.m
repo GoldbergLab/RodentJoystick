@@ -22,7 +22,7 @@ function varargout = pp_gui(varargin)
 
 % Edit the above text to modify the response to help pp_gui
 
-% Last Modified by GUIDE v2.5 31-Jan-2016 13:49:46
+% Last Modified by GUIDE v2.5 28-Jun-2016 10:47:23
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -137,7 +137,7 @@ function selectdays_Callback(hObject, eventdata, handles)
 try
     startdir = handles.startdir;
 catch
-    startdir = 'Z:\data\expt1';
+    startdir = 'Z:\';
 end
 tempdirlist = uipickfiles('filter',startdir, 'output', 'struct');
 if ~isempty(tempdirlist)

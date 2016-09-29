@@ -46,14 +46,14 @@ function [data, labels,fig_handle] = np_js_distribution(dirlist, varargin)
 
 %% Argument Handling
 colors = 'rbkmcgyrbkmcgyrbkmcgy';
-default = {20, 1, 0, 1, 1, []};
+default = {20, 1, 1, 0, 1, 1, []};
 numvarargs = length(varargin);
-if numvarargs > 6
-    error(['too many arguments (> 7), only one required ' ... 
-            'and 6 optional.']);
+if numvarargs > 7
+    error(['too many arguments (> 8), only one required ' ... 
+            'and 7 optional.']);
 end
 [default{1:numvarargs}] = varargin{:};
-[interv, normalize, combineflag, smoothparam, plotflag, ax] = default{:};
+[interv, first_only, normalize, combineflag, smoothparam, plotflag, ax] = default{:};
 clear varargin; clear default; clear numvarargs;
 %% Initialize Labels and some data
 labels.xlabel = 'Time (ms)';
@@ -72,12 +72,22 @@ elseif combineflag == 0
 end
 dist_time = -1000:interv:1000;
 
-[statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js');
+if first_only
+    [statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js_nc');
+else
+    [statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js');
+end
+
 labels.legend = dates;
 for i=1:length(statslist)
-    stats = statslist(i);
+    if first_only
+        stats.np_js = statslist(i).np_js_nc;
+    else
+        stats.np_js = statslist(i).np_js;
+    end
+    
     np_js = histc(stats.np_js,dist_time);
-    if normalize
+    if normalize 
         np_js = np_js./(sum(np_js));
     end
     data{i} = [dist_time', np_js];

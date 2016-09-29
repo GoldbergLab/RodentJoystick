@@ -66,7 +66,8 @@ if colnum > 3; colnum = colnum - 3; end;
 %       see notes on wiki for accessing other axes
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     interv = str2num(arg1);
-    np_js_distribution(dirlist, interv, normalize, combineflag, ...
+    first_only = str2num(arg2);
+    np_js_distribution(dirlist, interv, first_only, normalize, combineflag, ...
         smoothparam, 1, axlist(axnum));
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     interv = str2num(arg1);

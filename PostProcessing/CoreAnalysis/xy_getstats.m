@@ -75,6 +75,26 @@ for i=1:length(jstruct)
 end
 jstruct_stats.np_js = list(find((list>-10000)&(list<10000)));
 
+% Get Distribution of NP_JS Nearest Contacts Only
+list=[];
+for i=1:length(jstruct)
+    if (numel(jstruct(i).np_pairs)>0 && numel(jstruct(i).js_pairs_r>0))
+        for j=1:size(jstruct(i).np_pairs,1)
+            np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
+            [np_js_diff_abs,ind] = sort(abs(np_js_diff));
+
+            %keep adding each 
+            try
+            list = [list;np_js_diff(ind(1))];
+            catch
+            end
+
+        end
+    end
+end
+jstruct_stats.np_js_nc = list(find((list>-10000)&(list<10000)));
+
+
 % Get Distribution of NP_JSPost
 list=[];
 for i=1:length(jstruct)
@@ -303,6 +323,6 @@ end
 
 if ~isempty(savedir)
     save([savedir,savestr], '-struct', 'jstruct_stats', 'np_count', ...
-    'js_r_count', 'js_l_count', 'pellet_count', 'np_js', 'np_js_post', ...
+    'js_r_count', 'js_l_count', 'pellet_count', 'np_js','np_js_nc', 'np_js_post', ...
     'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
 end

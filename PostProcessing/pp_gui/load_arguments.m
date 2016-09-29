@@ -27,6 +27,8 @@ arg1label = '-'; arg2label = '-'; arg3label = '-';
 if strcmp(plotname, 'Nosepoke Joystick Onset Distribution')
     arg1 = '20';
     arg1label = 'Interv'; %Histogram interval (ms)
+    arg2 = '1';
+    arg2label = 'NearestContact';
 elseif strcmp(plotname, 'Nosepoke Post Onset Distribution')
     arg1 = '20';
     arg1label = 'Interv'; %Histogram interval (ms)

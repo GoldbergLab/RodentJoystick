@@ -165,6 +165,10 @@ function [stats] = add_field(stats, fname, fieldname)
         load(fname, 'np_js');
         stats.np_js = np_js;
     end
+    if allfields || strcmp(fieldname, 'np_js_nc') 
+        load(fname, 'np_js_nc');
+        stats.np_js_nc = np_js_nc;
+    end
     if allfields || strcmp(fieldname, 'np_js_post') 
         load(fname, 'np_js_post'); 
         stats.np_js_post = np_js_post; 
