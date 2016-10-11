@@ -1,4 +1,4 @@
-function [theta,tau,fig_handle] = tau_theta(stats,varargin)
+function [theta,tau,ax] = tau_theta(stats,varargin)
 %% argument handling
 
 default = {30*(6.35/100),60*(6.35/100),0,0,[],1, 'b'};

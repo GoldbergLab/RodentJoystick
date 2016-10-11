@@ -77,21 +77,33 @@ jstruct_stats.np_js = list(find((list>-10000)&(list<10000)));
 
 % Get Distribution of NP_JS Nearest Contacts Only
 list=[];
+list_laser=[];
 for i=1:length(jstruct)
     if (numel(jstruct(i).np_pairs)>0 && numel(jstruct(i).js_pairs_r>0))
         for j=1:size(jstruct(i).np_pairs,1)
             np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
             [np_js_diff_abs,ind] = sort(abs(np_js_diff));
-
+            
+            if numel(jstruct(i).laser_on)>0
+                if sum(abs(jstruct(i).laser_on(:,1) - jstruct(i).np_pairs(j,1))<5)
+                    laser_np = 1;
+                else
+                    laser_np = 0;
+                end
+            else     
+                laser_np = 0;
+            end
             %keep adding each 
             try
             list = [list;np_js_diff(ind(1))];
+            list_laser = [list_laser;laser_np];
             catch
             end
 
         end
     end
 end
+jstruct_stats.np_js_nc_l = list(list_laser==1);
 jstruct_stats.np_js_nc = list(find((list>-10000)&(list<10000)));
 
 

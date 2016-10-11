@@ -9,7 +9,7 @@ stats_nl = get_stats_with_trajid(stats_reach,2);
 
 
 if numel(stats_nl.traj_struct)>0
-[~,tau] = tau_theta(stats_nl,dist1*(6.35/100),dist2*(6.35/100));
+[~,tau,ax] = tau_theta(stats_nl,dist1*(6.35/100),dist2*(6.35/100));
 tau_dist = histc(tau,0:1:500);
 tau_dist = tau_dist/(sum(tau_dist));
 tau_cumdist = cumsum(tau_dist);
@@ -19,7 +19,7 @@ ylim([0 1]);
 end
 
 if numel(stats_l.traj_struct)>0
-[~,tau] = tau_theta(stats_l,dist1*(6.35/100),dist2*(6.35/100));
+[~,tau,ax] = tau_theta(stats_l,dist1*(6.35/100),dist2*(6.35/100),0,0,ax,1, 'r');
 tau_dist = histc(tau,0:1:500);
 tau_dist = tau_dist/(sum(tau_dist));
 tau_cumdist = cumsum(tau_dist);
