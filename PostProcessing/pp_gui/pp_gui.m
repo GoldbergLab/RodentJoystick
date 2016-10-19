@@ -2,7 +2,7 @@ function varargout = pp_gui(varargin)
 % PP_GUI MATLAB code for pp_gui.fig
 %      PP_GUI, by itself, creates a new PP_GUI or raises the existing
 %      singleton*.
-%commentsaumya
+%
 %      H = PP_GUI returns the handle to a new PP_GUI or the handle to
 %      the existing singleton*.
 %
