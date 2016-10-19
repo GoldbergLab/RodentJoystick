@@ -5,6 +5,9 @@ function [handles] = plot_raw_data(handles, axnum)
 npons = [handles.np1, handles.np2, handles.np3, handles.np4, handles.np5];
 npon = get(npons(axnum), 'Value');
 
+lickons = [handles.lick1, handles.lick2, handles.lick3, handles.lick4, handles.lick5];
+lickon = get(lickons(axnum), 'Value');
+
 postons = [handles.post1, handles.post2, handles.post3, ...
     handles.post4, handles.post5];
 poston = get(postons(axnum), 'Value');
@@ -43,6 +46,9 @@ axes(ax); cla; hold on;
 if npon
     plot_np(handles, ax, zerocenter, LINEWIDTH, xrange(2));
 end
+if lickon
+    plot_lick(handles, ax, zerocenter, LINEWIDTH, xrange(2));
+end
 if poston
     plot_post(handles,ax, zerocenter, LINEWIDTH, xrange(2));
 end
@@ -79,6 +85,16 @@ function plot_np(handles, ax, scaling, LINEWIDTH, xmax)
     end
     plot(ax,(1/handles.SAMPLE_RATE):(1/handles.SAMPLE_RATE):xmax,...
         npdata,'r','LineWidth',LINEWIDTH);
+end
+
+function plot_lick(handles, ax, scaling, LINEWIDTH, xmax)
+    data = handles.plotdata;
+    lickdata = data(9,:)*5.5;
+    if scaling
+        lickdata = lickdata*2 - 6;
+    end
+    plot(ax,(1/handles.SAMPLE_RATE):(1/handles.SAMPLE_RATE):xmax,...
+        lickdata,'color',[0.5 0.5 0.5],'LineWidth',LINEWIDTH);
 end
 
 function plot_post(handles, ax, scaling, LINEWIDTH, xmax)

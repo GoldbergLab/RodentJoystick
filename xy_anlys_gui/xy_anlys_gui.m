@@ -42,7 +42,7 @@ function varargout = xy_anlys_gui(varargin)
 
 % Edit the above text to modify the response to help xy_anlys_gui
 
-% Last Modified by GUIDE v2.5 04-Dec-2015 17:23:34
+% Last Modified by GUIDE v2.5 14-Oct-2016 16:53:27
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -171,8 +171,10 @@ np_pairs = jstruct(struct_index).np_pairs;
 rw_onset = jstruct(struct_index).reward_onset;
 js_pairs_r = jstruct(struct_index).js_pairs_r;
 js_pairs_l = jstruct(struct_index).js_pairs_l;
+
 try
     laser_on = jstruct(struct_index).laser_on;
+    lick_on = jstruct(struct_index).lick_on; 
 catch
 end
 
@@ -201,16 +203,22 @@ for i=1:size(rw_onset,2)
    rw_vect(rw_onset(i):min((rw_onset(i)+50), length(traj_x)))=1;
 end
 
+
+lickon_vect = zeros(1,length(traj_x)); 
 laser_vect = zeros(1,length(traj_x));
 try
     for i=1:size(laser_on,1)
        laser_vect(laser_on(i,1):laser_on(i,2)) = 1;
     end
+    
+    for i=1:size(lickon_vect,2)
+     lickon_vect(lick_on(i,1):lick_on(i,2))=1;
+    end
 catch
 end
 
 plotdata = [np_vect; js_vect_l; js_vect_r; rw_vect; laser_vect; ...
-            magtraj; traj_x; traj_y];
+            magtraj; traj_x; traj_y;lickon_vect];
         
 handles.plotdata = plotdata;
 handles.xaxis = [xmin xmax];
@@ -334,6 +342,7 @@ end
 function np1_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 1);
     guidata(hObject, handles);
+
 function post1_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 1);
     guidata(hObject, handles);
@@ -367,6 +376,7 @@ end
 function np2_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 2);
     guidata(hObject, handles);
+
 function post2_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 2);
     guidata(hObject, handles);
@@ -398,6 +408,7 @@ end
 function np3_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 3);
     guidata(hObject, handles);
+
 function post3_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 3);
     guidata(hObject, handles);
@@ -428,6 +439,8 @@ end
 %% axes 4 callback buttons/functions
 function np4_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+
     guidata(hObject, handles);
 function post4_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 4);
@@ -461,6 +474,7 @@ end
 function np5_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 5);
     guidata(hObject, handles);
+
 function post5_Callback(hObject, eventdata, handles)
     handles = plot_raw_data(handles, 5);
     guidata(hObject, handles);
@@ -524,3 +538,68 @@ msg = {'This GUI is a tool to analyze individual trajectories.',...
     'other specific information about the trajectory']...
     };
 msgbox(msg);
+
+
+% --- Executes on key press with focus on js1 and none of its controls.
+function js1_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to js1 (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in lick1.
+function lick1_Callback(hObject, eventdata, handles)
+handles = plot_raw_data(handles, 1);
+    guidata(hObject, handles);
+% hObject    handle to lick1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lick1
+
+
+% --- Executes on button press in lick5.
+function lick5_Callback(hObject, eventdata, handles)
+handles = plot_raw_data(handles, 5);
+    guidata(hObject, handles);
+% hObject    handle to lick5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lick5
+
+
+% --- Executes on button press in lick4.
+function lick4_Callback(hObject, eventdata, handles)
+handles = plot_raw_data(handles, 4);
+    guidata(hObject, handles);
+% hObject    handle to lick4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lick4
+
+
+% --- Executes on button press in lick3.
+function lick3_Callback(hObject, eventdata, handles)
+handles = plot_raw_data(handles, 3);
+    guidata(hObject, handles);
+% hObject    handle to lick3 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lick3
+
+
+% --- Executes on button press in lick2.
+function lick2_Callback(hObject, eventdata, handles)
+handles = plot_raw_data(handles, 2);
+    guidata(hObject, handles);
+% hObject    handle to lick2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of lick2
