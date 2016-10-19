@@ -12,7 +12,7 @@ stats = get_stats_startatzero(stats);
 
 clear fig_handle;
 try
-[~,~,fig_handle(1)] = np_js_distribution(dirlist,40,1,1,1,1,[]);
+[~,~,fig_handle(1)] = np_js_distribution(dirlist,40,1,1,1,1,1,[]);
 [~,~,fig_handle(2)] = np_post_distribution(dirlist,40,1,1,1,1,[]);
 exportfigpptx(pptname,fig_handle,[1 2]);
 close(fig_handle);

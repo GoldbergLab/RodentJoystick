@@ -191,7 +191,7 @@ for struct_index=1:length(jstruct)
                     
                 %FIND CORRESPONDING POST ONSET/OFFSET
                 %set of post touch onsets preceding the js onset
-                jt_js_temp = (js_pairs_l(:,1)-js_pairs_r(j,1))<0; 
+                jt_js_temp = (js_pairs_l(:,1)-js_pairs_r(j,1))<1; 
                 % Post-touch onset
                 post_start =  max(js_pairs_l(jt_js_temp,1)); 
                 % Post-touch offset
@@ -258,7 +258,6 @@ for struct_index=1:length(jstruct)
                 
 
                     k=k+1;
-
                     traj_struct(k).raw_x = raw_x;
                     traj_struct(k).raw_y = raw_y;
                     traj_struct(k).traj_x = traj_x_t;
