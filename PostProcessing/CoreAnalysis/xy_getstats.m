@@ -205,11 +205,15 @@ for struct_index=1:length(jstruct)
                 
 
                 if js_reward(j)
-                    rw_or_stop = rw_onset(onset_ind)+100;
+                    rw_or_stop = rw_onset(onset_ind) + 100; %Get 100 ms after Trial Success to capture the segment
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]);
                 else
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
-                    rw_or_stop = trial_end;
+                    try
+                        rw_or_stop = trial_end + 100; %Get 100 ms after Trial Fail to capture the last segment;
+                    catch
+                        continue; % If there isn't any data available data to finish out the trajectory, skip the trajectory
+                    end
                 end
                 
                 %If optogenetic expt was on, determine if "Hit" trial or
