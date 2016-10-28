@@ -19,12 +19,12 @@ for i=1:length(tstruct)
     index = find(tstruct(i).magtraj>thresh);
     thresh_cross = min(index);
     if numel(thresh_cross)
-        k=k+1;
-        pos_cross(k) = thresh_cross;
+            k=k+1;
+            pos_cross(k) = thresh_cross;
         try
-        real_time(k) = tstruct(i).real_time;
+            real_time(k) = tstruct(i).real_time;
         catch
-        real_time(k) = 0;
+            real_time(k) = 0;
         end
     end
     end

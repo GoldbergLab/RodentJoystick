@@ -1,6 +1,6 @@
 function [tau] = get_cumpdfexittime(stats,varargin)
 
-default= {30,60,0};
+default= {30,60,1};
 
 numvarargs = length(varargin);
 if numvarargs > 3
@@ -18,10 +18,9 @@ stats_nl = get_stats_with_trajid(stats_reach,2);
 
 if pdfSwitch
     edges = 0:10:500;
-    ylimmax = 0.1;
+    ylim
 else
     edges = 0:1:500;
-    ylimmax = 1;
 end
 
 
@@ -29,29 +28,21 @@ if numel(stats_nl.traj_struct)>0
     [~,tau,ax] = tau_theta(stats_nl,dist1*(6.35/100),dist2*(6.35/100));
     tau_dist = histc(tau,edges);
     tau_dist = tau_dist/(sum(tau_dist));
-    if pdfSwitch
-        tau_cumdist = tau_dist;
-    else
-        tau_cumdist = cumsum(tau_dist);
-    end
+    tau_cumdist = cumsum(tau_dist);
     h = figure;
     stairs(edges,tau_cumdist,'b');
-    ylim([0 ylimmax]);
+    ylim([0 1]);
 end
 
 if numel(stats_l.traj_struct)>0
     [~,tau,ax] = tau_theta(stats_l,dist1*(6.35/100),dist2*(6.35/100),0,0,ax,1, 'r');
-    tau_dist = histc(tau,edges);
+    tau_dist = histc(tau,0:1:500);
     tau_dist = tau_dist/(sum(tau_dist));
-    if pdfSwitch
-        tau_cumdist = tau_dist;
-    else
-        tau_cumdist = cumsum(tau_dist);
-    end
+    tau_cumdist = cumsum(tau_dist);
     figure(h)
     hold on
     stairs(edges,tau_cumdist,'r');
     hold off;
-    ylim([0 ylimmax]);
+    ylim([0 1]);
 end
 
