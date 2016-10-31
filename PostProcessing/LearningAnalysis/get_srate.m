@@ -8,6 +8,7 @@ catch_trials_s = 0;
 
 stats.traj_struct = tstruct;
 stats = get_stats_with_len(stats,50);
+stats = get_stats_with_reach(stats,60*(6.35/100));
 tstruct = stats.traj_struct;
 
 for tlen=1:length(tstruct)

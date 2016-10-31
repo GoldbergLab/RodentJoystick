@@ -6,7 +6,7 @@ if numvarargs > 2
     error('too many arguments (> 3), only 1 required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[dist,save_flag] = default{:};
+[save_flag] = default{:};
 theta_l = [];
 theta_l_rt = [];
 theta_nl = [];

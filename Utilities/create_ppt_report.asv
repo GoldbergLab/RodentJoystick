@@ -62,7 +62,7 @@ end
 
 clear fig_handle;
 try
-[~,fig_handle(1)] = multi_anglethreshcross(dirlist,out_thresh*(6.35/100),0,0,10,[],1,0,2);
+[~,fig_handle(1)] = multi_anglethreshcross(dirlist,45*(6.35/100),0,0,10,[],1,0,2);
 exportfigpptx(pptname,fig_handle,[1 1]);
 close(fig_handle);
 catch
@@ -72,8 +72,8 @@ end
 
 clear fig_handle;
 try
-[~,fig_handle(1)] = multi_tau_theta(dirlist,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],1,0,2);
-[~,fig_handle(2)] = multi_tau_theta(dirlist,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],1,0,3);
+[~,fig_handle(1)] = multi_tau_theta(dirlist,ho*(6.35/100),dist2*(6.35/100),0,0,[],1,0,2);
+[~,fig_handle(2)] = multi_tau_theta(dirlist,dist1*(6.35/100),dist2*(6.35/100),0,0,[],1,0,3);
 exportfigpptx(pptname,fig_handle,[1 2]);
 close(fig_handle);
 catch

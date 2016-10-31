@@ -78,12 +78,12 @@ angle1(angle1<0) = angle1(angle1<0)+360;angle2(angle2<0) = angle2(angle2<0)+360;
 angle3(angle3<0) = angle3(angle3<0)+360;angle4(angle4<0) = angle4(angle4<0)+360;
 
 angle1 = angle1/5;angle2 = angle2/5;
-angle3 = angle3/5;angle4 = angle4/5;
+angle3 = angle3/5;angle4 = angle5/5;
 
 angle1(angle1>36) = angle1(angle1>36) - 72;angle1 = angle1+36;
-angle2(angle2>36) = angle2(angle2>36) - 72;angle2 = angle2+36;
-angle3(angle3>36) = angle3(angle3>36) - 72;angle3 = angle3+36;
-angle4(angle4>36) = angle4(angle4>36) - 72;angle4 = angle4+36;
+angle2(angle2>36) = angle2(angle2>36) - 72;angle2 = angle2 +36;
+angle3(angle1>36) = angle3(angle1>36) - 72;angle3 = angle3+36;
+angle4(angle1>36) = angle4(angle4>36) - 72;angle4 = angle4+36;
 
 
 c_minmax = [0 0.2];

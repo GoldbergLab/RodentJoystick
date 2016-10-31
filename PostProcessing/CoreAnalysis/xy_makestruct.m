@@ -52,8 +52,7 @@ fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
 % start_frame = str2num(filelist(1).name(1:end-4));
 start_frame_first = start_frame;
 
-k = 1;
-for i=1:length(filelist)         
+k = 1;for i=1:length(filelist)         
     load(strcat(working_dir_1,'/',filelist(i).name));
     working_buff=working_buff';
     % nose pokes 
@@ -69,7 +68,7 @@ for i=1:length(filelist)
     if size(working_buff,1)>7
         lick = sensor_on_off_times(working_buff(8,:));
     end
-    if size(working_buff,1)>7
+    if size(working_buff,1)>8
         triallive = sensor_on_off_times(working_buff(9,:));
     end
         
@@ -122,6 +121,7 @@ for i=1:length(filelist)
    
    jstruct(i).np_js_start = start_p;
 end
+
 end
 
 % [pairs] = sensor_on_off_times(rawsens) generates a list of sensor 
