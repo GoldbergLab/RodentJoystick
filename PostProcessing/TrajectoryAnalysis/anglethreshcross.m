@@ -33,6 +33,7 @@ edges = -180:interv:180;
 theta_hist = histc(theta,edges);
 theta_hist = theta_hist./(sum(theta_hist));
 
+f = fit(edges.',theta_hist.','gauss1');
 % x_pl = dist_theta.*(cosd(0:10:360));
 % y_pl = dist_theta.*(sind(0:10:360));
  
@@ -45,6 +46,7 @@ if plot_flag
     end
     axes(ax);
     hold on
-    stairs(edges,theta_hist,color);
+    plot(edges,theta_hist,strcat(color,'.'));
+    plot(-180:1:180,f(-180:1:180),color);
     hold off
 end

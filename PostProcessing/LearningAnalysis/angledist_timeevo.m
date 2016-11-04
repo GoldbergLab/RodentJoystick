@@ -19,7 +19,7 @@ for i = 1:length(dirlist)
     [pathstr_rule,name,ext] = fileparts(pathstr);
     contingency_angle = strsplit(name,'_');
     
-    out_thresh = str2num(contingency_angle{2});
+    out_thresh(i) = str2num(contingency_angle{2});
     hold_time(i) = str2num(contingency_angle{3});
     hold_thresh(i) = str2num(contingency_angle{4});
     angle1(i) = str2num(contingency_angle{5});
@@ -34,6 +34,7 @@ for i = 1:length(dirlist)
     [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
     [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
     catch
+        display('Failed to Load and get theta');
     end
    
     theta_l = [theta_l theta_l_t];
@@ -47,10 +48,21 @@ offset = floor(min(theta_l_rt));
 theta_l_rt = theta_l_rt - offset;
 theta_nl_rt = theta_nl_rt - offset;
 end_point = ceil(max(max(theta_l_rt),max(theta_nl_rt)));
+
 fig_handle = figure;
-h2 = plot(theta_nl_rt,theta_nl,'ro','MarkerSize',4);
-%set(h2,'MarkerFaceColor','r');
+
 hold on;
-h1 = plot(theta_l_rt,theta_l,'ko','MarkerSize',4);
+
+for i = 1:end_point  
+    basevalue = -180;
+    h(i+2) = area([(i-0.5),i],[360,360],basevalue);
+    set(h(i+2),'FaceColor',[0 0.75 0.75]);
+end
+
+h2 = plot(theta_nl_rt,theta_nl,'ko','MarkerSize',4);
+%set(h2,'MarkerFaceColor','r');
+
+h1 = plot(theta_l_rt,theta_l,'ro','MarkerSize',4);
 %set(h1,'MarkerFaceColor','k');
+
 axis([0 end_point -180 180]);

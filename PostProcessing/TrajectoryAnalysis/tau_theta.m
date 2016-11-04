@@ -1,4 +1,4 @@
-function [theta,tau,ax] = tau_theta(stats,varargin)
+function [theta,tau,real_time,ax] = tau_theta(stats,varargin)
 %% argument handling
 
 default = {30*(6.35/100),60*(6.35/100),0,0,[],1, 'b'};
@@ -25,6 +25,7 @@ for i=1:length(tstruct)
         k=k+1;
         [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross2),tstruct(i).traj_y(thresh_cross2));
         tau(k) = thresh_cross;
+        real_time(k) = tstruct(i).real_time;
     end
     end
 end
