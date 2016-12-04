@@ -84,7 +84,7 @@ maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,
 stats = load_stats(dayscompare, 1, 'pellet_count', 'srate', 'np_count', 'trialnum');
 sz = length(dayscompare)-duplicates;
 set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));
-set(srates(boxnum), 'String', num2str(stats.srate.total));
+set(srates(boxnum), 'String', num2str(stats.srate));
 set(npokes(boxnum), 'String', num2str(stats.np_count/sz));
 set(trialcount(boxnum), 'String', num2str(stats.trialnum/sz));
 [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, duplicates);
@@ -100,7 +100,5 @@ set(maxangle(boxnum), 'String', num2str(oldcont.sector(4)));
 set(thresholdsrec(boxnum), 'String', num2str(thresh));
 set(holdtimesrec(boxnum), 'String', num2str(holdtime));
 set(holdthreshrec(boxnum), 'String', num2str(centerhold));
-set(minanglerec_l(boxnum), 'String', num2str(sector(1)));
-set(maxanglerec_l(boxnum), 'String', num2str(sector(2)));
-set(minanglerec(boxnum), 'String', num2str(sector(3)));
-set(maxanglerec(boxnum), 'String', num2str(sector(4)));
+set(minanglerec(boxnum), 'String', num2str(sector(1)));
+set(maxanglerec(boxnum), 'String', num2str(sector(2)));

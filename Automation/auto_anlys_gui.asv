@@ -1198,8 +1198,7 @@ function MovDir4_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns MovDir4 contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from MovDir4
 
-function figure1_WindowScrollWheelFcn(hObject, eventdata, handles)
-% do nothing
+ffigure1_WindowScrollWheelFcn
 
 % --- Executes during object creation, after setting all properties.
 function MovDir4_CreateFcn(hObject, eventdata, handles)

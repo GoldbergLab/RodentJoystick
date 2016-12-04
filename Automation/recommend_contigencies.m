@@ -20,9 +20,17 @@ oldcont.centerhold = centerhold; oldcont.sector = sector;
 %Is average daily pellet count acceptable? (Also looks at Pellet Count
 %Override, which ignores the threshold)
 stats = load_stats(dirlist, 1, 'pellet_count');
+
+%get the relvant box number
+split_path = strsplit(dirlist(1).name,'\');
+split_cont = strsplit(split_path{end-2},'_');
+boxnum_str = split_cont{2};
+
 pc_acceptable = ((stats.pellet_count)/(length(dirlist)-duplicates) >= pellet_count_threshold) ...
                     || ~get(handles.pcoverride, 'Value');
 rewardrate = str2num(get(handles.rewardrate, 'String'));
+dir_def = 0;
+split_def = 0;
 
 if pc_acceptable && get(handles.thresholdselect, 'Value')
     thresh = recommend_threshold(dirlist, rewardrate);
@@ -31,7 +39,10 @@ elseif pc_acceptable && get(handles.holdtimeselect, 'Value')
 elseif pc_acceptable && get(handles.centerthresholdselect, 'Value')
     centerhold = recommend_centerhold(dirlist, rewardrate, holdtime, centerhold);
 elseif pc_acceptable && get(handles.sectorselect, 'Value')
-    sector = recommend_sector(dirlist, rewardrate);
+    split = eval(strcat('get(handles.SplitSel',boxnum_str,',''Value'')'))-1;
+    def_dir = eval(strcat('get(handles.MovDir',boxnum_str,',''Value'')'))-1;
+    sector = update_contingency(dirlist(end),rewardrate,split,def_dir);
+    sector = [sector(1) sector(2) sector(4) sector(5)];
 end
 
 end
@@ -48,7 +59,7 @@ end
 
 function centerhold = recommend_centerhold(dirlist, rewardrate, oldht, oldcenterhold)
     %LOWEST POSSIBLE VALUE FOR CENTERHOLD
-    MIN_CH = 20;
+    MIN_CH = 30;
     hist_interval = 20; combineflag = 1; plotflag = 0;
     [set_dists] = multi_js_touch_dist(dirlist, hist_interval, rewardrate, ...
         oldcenterhold, oldht, combineflag, plotflag);
@@ -59,10 +70,6 @@ function centerhold = recommend_centerhold(dirlist, rewardrate, oldht, oldcenter
     end
 end
 
-function sector = recommend_sector(dirlist, rewardrate)
-    sector = [-180 180];
-end
-
 function [threshold, holdtime, centerhold, sector] = load_contingencies(dayscompare)
     last = dayscompare(end).name;
     datecont = strsplit(last, '\');
@@ -70,6 +77,5 @@ function [threshold, holdtime, centerhold, sector] = load_contingencies(dayscomp
     threshold = str2num(datecont{2});
     holdtime = str2num(datecont{3});
     centerhold = str2num(datecont{4});
-    sector = [str2num(datecont{5}) str2num(datecont{6})];
-
+    sector = [str2num(datecont{5}) str2num(datecont{6}) str2num(datecont{7}) str2num(datecont{8})];
 end

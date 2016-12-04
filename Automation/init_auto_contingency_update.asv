@@ -48,22 +48,22 @@ function regular_contingency_updates(handles, recipients)
     disp('Beginning scheduled contingency update');
     exptdir = get(handles.exptdirlabel, 'String');
     update_all_boxes_anlys_gui(handles);
-%     [~, failures, attachments] = write_out_all_contingencies_anlys_gui(handles, 0);
-%     try
-%     logdir = [exptdir, '\AutomatedLogs'];
-%     if exist(logdir, 'dir') == 0
-%         mkdir(logdir);
-%     end
-%     title = ['AutoContingencyUpdate_', datestr(now, 'mm_dd_yyyy_HH_MM')];
-%     logname = [logdir,'\', title, '.txt'];
-% 
-%     fid = fopen(logname, 'w');
-%     for i = 1:size(failures, 1)
-%          fprintf(fid, '%s\n', failures{i});
-%     end
-%     fclose(fid);
-%     matlabmail(recipients, failures, title, attachments);
-%     catch e
-%         disp(getReport(e));
-%     end
+    [~, failures, attachments] = write_out_all_contingencies_anlys_gui(handles, 0);
+    try
+    logdir = [exptdir, '\AutomatedLogs'];
+    if exist(logdir, 'dir') == 0
+        mkdir(logdir);
+    end
+    title = ['AutoContingencyUpdate_', datestr(now, 'mm_dd_yyyy_HH_MM')];
+    logname = [logdir,'\', title, '.txt'];
+
+    fid = fopen(logname, 'w');
+    for i = 1:size(failures, 1)
+         fprintf(fid, '%s\n', failures{i});
+    end
+    fclose(fid);
+    matlabmail(recipients, failures, title, attachments);
+    catch e
+        disp(getReport(e));
+    end
 end
