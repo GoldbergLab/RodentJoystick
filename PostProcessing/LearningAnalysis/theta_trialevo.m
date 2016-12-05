@@ -1,4 +1,4 @@
-function [out,h] = angledist_trialevo(dirlist,varargin)
+function [out,h] = theta_trialevo(dirlist,varargin)
 
 default = {1};
 numvarargs = length(varargin);
@@ -27,14 +27,17 @@ try
         angle3(i) = str2num(contingency_angle{7});
         angle4(i) = str2num(contingency_angle{8});
         
+        
         try
             stats = load_stats(dirlist(i),0,1);
             stats = get_stats_with_len(stats,50);
             stats = get_stats_startatzero(stats,hold_thresh(i));
             stats = get_stats_with_reach(stats,out_thresh(i)*(6.35/100));
-            [~,theta_t] = anglethreshcross(stats,out_thresh(i)*(6.35/100),0,0,1,[],0);
+            [theta_t,~,~,~] = tau_theta(stats,hold_thresh(i)*(6.35/100),out_thresh(i)*(6.35/100),0,0,[],0);
             laser_vect_t = [stats.traj_struct.laser];
         catch
+            theta_t = [];
+            laser_vect_t = [];
         end
 
         theta = [theta theta_t];

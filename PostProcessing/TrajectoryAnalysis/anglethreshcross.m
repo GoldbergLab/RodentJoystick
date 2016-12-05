@@ -1,32 +1,30 @@
 function [theta_hist,theta,theta_realtime,fig_handle] = anglethreshcross(stats,varargin)
 %% argument handling
 
-default = {30*(6.35/100),0,0,10,[],1, 'b'};
+default = {30*(6.35/100),63*(6.35/100),0,0,10,[],1, 'b'};
 numvarargs = length(varargin);
-if numvarargs > 7
-    error('too many arguments (> 8), only 1 required and 7 optional.');
+if numvarargs > 8
+    error('too many arguments (> 9), only 1 required and 8 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[thresh,trajid,rw_only,interv,ax,plot_flag,color] = default{:};
+[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plot_flag,color] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
-tstruct = stats.traj_struct;
 theta=[];
 
-k=0;
-for i=1:length(tstruct)
-    if (tstruct(i).rw == rw_only) || ~rw_only
-    index = find(tstruct(i).magtraj>thresh);
-    thresh_cross = min(index);
-    if numel(thresh_cross)
-        k=k+1;
-        [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
-        theta_realtime(k) = tstruct(i).real_time;
-    end
-    end
-end
+k=0;   
+  [theta,~,theta_realtime] = tau_theta(stats,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],0);  
+%     if (tstruct(i).rw == rw_only) || ~rw_only
+%     index = find(tstruct(i).magtraj>thresh);
+%     thresh_cross = min(index);
+%     if numel(thresh_cross)
+%         k=k+1;
+%         [theta(k),rho] = cart2pol(tstruct(i).traj_x(thresh_cross),tstruct(i).traj_y(thresh_cross));
+%         theta_realtime(k) = tstruct(i).real_time;
+%     end
+%     end
 
-theta = theta*(180/pi);
+%theta = theta*(180/pi);
 
 % theta(sign(theta)==-1) = 2*pi + theta(sign(theta)==-1);
 edges = -180:interv:180;
@@ -49,4 +47,5 @@ if plot_flag
     plot(edges,theta_hist,strcat(color,'.'));
     plot(-180:1:180,f(-180:1:180),color);
     hold off
+    fig_handle = gcf();
 end

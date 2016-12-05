@@ -90,7 +90,7 @@ end
 
 clear fig_handle;
 try
-    [~,fig_handle(1)] = multi_anglethreshcross(dirlist,out_thresh*(6.35/100),0,0,10,[],1,0,2);
+    [~,fig_handle(1)] = multi_anglethreshcross(dirlist,hold_thresh,out_thresh,0,0,10,[],1,0,2);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/anglethreshcross/');
     if ~exist(fig_dir,'dir')
@@ -128,7 +128,7 @@ end
 
 clear fig_handle;
 try
-    [~,fig_handle] = angledist_trialevo(dirlist);
+    [~,fig_handle] = theta_trialevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_trial_evo_day/');
     if ~exist(fig_dir,'dir')
@@ -141,12 +141,12 @@ try
     exportfigpptx(pptname,fig_handle,[2 3]);
     close(fig_handle);
 catch e
-    display('Failed angledist_trialevo');
+    display(strcat('Failed theta_trialevo day :',e.message));
 end
 
 clear fig_handle;
 try
-    [~,~,~,~,fig_handle] = angledist_timeevo(dirlist);
+    [~,~,~,~,fig_handle] = theta_timeevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_time_evo_day/');
     if ~exist(fig_dir,'dir')
@@ -159,12 +159,13 @@ try
     exportfigpptx(pptname,fig_handle,[1 1]);
     close(fig_handle);
 catch e
+    display(strcat('Failed theta_timeevo day :',e.message));
 end
 
 
 clear fig_handle;
 try
-    [~,fig_handle] = timetothreshcross_trialevo(dirlist);
+    [~,fig_handle] = tau_trialevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_trial_evo_day/');
     if ~exist(fig_dir,'dir')
@@ -177,12 +178,13 @@ try
     exportfigpptx(pptname,fig_handle,[2 3]);
     close(fig_handle);
 catch e
+    display(strcat('Failed tau_trialevo day :',e.message));
 end
 
 
 clear fig_handle;
 try
-    [~,~,~,~,fig_handle(1)] = posthreshcross_timeevo(dirlist);
+    [~,~,~,~,fig_handle(1)] = tau_timeevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_time_evo_day/');
     if ~exist(fig_dir,'dir')
@@ -195,6 +197,7 @@ try
     exportfigpptx(pptname,fig_handle,[1 1]);
     close(fig_handle);
 catch e
+        display(strcat('Failed tau_timeevo day :',e.message));
 end
 
 clear fig_handle;
@@ -202,9 +205,9 @@ try
     
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
-    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'dir');
+    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
     
-    [~,fig_handle] = angledist_trialevo(dirlist_all(1:end),0);
+    [~,fig_handle] = theta_trialevo(dirlist_all(1:end),0);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_trial_evo_full/');
     if ~exist(fig_dir,'dir')
@@ -217,7 +220,7 @@ try
     exportfigpptx(pptname,fig_handle,[2 3]);
     close(fig_handle);
 catch e
-    display('Failed angledist_trialevo');
+    display(strcat('Failed theta_trialevo full:',e.message));
 end
 
 
@@ -225,9 +228,9 @@ clear fig_handle;
 try
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
-    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'dir');
+    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
     
-    [~,~,~,~,fig_handle] = angledist_timeevo(dirlist_all(1:end),0);
+    [~,~,~,~,fig_handle] = theta_timeevo(dirlist_all(1:end),0);
         
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_time_evo_full/');
     if ~exist(fig_dir,'dir')
@@ -240,15 +243,16 @@ try
     exportfigpptx(pptname,fig_handle,[1 1]);
     close(fig_handle);
 catch e
+        display(strcat('Failed theta_timeevo full :',e.message));
 end
 
 clear fig_handle;
 try
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
-    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'dir');
+    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
     
-    [~,fig_handle] = timetothreshcross_trialevo(dirlist_all(1:end));
+    [~,fig_handle] = tau_trialevo(dirlist_all(1:end));
         
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_trial_evo_full/');
     if ~exist(fig_dir,'dir')
@@ -261,15 +265,16 @@ try
     exportfigpptx(pptname,fig_handle,[2 3]);
     close(fig_handle);
 catch e
+    display(strcat('Failed tau_trialevo full :',e.message));
 end
 
 clear fig_handle;
 try
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
-    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'dir');
+    dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
     
-    [~,~,~,~,fig_handle(1)] = posthreshcross_timeevo(dirlist_all(1:end));
+    [~,~,~,~,fig_handle(1)] = tau_timeevo(dirlist_all(1:end));
     
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_time_evo_full/');
@@ -283,6 +288,7 @@ try
     exportfigpptx(pptname,fig_handle,[1 1]);
     close(fig_handle);
 catch e
+    display(strcat('Failed tau_timeevo full :',e.message));
 end
 close all
 clear fig_handle;

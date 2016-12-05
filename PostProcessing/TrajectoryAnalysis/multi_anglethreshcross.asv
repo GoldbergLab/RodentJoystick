@@ -6,7 +6,7 @@ if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[hold_thresh,othresh2,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
 fig_handle= [];
 
 if plotflag
@@ -38,7 +38,7 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,theta{i},~,~] = anglethreshcross(stats,hold_thresh,out_thresh,0,rw_only,interv,ax,plotflag,colors(i));    
+    [~,theta{i},~,~] = tau_theta %anglethreshcross(stats,thresh,0,rw_only,interv,ax,plotflag,colors(i));    
     console_output{i+1} = sprintf(strcat(dates{i},' Med: %d'),median([theta{i}]));
 end
 
@@ -51,7 +51,7 @@ end
 if plotflag
     axes(ax);
     legend(dates);
-    title(strcat('Angle at threshold Crossing :',num2str(out_thresh*(6.35/100))));
+    title(strcat('Angle at threshold Crossing :',num2str(thresh)));
 end
 
 

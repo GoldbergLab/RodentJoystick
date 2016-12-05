@@ -1,4 +1,4 @@
-function [theta_nl,theta_nl_rt,theta_l,theta_l_rt,fig_handle] = angledist_timeevo(dirlist,varargin)
+function [theta_nl,theta_nl_rt,theta_l,theta_l_rt,fig_handle] = theta_timeevo(dirlist,varargin)
 
 default = {45,1};
 numvarargs = length(varargin);
@@ -31,16 +31,19 @@ for i = 1:length(dirlist)
     stats = get_stats_startatzero(stats,hold_thresh(i));
     stats_l = get_stats_with_trajid(stats,1);
     stats_nl = get_stats_with_trajid(stats,2);
-    [~,theta_l_t,theta_l_rtime] = anglethreshcross(stats_l,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
-    [~,theta_nl_t,theta_nl_rtime] = anglethreshcross(stats_nl,out_thresh(i)*(6.35/100),0,0,1,10,[],0);
+    [theta_l_t,~,theta_l_rtime,~] = tau_theta(stats_l,hold_thresh(i)*(6.35/100),out_thresh(i)*(6.35/100),0,0,[],0);
+    [theta_nl_t,~,theta_nl_rtime,~] = tau_theta(stats_nl,hold_thresh(i)*(6.35/100),out_thresh(i)*(6.35/100),0,0,[],0);
+    
     catch
-        display('Failed to Load and get theta');
+        theta_l_t = [];theta_l_rtime = [];
+        theta_nl_t = [];theta_nl_rtime = [];
     end
    
     theta_l = [theta_l theta_l_t];
     theta_l_rt = [theta_l_rt theta_l_rtime];
     theta_nl = [theta_nl theta_nl_t];
     theta_nl_rt = [theta_nl_rt theta_nl_rtime];
+    
     angle_index_nl(i) = numel(theta_nl);
     angle_index_l(i) = numel(theta_l);
 end

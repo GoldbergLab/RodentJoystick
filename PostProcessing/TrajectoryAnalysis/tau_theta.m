@@ -13,6 +13,8 @@ stats=get_stats_with_trajid(stats,trajid);
 stats=get_stats_with_len(stats,50);
 tstruct = stats.traj_struct;
 theta=[];
+tau = [];
+real_time =[];
 
 k=0;
 for i=1:length(tstruct)

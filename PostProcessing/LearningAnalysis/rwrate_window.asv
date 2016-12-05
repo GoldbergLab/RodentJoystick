@@ -1,8 +1,0 @@
-function [rw_vect] = rwrate_window(stats,windowlen)
-
-a = 1;
-b = ones(windowlen,1)/windowlen;
-rw_vect = filter(b,a,rw);
-
-rw = [stats.traj_struct.rw];
-

@@ -1,4 +1,4 @@
-function [out,h] = timetothreshcross_trialevo(dirlist,varargin)
+function [out,h] = tau_trialevo(dirlist,varargin)
 
 default = {30,45,1};
 numvarargs = length(varargin);
@@ -16,25 +16,28 @@ try
     for i = 1:length(dirlist)
         %   i
         [pathstr,name,ext] = fileparts(dirlist(i).name);
-        [pathstr_rule,name,ext] = fileparts(dirlist(i).name);
+        [pathstr_rule,name,ext] = fileparts(pathstr);        
+        contingency_angle = strsplit(name,'_');
         
-        contingency_angle = strsplit(pathstr_rule,'_');
-        
-        out_thresh(i) = str2num(contingency_angle{end-5});
-        hold_time(i) = str2num(contingency_angle{end-4});
-        hold_thresh(i) = str2num(contingency_angle{end-3});
-        angle1(i) = str2num(contingency_angle{end-2});
-        angle2(i) = str2num(contingency_angle{end-1});
+        out_thresh(i) = str2num(contingency_angle{2});
+        hold_time(i) = str2num(contingency_angle{3});
+        hold_thresh(i) = str2num(contingency_angle{4});
+        angle1(i) = str2num(contingency_angle{5});
+        angle2(i) = str2num(contingency_angle{6});
+        angle3(i) = str2num(contingency_angle{7});
+        angle4(i) = str2num(contingency_angle{8});
         
         try
             
             stats = load_stats(dirlist(i),0,1);
             stats = get_stats_with_len(stats,50);
-            stats = get_stats_with_reach(stats,(out_thresh(i)-3)*(6.35/100));
-            [~,tau_t] = posthreshcross(stats,(hold_thresh(i))*(6.35/100),0,0,1,10,[],0);
+            stats = get_stats_with_reach(stats,(out_thresh(i))*(6.35/100));
+            [~,tau_t,~,~] = tau_theta(stats,(hold_thresh(i))*(6.35/100),(out_thresh(i))*(6.35/100),0,0,[],0);
             laser_vect_t = [stats.traj_struct.laser];
             
         catch
+            tau_t = [];
+            laser_vect_t = [];
         end
                 
         tau = [tau tau_t];
@@ -72,7 +75,7 @@ for i = 1:(numel(tau)-windowSize)
     sig_vect(i) = vartestn(vertcat([reshape(tau_l,numel(tau_l),1);reshape(tau_nl,numel(tau_nl),1)]),index_list,'Display','off','TestType','BrownForsythe');
  end
     thresh_index = [0 thresh_index];
-thresh_index(end) = thresh_index(end)-windowSize;
+    thresh_index(end) = thresh_index(end)-windowSize;
 
 angle1(angle1<0) = angle1(angle1<0)+360;angle2(angle2<0) = angle2(angle2<0)+360;
 angle1 = angle1/5;angle2 = angle2/5;
