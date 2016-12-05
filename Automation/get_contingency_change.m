@@ -1,5 +1,8 @@
 function [angles] = get_contingency_change(stats,targ_rate,ccw,plot_flag)
 
+angles = [];
+
+try
 stats = get_stats_with_len(stats,50);
 stats = get_stats_with_reach(stats,63*(6.35/100));
 
@@ -51,4 +54,7 @@ if plot_flag
     stairs(theta_edges,theta_dist);
     figure;
     stairs(theta_edges,theta_dist_cum);
+end
+catch e
+    display(e.message);
 end
