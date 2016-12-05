@@ -34,7 +34,7 @@ end
 
 %attempt to write data
 try
-    logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_data);
+    logname = write_analysis_log(experiment_directory, pp_report, bhvr_report, skipped_dats);
 end
 disp([datestr(now, 'HH:MM:SS'), ' Finished scheduled post processing analysis.']);
 end
