@@ -95,29 +95,30 @@ for k= 1:length(dirlist)
     [stats, days(k), e] = load_fields(statsname, fieldlist);
     errlist{k} = e;
     if exist('statsaccum', 'var')
-        try; statsaccum.np_count = stats.np_count + statsaccum.np_count; end;
-        try; statsaccum.js_r_count = stats.js_r_count + statsaccum.js_r_count; end;
-        try; statsaccum.js_l_count = stats.js_l_count + statsaccum.js_l_count; end;
-        try; statsaccum.pellet_count = stats.pellet_count + statsaccum.pellet_count; end;
-        try; statsaccum.np_js = [statsaccum.np_js; stats.np_js]; end;
-        try; statsaccum.np_js_post = [stats.np_js_post; statsaccum.np_js_post]; end;
-        try; statsaccum.traj_struct = [statsaccum.traj_struct, stats.traj_struct]; end;
-        try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial + ...
+        try statsaccum.np_count = stats.np_count + statsaccum.np_count; end;
+        try statsaccum.js_r_count = stats.js_r_count + statsaccum.js_r_count; end;
+        try statsaccum.js_l_count = stats.js_l_count + statsaccum.js_l_count; end;
+        try statsaccum.pellet_count = stats.pellet_count + statsaccum.pellet_count; end;
+        try statsaccum.np_js = [statsaccum.np_js; stats.np_js]; end;
+        try statsaccum.np_js_post = [stats.np_js_post; statsaccum.np_js_post]; end;
+        try statsaccum.traj_struct = [statsaccum.traj_struct, stats.traj_struct]; end;
+        try statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial + ...
                 statsaccum.traj_pdf_jstrial; end;
-        try; statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
-        try; statsaccum.trialnum = stats.trialnum + statsaccum.trialnum; end;
-        try; statsaccum.srate = statsaccum.pellet_count/statsaccum.trialnum; end;
+        try statsaccum.numtraj = stats.numtraj + statsaccum.numtraj; end;
+        try statsaccum.trialnum = stats.trialnum + statsaccum.trialnum; end;
+        try statsaccum.srate(end+1) = stats.srate; end; %+ statsaccum.pellet_count/statsaccum.trialnum; end;
     else
-        try; statsaccum.np_count = stats.np_count; end;
-        try; statsaccum.js_r_count = stats.js_r_count; end;
-        try; statsaccum.js_l_count = stats.js_l_count; end;
-        try; statsaccum.pellet_count = stats.pellet_count; end;
-        try; statsaccum.np_js = stats.np_js; end;
-        try; statsaccum.np_js_post = stats.np_js_post; end;
-        try; statsaccum.traj_struct = stats.traj_struct; end;
-        try; statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
-        try; statsaccum.numtraj = stats.numtraj; end;
-        try; statsaccum.trialnum = stats.trialnum; end;
+        try statsaccum.np_count = stats.np_count; end;
+        try statsaccum.js_r_count = stats.js_r_count; end;
+        try statsaccum.js_l_count = stats.js_l_count; end;
+        try statsaccum.pellet_count = stats.pellet_count; end;
+        try statsaccum.np_js = stats.np_js; end;
+        try statsaccum.np_js_post = stats.np_js_post; end;
+        try statsaccum.traj_struct = stats.traj_struct; end;
+        try statsaccum.traj_pdf_jstrial = stats.traj_pdf_jstrial; end;
+        try statsaccum.numtraj = stats.numtraj; end;
+        try statsaccum.trialnum = stats.trialnum; end;
+        try statsaccum.srate = stats.srate; end;
     end
     clear stats;
 end

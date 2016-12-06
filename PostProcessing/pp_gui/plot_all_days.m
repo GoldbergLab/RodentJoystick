@@ -238,12 +238,13 @@ elseif strcmp(plotname,'Segments in Trajectory')
 elseif strcmp(plotname,'Angle at Thresh')
     trajid = str2num(arg1);
     interv = str2num(arg2);
-    thresh = str2num(arg3)*(6.35/100);
+    thresh = str2num(arg3);
+    hold_thresh = 30;
 %   arg1label = 'TrajID'; 
 %   arg2label = 'Interv';
 %   arg3label = 'Thresh';
     plotflag=1;
-    [consolestr] = multi_anglethreshcross(dirlist,thresh,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_anglethreshcross(dirlist,hold_thresh,thresh,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Angle at Thresh after Hold')
     trajid = str2num(arg1);

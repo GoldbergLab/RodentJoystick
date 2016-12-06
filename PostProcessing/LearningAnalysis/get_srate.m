@@ -1,5 +1,6 @@
 function [s_struct] = get_srate(tstruct)
 
+try
 
 laser_trials = 0;
 laser_trials_s = 0;
@@ -48,5 +49,11 @@ s_struct.total = total_s;
 s_struct.laser_succ = laser_s;
 s_struct.catch_succ = catch_s;
 s_struct.ratio = ratio_l_nl;
+
+catch
+    s_struct.total = [];
+    s_struct.laser_succ = [];
+    s_struct.catch_succ = [];
+    s_struct.ratio = [];
 
 end

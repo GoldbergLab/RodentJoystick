@@ -56,5 +56,6 @@ if plot_flag
     stairs(theta_edges,theta_dist_cum);
 end
 catch e
-    display(e.message);
+    display(strcat(e.message,': Failed Angle Distribution, using defaults'));
+    angles = [0 360 1];
 end
