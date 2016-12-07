@@ -27,7 +27,7 @@ split_cont = strsplit(split_path{end-2},'_');
 boxnum_str = split_cont{2};
 
 %pc_acceptable = ((stats.pellet_count)/(length(dirlist)-duplicates) >= pellet_count_threshold) ...
-                    || ~get(handles.pcoverride, 'Value');
+%                    || ~get(handles.pcoverride, 'Value');
 rewardrate = str2num(get(handles.rewardrate, 'String'));
 dir_def = 0;
 split_def = 0;
