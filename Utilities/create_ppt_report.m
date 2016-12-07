@@ -26,6 +26,7 @@ angle4 = str2num(contingency{8});
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,~,fig_handle(1)] = np_js_distribution(dirlist,40,1,1,1,1,1,[]);
     [~,~,fig_handle(2)] = np_post_distribution(dirlist,40,1,1,1,1,[]);
     
@@ -47,6 +48,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,~,fig_handle(1)] = activity_heat_map(stats, 1, [2 99], [],[1 100], 1, 0, 1);
     [~,~,fig_handle(2)] = activity_heat_map(stats, 1, [2 99], [],[1 100], 2, 0, 1);
     [~,~,fig_handle(3)] = activity_heat_map(stats, 1, [2 99], [],[1 100], 3, 0, 1);
@@ -69,6 +71,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,~,fig_handle(1)] = activity_heat_map(stats_ts, 1, [2 99], [],[1 100], 1, 0, 1);
     [~,~,fig_handle(2)] = activity_heat_map(stats_ts, 1, [2 99], [],[1 100], 2, 0, 1);
     [~,~,fig_handle(3)] = activity_heat_map(stats_ts, 1, [2 99], [],[1 100], 3, 0, 1);
@@ -90,6 +93,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,fig_handle(1)] = multi_anglethreshcross(dirlist,hold_thresh,out_thresh,0,0,10,[],1,0,2);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/anglethreshcross/');
@@ -109,6 +113,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,fig_handle(1)] = multi_tau_theta(dirlist,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],1,0,2);
     [~,fig_handle(2)] = multi_tau_theta(dirlist,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],1,0,3);
     
@@ -128,6 +133,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,fig_handle] = theta_trialevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_trial_evo_day/');
@@ -146,6 +152,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,~,~,~,fig_handle] = theta_timeevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/theta_time_evo_day/');
@@ -165,6 +172,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,fig_handle] = tau_trialevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_trial_evo_day/');
@@ -184,6 +192,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [~,~,~,~,fig_handle(1)] = tau_timeevo(dirlist);
     
     fig_dir = strcat(dirlist(1).name,'/Analysis_fig/tau_time_evo_day/');
@@ -202,7 +211,7 @@ end
 
 clear fig_handle;
 try
-    
+    fig_handle = [];
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
     dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
@@ -226,6 +235,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
     dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
@@ -248,6 +258,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
     dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');
@@ -270,6 +281,7 @@ end
 
 clear fig_handle;
 try
+    fig_handle = [];
     [dirlist_all,name,ext] = fileparts(dirlist(1).name);
     [dirlist_all,name,ext] = fileparts(dirlist_all);
     dirlist_all = rdir(strcat(dirlist_all,'\*\'),'isdir');

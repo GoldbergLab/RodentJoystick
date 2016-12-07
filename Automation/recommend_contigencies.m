@@ -26,19 +26,19 @@ split_path = strsplit(dirlist(1).name,'\');
 split_cont = strsplit(split_path{end-2},'_');
 boxnum_str = split_cont{2};
 
-pc_acceptable = ((stats.pellet_count)/(length(dirlist)-duplicates) >= pellet_count_threshold) ...
+%pc_acceptable = ((stats.pellet_count)/(length(dirlist)-duplicates) >= pellet_count_threshold) ...
                     || ~get(handles.pcoverride, 'Value');
 rewardrate = str2num(get(handles.rewardrate, 'String'));
 dir_def = 0;
 split_def = 0;
 
-if pc_acceptable && get(handles.thresholdselect, 'Value')
+if get(handles.thresholdselect, 'Value')
     thresh = recommend_threshold(dirlist, rewardrate);
-elseif pc_acceptable && get(handles.holdtimeselect, 'Value')
+elseif get(handles.holdtimeselect, 'Value')
     holdtime = recommend_holdtime(dirlist, rewardrate);
-elseif pc_acceptable && get(handles.centerthresholdselect, 'Value')
+elseif get(handles.centerthresholdselect, 'Value')
     centerhold = recommend_centerhold(dirlist, rewardrate, holdtime, centerhold);
-elseif pc_acceptable && get(handles.sectorselect, 'Value')
+elseif get(handles.sectorselect, 'Value')
     split = eval(strcat('get(handles.SplitSel',boxnum_str,',''Value'')'))-1;
     def_dir = eval(strcat('get(handles.MovDir',boxnum_str,',''Value'')'))-1;
     sector = update_contingency(dirlist(end),rewardrate,split,def_dir);
