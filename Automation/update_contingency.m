@@ -63,11 +63,14 @@ end
 [angle_l] = get_contingency_change(stats_l,rew_rate,l_dir,0);
 [angle_nl] = get_contingency_change(stats_nl,rew_rate,nl_dir,0);
 
+ angle_l(angle_l<60&angle_l>0) = angle_l(angle_l<60&angle_l>0) + 360;
+ angle_nl(angle_nl<60&angle_nl>0) = angle_nl(angle_nl<60&angle_nl>0) + 360;
+
 if split == 0
     %% Determine which way the animal is being pushed,
     %Then make sure the animal isn't being pushed in the opposite direction
     if ~no_prev_cont
-        temp1 = sort([angle_nl(1:3);prev_cont(1:3)],1,'descend');        
+        temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);        
         if def_dir == 1            
             angle_nl(1:3) = temp1(1,:);    
         elseif def_dir == 0
@@ -78,21 +81,23 @@ if split == 0
     
 elseif split == 1
     if ~no_prev_cont
-        temp1 = sort([angle_nl(1:3);prev_cont(1:3)],1,'descend');
-        temp2 = sort([angle_l(4:6);prev_cont(4:6)],1,'ascend');
+        temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);
+        temp2 = sortrows([angle_l(4:6);prev_cont(4:6)],1);
         angle_nl = temp1(1,:);        
         angle_l = temp2(1,:);
     end
     angle_out = [angle_nl angle_l split def_dir];
 elseif split == 2
     if ~no_prev_cont
-        temp1 = sort([angle_nl(1:3);prev_cont(1:3)],1,'descend');
-        temp2 = sort([angle_l(4:6);prev_cont(4:6)],1,'ascend');
+        temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);
+        temp2 = sortrows([angle_l(4:6);prev_cont(4:6)],1);
         angle_nl(1:3) = temp1(2,:);
         angle_l(1:3) = temp2(2,:);
     end
     angle_out = [angle_nl angle_l split def_dir];
 end
+
+angle_out(angle_out>360) = angle_out(angle_out>360) - 360;
 
 %% Write New Contingency
 fileID = fopen(write_contingency_path{1},'w');
