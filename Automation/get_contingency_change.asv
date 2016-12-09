@@ -1,7 +1,7 @@
 function [angles,rwrate_fail] = get_contingency_change(stats,targ_rate,ccw,plot_flag)
 
 angles = [];
-rwrate_fail = 0;
+
 try
 stats = get_stats_with_len(stats,50);
 stats = get_stats_with_reach(stats,63*(6.35/100));
@@ -22,8 +22,6 @@ if ccw
     [ind] = find(theta_dist_cum<tau_factor);
     if tau_factor>1 || tau_factor <0
         rwrate_fail = 1;
-        angles = [0 360 1];
-        return
     end
     angle1 = theta_edges(ind(end));
     angle2 = theta_edges(ind(end))+60;
@@ -33,8 +31,7 @@ else
     [ind] = find(theta_dist_cum>tau_factor);
     if tau_factor>1 || tau_factor <0
         rwrate_fail = 1;
-        angles = [0 360 1];
-        return
+        
     end
     angle1 = theta_edges(ind(1))-60;
     angle2 = theta_edges(ind(1));
