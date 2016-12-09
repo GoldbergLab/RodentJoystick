@@ -1,4 +1,5 @@
 function [] = create_ppt_report(dirlist)
+warning('off','all');
 
 stats = load_stats(dirlist,0,0);
 stats_ts = load_stats(dirlist,0,1);
@@ -293,7 +294,7 @@ try
     if ~exist(fig_dir,'dir')
         mkdir(fig_dir);
     end
-    for i=1:6
+    for i=1:1
         savefig(fig_handle(i),strcat(fig_dir,num2str(i)));
     end
     
@@ -305,3 +306,4 @@ end
 close all
 clear fig_handle;
 
+warnings('on','all');

@@ -47,10 +47,17 @@ for i = 1:length(dirlist)
     tau_index_l(i) = numel(tau_l);
 end
 
-offset = floor(min(tau_l_rt));
-tau_l_rt = tau_l_rt - offset;
-tau_nl_rt = tau_nl_rt - offset;
-end_point = ceil(max(max(tau_l_rt),max(tau_nl_rt)));
+offset_l = floor(min(tau_l_rt));
+offset_nl = floor(min(tau_nl_rt));
+
+tau_l_rt = tau_l_rt - offset_l;
+tau_nl_rt = tau_nl_rt - offset_nl;
+
+if isempty(tau_l_rt)
+    end_point = ceil(max(tau_nl_rt));    
+else
+    end_point = ceil(max(max(tau_l_rt),max(tau_nl_rt)));
+end
 
 fig_handle = figure;
 

@@ -47,10 +47,16 @@ for i = 1:length(dirlist)
     angle_index_nl(i) = numel(theta_nl);
     angle_index_l(i) = numel(theta_l);
 end
-offset = floor(min(theta_l_rt));
-theta_l_rt = theta_l_rt - offset;
-theta_nl_rt = theta_nl_rt - offset;
-end_point = ceil(max(max(theta_l_rt),max(theta_nl_rt)));
+offset_l = floor(min(theta_l_rt));
+offset_nl = floor(min(theta_nl_rt));
+theta_l_rt = theta_l_rt - offset_l;
+theta_nl_rt = theta_nl_rt - offset_nl;
+if isempty(theta_l_rt)
+    end_point = ceil(max(theta_nl_rt));
+else
+    end_point = ceil(max(max(theta_l_rt),max(theta_nl_rt)));
+end
+
 
 fig_handle = figure;
 

@@ -146,52 +146,56 @@ end
 function [stats] = add_field(stats, fname, fieldname)
     allfields = isempty(fieldname);
     srateneeded = strcmp(fieldname, 'srate');
-    if allfields || (strcmp(fieldname, 'np_count'))
-        load(fname, 'np_count');
-        stats.np_count = np_count;
-    end
-    if allfields || strcmp(fieldname, 'js_r_count')
-        load(fname, 'js_r_count');
-        stats.js_r_count = js_r_count;
-    end
-    if allfields || strcmp(fieldname, 'js_l_count')
-        load(fname, 'js_l_count');
-        stats.js_l_count = js_l_count;
-    end
-    if allfields || strcmp(fieldname, 'pellet_count') || srateneeded
-        load(fname, 'pellet_count');
-        stats.pellet_count = pellet_count;
-    end
-    if allfields || strcmp(fieldname, 'np_js') 
-        load(fname, 'np_js');
-        stats.np_js = np_js;
-    end
-    if allfields || strcmp(fieldname, 'np_js_nc') 
-        load(fname, 'np_js_nc');
-        stats.np_js_nc = np_js_nc;
-    end
-    if allfields || strcmp(fieldname, 'np_js_post') 
-        load(fname, 'np_js_post'); 
-        stats.np_js_post = np_js_post; 
-    end
-    if allfields || strcmp(fieldname, 'traj_pdf_jstrial') 
-        load(fname, 'traj_pdf_jstrial');
-        stats.traj_pdf_jstrial = traj_pdf_jstrial;
-    end
-    if allfields || strcmp(fieldname, 'numtraj') 
-        load(fname, 'numtraj');
-        stats.numtraj = numtraj;
-    end
-    if allfields || strcmp(fieldname, 'traj_struct')
-        load(fname, 'traj_struct');
-        stats.traj_struct = traj_struct;
-    end
-    if allfields || strcmp(fieldname, 'trialnum') || srateneeded
-        load(fname, 'trialnum');
-        stats.trialnum = trialnum;
-    end
-    if  allfields ||strcmp(fieldname, 'srate')
-        load(fname, 'srate');
-        stats.srate = srate;        
+    try
+        if allfields || (strcmp(fieldname, 'np_count'))
+            load(fname, 'np_count');
+            stats.np_count = np_count;
+        end
+        if allfields || strcmp(fieldname, 'js_r_count')
+            load(fname, 'js_r_count');
+            stats.js_r_count = js_r_count;
+        end
+        if allfields || strcmp(fieldname, 'js_l_count')
+            load(fname, 'js_l_count');
+            stats.js_l_count = js_l_count;
+        end
+        if allfields || strcmp(fieldname, 'pellet_count') || srateneeded
+            load(fname, 'pellet_count');
+            stats.pellet_count = pellet_count;
+        end
+        if allfields || strcmp(fieldname, 'np_js')
+            load(fname, 'np_js');
+            stats.np_js = np_js;
+        end
+        if allfields || strcmp(fieldname, 'np_js_nc')
+            load(fname, 'np_js_nc');
+            stats.np_js_nc = np_js_nc;
+        end
+        if allfields || strcmp(fieldname, 'np_js_post')
+            load(fname, 'np_js_post');
+            stats.np_js_post = np_js_post;
+        end
+        if allfields || strcmp(fieldname, 'traj_pdf_jstrial')
+            load(fname, 'traj_pdf_jstrial');
+            stats.traj_pdf_jstrial = traj_pdf_jstrial;
+        end
+        if allfields || strcmp(fieldname, 'numtraj')
+            load(fname, 'numtraj');
+            stats.numtraj = numtraj;
+        end
+        if allfields || strcmp(fieldname, 'traj_struct')
+            load(fname, 'traj_struct');
+            stats.traj_struct = traj_struct;
+        end
+        if allfields || strcmp(fieldname, 'trialnum') || srateneeded
+            load(fname, 'trialnum');
+            stats.trialnum = trialnum;
+        end
+        if  allfields ||strcmp(fieldname, 'srate')
+            load(fname, 'srate');
+            stats.srate = srate;
+        end
+    catch e
+        display(e.message);
     end
 end
