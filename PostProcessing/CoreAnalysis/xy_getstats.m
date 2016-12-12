@@ -212,7 +212,7 @@ for struct_index=1:length(jstruct)
                     try
                         rw_or_stop = trial_end + 100; %Get 100 ms after Trial Fail to capture the last segment;
                     catch
-                        continue; % If there isn't any data available data to finish out the trajectory, skip the trajectory
+                        continue; % If there isn't any available data to finish out the trajectory, skip the trajectory
                     end
                 end
                 
@@ -235,8 +235,12 @@ for struct_index=1:length(jstruct)
                     rw_or_stop = stop_p;                  
                 end
                 
-                raw_x = traj_x(js_pairs_r(j,1):rw_or_stop);
-                raw_y = traj_y(js_pairs_r(j,1):rw_or_stop);
+                try
+                    raw_x = traj_x(js_pairs_r(j,1):rw_or_stop);
+                    raw_y = traj_y(js_pairs_r(j,1):rw_or_stop);
+                catch
+                    continue
+                end
 
                 try
                 [traj_x_t,traj_y_t] = ...

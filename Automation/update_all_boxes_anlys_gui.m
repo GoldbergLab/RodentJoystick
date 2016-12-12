@@ -12,7 +12,7 @@ for i = 1:4
     try
         handles = update_box(handles, i); 
     catch e
-        disp(['Failed to find contingency info for Box ', num2str(i)]);
+        disp(['Failed to find contingency info for Box ', num2str(i), e.message]);
     end
 end
 set(handles.calculatingindicator, 'BackgroundColor', [0, 0, 0.4]);
@@ -83,24 +83,27 @@ maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,
             
 stats = load_stats(dayscompare, 1, 'pellet_count', 'srate', 'np_count', 'trialnum');
 sz = length(dayscompare)-duplicates;
+try
 set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));
-set(srates(boxnum), 'String', num2str(stats.srate.total));
+set(srates(boxnum), 'String', num2str(stats.srate(end).total));
 set(npokes(boxnum), 'String', num2str(stats.np_count/sz));
 set(trialcount(boxnum), 'String', num2str(stats.trialnum/sz));
+catch
+end
 [thresh, holdtime, centerhold, sector, oldcont] = recommend_contigencies(handles, exptdir, dayscompare, duplicates);
 
 set(thresholds(boxnum), 'String', num2str(oldcont.thresh));
 set(holdtimes(boxnum), 'String', num2str(oldcont.holdtime));
 set(holdthresh(boxnum), 'String', num2str(oldcont.centerhold));
-set(minangle_l(boxnum), 'String', num2str(oldcont.sector(1)));
-set(maxangle_l(boxnum), 'String', num2str(oldcont.sector(2)));
-set(minangle(boxnum), 'String', num2str(oldcont.sector(3)));
-set(maxangle(boxnum), 'String', num2str(oldcont.sector(4)));
+set(minangle(boxnum), 'String', num2str(oldcont.sector(1)));
+set(maxangle(boxnum), 'String', num2str(oldcont.sector(2)));
+set(minangle_l(boxnum), 'String', num2str(oldcont.sector(3)));
+set(maxangle_l(boxnum), 'String', num2str(oldcont.sector(4)));
 
 set(thresholdsrec(boxnum), 'String', num2str(thresh));
 set(holdtimesrec(boxnum), 'String', num2str(holdtime));
 set(holdthreshrec(boxnum), 'String', num2str(centerhold));
-set(minanglerec_l(boxnum), 'String', num2str(sector(1)));
-set(maxanglerec_l(boxnum), 'String', num2str(sector(2)));
-set(minanglerec(boxnum), 'String', num2str(sector(3)));
-set(maxanglerec(boxnum), 'String', num2str(sector(4)));
+set(minanglerec(boxnum), 'String', num2str(sector(1)));
+set(maxanglerec(boxnum), 'String', num2str(sector(2)));
+set(minanglerec_l(boxnum), 'String', num2str(sector(3)));
+set(maxanglerec_l(boxnum), 'String', num2str(sector(4)));
