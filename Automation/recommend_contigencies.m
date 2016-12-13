@@ -41,7 +41,8 @@ elseif get(handles.centerthresholdselect, 'Value')
 elseif get(handles.sectorselect, 'Value')
     split = eval(strcat('get(handles.SplitSel',boxnum_str,',''Value'')'))-1;
     def_dir = eval(strcat('get(handles.MovDir',boxnum_str,',''Value'')'))-1;
-    sector = update_contingency(dirlist(end),rewardrate,split,def_dir);
+    [~,dirlist_index] = max([dirlist.datenum],[],2);
+    sector = update_contingency(dirlist(dirlist_index),rewardrate,split,def_dir);
     sector = [sector(1) sector(2) sector(4) sector(5)];
 end
 
