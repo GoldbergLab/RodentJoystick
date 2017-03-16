@@ -41,7 +41,17 @@ elseif get(handles.centerthresholdselect, 'Value')
 elseif get(handles.sectorselect, 'Value')
     split = eval(strcat('get(handles.SplitSel',boxnum_str,',''Value'')'))-1;
     def_dir = eval(strcat('get(handles.MovDir',boxnum_str,',''Value'')'))-1;
-    [~,dirlist_index] = max([dirlist.datenum],[],2);
+    
+   %%Find the datenum for the files in the selected directories, and pick the
+   %%directory with the newest file
+   
+    for dirind = 1:length(dirlist)
+        fl = rdir(strcat(dirlist(dirind).name,'/*.dat'));
+        max_datenum(dirind) = max([fl.datenum]);
+    end
+    
+    dirlist_index = (max_datenum==max(max_datenum));
+    
     sector = update_contingency(dirlist(dirlist_index),rewardrate,split,def_dir);
     sector = [sector(1) sector(2) sector(4) sector(5)];
 end

@@ -82,6 +82,8 @@ colors = 'rbkmcyrgbkmcyrgbkmcy';
 %% Loading days and actual plotting
 [statslist_all, dates] = load_stats(dirlist, combineflag, 0);
 
+statslist_all = get_stats_with_len(statslist_all,50);
+statslist_all = get_stats_with_reach(statslist_all,4);
 if lasercompareflag==3 && combineflag==1
     statslist(1) = get_stats_with_trajid(statslist_all,1);
     statslist(2) = get_stats_with_trajid(statslist_all,3);

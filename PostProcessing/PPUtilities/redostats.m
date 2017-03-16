@@ -1,7 +1,8 @@
-function [] = redostats(dir_list)
+function [] = redostats(dirlist)
 
-for i=1:length(dir_list)
-    load(dir_list(i).name);
-    [~] = xy_getstats(jstruct,dir_list(i).name(1:(end-12)),1);
-    [~] = xy_getstats(jstruct,dir_list(i).name(1:(end-12)),0);
+for i=1:length(dirlist)
+    i
+    load(strcat(dirlist(i).name,'/jstruct.mat'));
+    [~] = xy_getstats(jstruct,dirlist(i).name,1,0.5);
+    [~] = xy_getstats(jstruct,dirlist(i).name,0,0.5);
 end

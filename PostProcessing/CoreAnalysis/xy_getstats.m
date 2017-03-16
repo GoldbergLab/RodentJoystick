@@ -41,13 +41,22 @@
 %           posttouch :: onset of post touch
 %           rw_or_stop :: minimum of trajectory reward time and nosepoke release
 function jstruct_stats = xy_getstats(jstruct,varargin)
-default = {'',0};
+default = {'',0,0};
 numvarargs = length(varargin);
-if numvarargs > 2
-    error('too many arguments (> 2), only one required and 1 optional.');
+if numvarargs > 3
+    error('too many arguments (> 3), only one required and 2 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[savedir,to_stop_p] = default{:};
+[savedir,to_stop_p,time_after] = default{:};
+
+jstruct_index = arrayfun(@(x) rem(x.real_time,1)>time_after, jstruct);
+jstruct = jstruct(jstruct_index);
+
+jstruct_stats = [];
+
+if numel(jstruct) <1
+  return
+end
 
 %Count the Number of nosepokes, JS (onsets and offsets), JS_post (onsets and offsets)
 %and Number of Pellets dispensed
@@ -123,10 +132,12 @@ traj_struct = [];
 traj_pdf_jstrial= zeros(100,100);
 k=0;
 
+try
 trialnum=0;
 js_trialnum=0;
 d = fdesign.lowpass('N,F3db',8, 50, 1000);
 hd = design(d, 'butter');
+
 for struct_index=1:length(jstruct)
     traj_x = jstruct(struct_index).traj_x;
     traj_y = jstruct(struct_index).traj_y;    
@@ -151,7 +162,7 @@ for struct_index=1:length(jstruct)
     %% Process, and develop traj_struct
     start_temp =0;
     onset_ind = 1;
-    if numel(trials)>0
+    if numel(trials)>0 && numel(js_pairs_l)>0
         for j=1:size(js_pairs_r,1)
             if(sum(((trials(:,1)-js_pairs_r(j,1))<3)&((trials(:,2)-js_pairs_r(j,1))>0))>0) 
             % If the Joystick is in between an nosepoke onset and a nosepoke offset pair
@@ -205,8 +216,9 @@ for struct_index=1:length(jstruct)
                 
 
                 if js_reward(j)
-                    rw_or_stop = rw_onset(onset_ind) + 100; %Get 100 ms after Trial Success to capture the segment
+                    rw_or_stop = rw_onset(onset_ind) + 100; %Get 100 ms after Trial Success to capture the segmen
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]);
+                    
                 else
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
                     try
@@ -328,16 +340,24 @@ for struct_index=1:length(jstruct)
 end
 
 jstruct_stats.traj_pdf_jstrial = traj_pdf_jstrial./sum(sum(traj_pdf_jstrial));
-jstruct_stats.numtraj = k;
 jstruct_stats.traj_struct = traj_struct;
-jstruct_stats.trialnum = trialnum;
 jstruct_stats.srate = get_srate(traj_struct);
+
+catch
+ jstruct_stats.srate = [];
+ jstruct_stats.traj_pdf_jstrial = [];
+ jstruct_stats.traj_struct = [];
+end
+
+jstruct_stats.trialnum = trialnum;
+jstruct_stats.numtraj = k;
 jstruct_stats.day = floor(jstruct(1).real_time);
 
+
 if to_stop_p
-    savestr = '\stats_ts.mat';
+    savestr = strcat('\stats_ts_',num2str(time_after*24),'.mat');
 else
-    savestr = '\stats.mat';
+    savestr = strcat('\stats_',num2str(time_after*24),'.mat');
 end
 
 if ~isempty(savedir)

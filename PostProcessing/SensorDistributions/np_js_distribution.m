@@ -73,18 +73,20 @@ end
 dist_time = -1000:interv:1000;
 
 if first_only
-    [statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js_nc');
+    [statslist, dates] = load_stats(dirlist, combineflag,1, 'np_js_nc');
 else
-    [statslist, dates] = load_stats(dirlist, combineflag,0, 'np_js');
+    [statslist, dates] = load_stats(dirlist, combineflag,1, 'np_js');
 end
 
 labels.legend = dates;
 for i=1:length(statslist)
     if first_only
-        stats.np_js = statslist(i).np_js_nc;
+        stats.np_js = statslist(i).np_js_nc;       
     else
         stats.np_js = statslist(i).np_js;
     end
+    
+    stats.np_js = stats.np_js(stats.np_js~=0);
     
     np_js = histc(stats.np_js,dist_time);
     if normalize 

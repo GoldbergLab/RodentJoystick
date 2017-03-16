@@ -6,6 +6,10 @@ try
 stats = get_stats_with_len(stats,50);
 stats = get_stats_with_reach(stats,63*(6.35/100));
 
+stats_rw = get_stats_rw(stats,1);
+
+rw_cnt = numel(stats_rw.traj_struct);
+
 %stats_nl = get_stats_with_trajid(stats,2);
 [theta,tau,real_time] = tau_theta(stats,30*(6.35/100),63*(6.35/100),0,0,[],0,'b');
 
@@ -20,10 +24,14 @@ tau_factor = sum(tau>100)/numel(tau);
 if ccw
     tau_factor = 1-(targ_rate/tau_factor);
     [ind] = find(theta_dist_cum<tau_factor);
-    if tau_factor>1 || tau_factor <0
-        rwrate_fail = 1;
-        angles = [0 360 1];
-        return
+    if (tau_factor>1 || tau_factor <0)
+         if rw_cnt>100
+          [ind] = find(theta_dist_cum<0.85);
+         else    
+            rwrate_fail = 1;
+            angles = [0 360 1];
+            return
+         end
     end
     angle1 = theta_edges(ind(end));
     angle2 = theta_edges(ind(end))+60;
@@ -31,10 +39,14 @@ if ccw
 else
     tau_factor = (targ_rate/tau_factor);
     [ind] = find(theta_dist_cum>tau_factor);
-    if tau_factor>1 || tau_factor <0
-        rwrate_fail = 1;
-        angles = [0 360 1];
-        return
+    if (tau_factor>1 || tau_factor <0) %&& (rw_cnt<100)
+         if rw_cnt>100
+          [ind] = find(theta_dist_cum>0.15);
+         else    
+            rwrate_fail = 1;
+            angles = [0 360 1];
+            return
+         end
     end
     angle1 = theta_edges(ind(1))-60;
     angle2 = theta_edges(ind(1));

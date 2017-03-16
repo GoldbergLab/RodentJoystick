@@ -71,6 +71,8 @@ dist_time = -1000:interv:1000;
 labels.legend = dates;
 for i=1:length(statslist)
     stats = statslist(i);
+    
+    stats.np_js_post = stats.np_js_post(stats.np_js_post~=0);
     np_js_post = histc(stats.np_js_post,dist_time);
     if normalize
         np_js_post = np_js_post ./(sum(np_js_post));

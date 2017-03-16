@@ -39,7 +39,7 @@ end
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
     [~,theta{i},~,~] = anglethreshcross(stats,hold_thresh,out_thresh,0,rw_only,interv,ax,plotflag,colors(i));    
-    console_output{i+1} = sprintf(strcat(dates{i*2-1},' Med: %d'),round(median([theta{i}])));
+    console_output{i+1} = sprintf(strcat(dates{i*2-1},' Mean: %d'),round(circmean([theta{i}])));
 end
 
 console_output{1} = 'Angle at Thresh';

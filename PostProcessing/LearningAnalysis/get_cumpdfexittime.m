@@ -11,10 +11,14 @@ end
 [dist1,dist2,pdfSwitch] = default{:};
 
 stats = get_stats_with_len(stats,50);
-stats_reach = get_stats_with_reach(stats,dist2*(6.35/100));
 
-stats_l = get_stats_with_trajid(stats_reach,1);
-stats_nl = get_stats_with_trajid(stats_reach,2);
+% stats = get_stats_with_stopindex(stats,1);
+
+stats_l = get_stats_with_trajid(stats,1);
+stats_nl = get_stats_with_trajid(stats,2);
+
+stats_reach_l = get_stats_with_reach(stats_l,dist2*(6.35/100));
+stats_reach_nl = get_stats_with_reach(stats_nl,dist2*(6.35/100));
 
 if pdfSwitch
     edges = 0:10:500;
@@ -26,9 +30,9 @@ end
 
 
 if numel(stats_nl.traj_struct)>0
-    [~,tau,~,ax] = tau_theta(stats_nl,dist1*(6.35/100),dist2*(6.35/100));
+    [~,tau,~,ax] = tau_theta(stats_reach_nl,dist1*(6.35/100),dist2*(6.35/100));
     tau_dist = histc(tau,edges);
-    tau_dist = tau_dist/(sum(tau_dist));
+    tau_dist = tau_dist/(numel(stats_nl.traj_struct));
     if pdfSwitch
         tau_cumdist = tau_dist;
     else
@@ -40,9 +44,9 @@ if numel(stats_nl.traj_struct)>0
 end
 
 if numel(stats_l.traj_struct)>0
-    [~,tau,~,ax] = tau_theta(stats_l,dist1*(6.35/100),dist2*(6.35/100),0,0,ax,1, 'r');
+    [~,tau,~,ax] = tau_theta(stats_reach_l,dist1*(6.35/100),dist2*(6.35/100),0,0,ax,1, 'r');
     tau_dist = histc(tau,edges);
-    tau_dist = tau_dist/(sum(tau_dist));
+    tau_dist = tau_dist/(numel(stats_l.traj_struct));
     if pdfSwitch
         tau_cumdist = tau_dist;
     else
