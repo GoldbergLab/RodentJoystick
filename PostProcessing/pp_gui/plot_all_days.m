@@ -40,7 +40,7 @@ lasercompareflag = get(handles.lasercomparemenu, 'Value');
 to_stop = get(handles.checkbox_ts,'value');
 
 if strcmp(plotname, 'Activity Heat Map')
-    statscombined = load_stats(dirlist,1,to_stop,12);
+    statscombined = load_stats(dirlist,1,to_stop,0);
 end
 cla(axlist(axnum), 'reset');
 colnum = axnum;

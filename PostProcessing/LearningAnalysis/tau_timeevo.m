@@ -28,9 +28,9 @@ for i = 1:length(dirlist)
     angle4(i) = str2num(contingency_angle{8});
 
     try        
-      stats = load_stats(dirlist(i),0,1);
+      stats = load_stats(dirlist(i),0,1,12);
       stats = get_stats_with_len(stats,50);  
-      [~,tau_l_t,tau_l_rtime,~] = tau_theta(stats,(hold_thresh(i))*(6.35/100),(out_thresh(i))*(6.35/100),1,0,[],0);
+      [~,tau_l_t,tau_l_rtime,~] = tau_theta(stats,(hold_thresh(i))*(6.35/100),(out_thresh(i))*(6.35/100),1,0,[],0);      
       [~,tau_nl_t,tau_nl_rtime,~] = tau_theta(stats,(hold_thresh(i))*(6.35/100),(out_thresh(i))*(6.35/100),2,0,[],0);      
     catch
         tau_l_t=[];tau_l_rtime=[];
