@@ -216,13 +216,13 @@ for struct_index=1:length(jstruct)
                 
 
                 if js_reward(j)
-                    rw_or_stop = rw_onset(onset_ind) + 100; %Get 100 ms after Trial Success to capture the segmen
-                    [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_onset(onset_ind)]);
+                    rw_or_stop = rw_onset(onset_ind); %Get 100 ms after Trial Success to capture the segmen
+                    [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end,rw_or_stop]);
                     
                 else
                     [stop_p,stop_index] = min([js_pairs_r(j,2),np_end,post_end]);
                     try
-                        rw_or_stop = trial_end + 100; %Get 100 ms after Trial Fail to capture the last segment;
+                        rw_or_stop = trial_end; %Get 100 ms after Trial Fail to capture the last segment;
                     catch
                         continue; % If there isn't any available data to finish out the trajectory, skip the trajectory
                     end
@@ -256,12 +256,16 @@ for struct_index=1:length(jstruct)
 
                 try
                 [traj_x_t,traj_y_t] = ...
-                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), rw_or_stop]);
+                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), rw_or_stop + 100]);
                 catch
                     continue;
                 end
                 
-             
+                traj_x_seg = traj_x_t;
+                traj_y_seg = traj_y_t;
+                
+                traj_x_t = traj_x_t(1:(end-100));
+                traj_y_t = traj_y_t(1:(end-100));
                 
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                                
@@ -285,9 +289,11 @@ for struct_index=1:length(jstruct)
                     traj_struct(k).duration = numel(traj_x_t);
                     traj_struct(k).pathlen = pathlen;
                     
-                    
+                    traj_struct(k).traj_x_seg = traj_x_seg;
+                    traj_struct(k).traj_y_seg = traj_y_seg;
+
                     [seginfo,redir_pts] = get_segmentinfo(traj_struct(k));
-                    
+
                     traj_struct(k).seginfo =  seginfo;
                     traj_struct(k).redir_pts =  redir_pts;
                     

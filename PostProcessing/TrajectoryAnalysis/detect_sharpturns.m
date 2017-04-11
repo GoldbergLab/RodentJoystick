@@ -2,7 +2,7 @@ function [redir_points, quality, data] = detect_sharpturns(traj)
 %take in a single trajectory, and fit a smoothing spline - then examine
 %redirection points.
 
-[redir_points,quality, data] = zero_points(traj.traj_x, traj.traj_y);
+[redir_points,quality, data] = zero_points(traj.traj_x_seg, traj.traj_y_seg);
 
 end
 

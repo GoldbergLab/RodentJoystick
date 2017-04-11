@@ -47,6 +47,7 @@ elseif traj_id == 3;
     ext = ' (No Laser Only - Resampled)';
 end
 if plot_flag==1
+    stats = get_stats_with_len(stats,50);
     stats = get_stats_with_trajid(stats,traj_id);
     data = trajectorypdf(stats,rwonly);
     labels = draw_heat_map(data, ax, ['Activity Distribution',ext], logmapping, colorperc, radii);

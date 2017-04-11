@@ -73,9 +73,9 @@ end
 dist_time = -1000:interv:1000;
 
 if first_only
-    [statslist, dates] = load_stats(dirlist, combineflag,1, 'np_js_nc');
+    [statslist, dates] = load_stats(dirlist, combineflag,1,0, 'np_js_nc');
 else
-    [statslist, dates] = load_stats(dirlist, combineflag,1, 'np_js');
+    [statslist, dates] = load_stats(dirlist, combineflag,1,0, 'np_js');
 end
 
 labels.legend = dates;

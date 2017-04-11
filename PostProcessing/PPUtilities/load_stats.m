@@ -1,4 +1,4 @@
-function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag,to_stop,varargin)
+function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag,to_stop,hrin,varargin)
 %[statslist, dates, days] = load_stats(dirlist, combineflag) attempts
 %   to load the stats structures from the directories in dirlist.
 %
@@ -45,15 +45,15 @@ function [statslist, dates, days, errlist] = load_stats(dirlist, combineflag,to_
 %
 errlist = cell(length(dirlist), 1);
 if to_stop
-    statstr = '\stats_ts_0.mat';
+    statstr = strcat('\stats_ts_',num2str(hrin),'.mat');
 else
-    statstr = '\stats_0.mat';
+    statstr = strcat('\stats_',num2str(hrin),'.mat');
 end
 if combineflag==0 || length(dirlist) == 1
 %% GET LIST of individual data
     days = zeros(length(dirlist), 1);
     
-    for k= 1:length(dirlist)
+    for k = 1:length(dirlist)
         [statslist(k), days(k), errlist{k}] = load_fields([dirlist(k).name, statstr], varargin);
     end
 elseif combineflag == 1 % combine all days' stats

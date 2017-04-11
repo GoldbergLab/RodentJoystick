@@ -159,7 +159,7 @@ try
     handles.startdir = startdir;
     to_stop = get(handles.checkbox_ts,'Value');
     
-    [statslist, dates] = load_stats(dirlist, 0, to_stop,'pellet_count', ...
+    [statslist, dates] = load_stats(dirlist, 0, to_stop, 0,'pellet_count', ...
         'srate', 'numtraj');
     disp(length(statslist));
     pellets = 0; trialnum = 0;

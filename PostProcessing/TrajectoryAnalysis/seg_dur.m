@@ -24,7 +24,7 @@ for i=1:numel(stats.traj_struct)
     end
 end
 peakvel = [peakvel{:}];
-edges = 0:interv:100;
+edges = 0:interv:300;
 peakvel_hist = histc(peakvel,edges);
 
 %normalize

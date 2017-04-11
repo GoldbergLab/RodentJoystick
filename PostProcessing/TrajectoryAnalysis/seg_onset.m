@@ -1,4 +1,4 @@
-function [path_hist,pathlen] = seg_pathlen(stats,varargin)
+function [segonset_hist,onset_time] = seg_onset(stats,varargin)
 
 %SEG_PATHLEN Summary of this function goes here
 %   Detailed explanation goes here
@@ -15,19 +15,23 @@ stats=get_stats_with_trajid(stats,trajid);
 
 tstruct = stats.traj_struct;
 
-for i=1:numel(stats.traj_struct)
-    if (tstruct(i).rw == rw_only) || ~rw_only
-        if numel(tstruct(i).seginfo)
-            pathlen{i} = [tstruct(i).seginfo(1:end).pathlen];
-        end
-    end
+for i=1:numel(tstruct)
+   if (tstruct(i).rw == rw_only) || ~rw_only
+       if numel(tstruct(i).seginfo)
+           onset_time(i) = tstruct(i).reach_seg.onset;
+       else
+           onset_time(i) = NaN;
+       end       
+   end
 end
-pathlen = [pathlen{:}];
-edges = logspace(-5,1,50);%0:interv:1;
-path_hist = histc(pathlen,edges);
+
+onset_time = onset_time(~isnan(onset_time));
+
+edges = 0:interv:500;
+segonset_hist = histc(onset_time,edges);
 
 %normalize
-path_hist = path_hist./sum(path_hist);
+segonset_hist = segonset_hist./sum(segonset_hist);
 
 %plot
 if plotflag
@@ -37,6 +41,6 @@ if plotflag
     end
     axes(ax);
     hold on;
-    stairs(log10(edges),path_hist,color);
+    stairs(edges,segonset_hist,color);
     hold off;
 end

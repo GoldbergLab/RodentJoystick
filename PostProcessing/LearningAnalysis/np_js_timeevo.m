@@ -17,7 +17,7 @@ for i=1:length(dirlist)
         angle4(i) = str2num(contingency_rule{8});
         
         try
-            stats_temp = load_stats(dirlist(i),0,0,'np_js_nc');
+            stats_temp = load_stats(dirlist(i),0,0,12,'np_js_nc');
             np_js_nc_vect = [np_js_nc_vect;stats_temp.np_js_nc];
             np_js_time_vect = 0;
             np_js_nc_vect = np_js_nc_vect(np_js_nc_vect~=0);

@@ -22,8 +22,9 @@ for i=1:numel(stats.traj_struct)
     end
    end
 end
-peakvel = [peakvel{:}];
-edges = 0:interv:0.01;
+peakvel = 10*[peakvel{:}]; %% Scale correction due to error in vel calculation in getstats
+edges = logspace(-5,1,50);
+%edges = 0:interv:1;
 peakvel_hist = histc(peakvel,edges);
 
 %normalize
@@ -37,6 +38,7 @@ if plotflag
     end
     axes(ax);
     hold on;
-    stairs(edges,peakvel_hist,color);
+    stairs(log10(edges),peakvel_hist,color);
+    %stairs(edges,peakvel_hist,color);
     hold off;
 end

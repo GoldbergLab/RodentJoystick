@@ -27,8 +27,9 @@ for i=1:numel(stats.traj_struct)
     end
    end
 end
-avgvel = [avgvel{:}];
-edges = 0:interv:.01;
+avgvel = 10*[avgvel{:}];
+edges = logspace(-5,1,50);
+%edges = 0:interv:.01;
 avgvel_hist = histc(avgvel,edges);
 
 %normalize
@@ -42,6 +43,6 @@ if plotflag
     end
     axes(ax);
     hold on;
-    stairs(edges,avgvel_hist,color);
+    stairs(log10(edges),avgvel_hist,color);
     hold off;
 end

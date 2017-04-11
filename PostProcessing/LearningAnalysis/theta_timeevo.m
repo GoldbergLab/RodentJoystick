@@ -26,7 +26,7 @@ for i = 1:length(dirlist)
     angle2(i) = str2num(contingency_angle{6});
     
     try
-    stats = load_stats(dirlist(i),0,1);
+    stats = load_stats(dirlist(i),0,1,12);
     stats = get_stats_with_len(stats,50);
     stats = get_stats_startatzero(stats,hold_thresh(i));
     stats_l = get_stats_with_trajid(stats,1);
