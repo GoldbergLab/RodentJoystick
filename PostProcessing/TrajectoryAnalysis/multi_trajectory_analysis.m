@@ -80,7 +80,7 @@ end
 colors = 'rbkmcyrgbkmcyrgbkmcy';
 
 %% Loading days and actual plotting
-[statslist_all, dates] = load_stats(dirlist, combineflag, 0);
+[statslist_all, dates] = load_stats(dirlist, combineflag, 0, 0);
 
 statslist_all = get_stats_with_len(statslist_all,50);
 statslist_all = get_stats_with_reach(statslist_all,4);
