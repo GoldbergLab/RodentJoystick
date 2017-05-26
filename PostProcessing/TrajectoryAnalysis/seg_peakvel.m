@@ -23,8 +23,8 @@ for i=1:numel(stats.traj_struct)
    end
 end
 peakvel = 10*[peakvel{:}]; %% Scale correction due to error in vel calculation in getstats
-edges = logspace(-5,1,50);
-%edges = 0:interv:1;
+%edges = logspace(-5,1,50);
+edges = 0:interv:1;
 peakvel_hist = histc(peakvel,edges);
 
 %normalize

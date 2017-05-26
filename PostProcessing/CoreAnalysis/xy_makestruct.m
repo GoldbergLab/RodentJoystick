@@ -71,7 +71,10 @@ k = 1;for i=1:length(filelist)
     if size(working_buff,1)>8
         triallive = sensor_on_off_times(working_buff(9,:));
     end
-        
+    if size(working_buff,1)>9
+        masking_light = sensor_on_off_times(working_buff(10,:));
+    end   
+    
     %mark reward times
     reward_del = working_buff(6,:);
     reward_logical = (reward_del>0.5);
@@ -99,12 +102,13 @@ k = 1;for i=1:length(filelist)
     jstruct(i).js_pairs_r = js_r;
     jstruct(i).js_pairs_l = js_l;
     jstruct(i).reward_onset = reward_on;
-    jstruct(i).js_reward = js_reward;
+    jstruct(i).js_reward = js_reward;    
     jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
     try
         jstruct(i).laser_on = laser_on;
         jstruct(i).lick_on = lick;
         jstruct(i).trial_live = triallive;
+        jstruct(i).masking_light = masking_light;
     catch
     end
 

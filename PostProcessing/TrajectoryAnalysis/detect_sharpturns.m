@@ -42,7 +42,7 @@ theta_dot = diff(wrapTo2Pi(atan2(y, x)));
 [~, theta_dot_maxima] = findpeaks(theta_dot);
 theta_dot_cp = [theta_dot_minima; theta_dot_maxima];
 
-data.speed = speed(1:10:end);
+data.speed = speed(1:10:end)*10;
 data.r_curv = r_c(1:10:end);
 data.r_curv_minima = round(r_curv_minima./10);
 data.speed_minima = round(speed_minima./10);

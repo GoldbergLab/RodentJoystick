@@ -1,12 +1,12 @@
 function [console_output,fig_handle] = multi_anglethreshcross(dirlist,varargin)
 
-default = {30*(6.35/100),0,0,1,[],1,0,0};
+default = {30*(6.35/100),0,0,1,[],1,0,0,1};
 numvarargs = length(varargin);
-if numvarargs > 9
-    error('too many arguments (> 10), only 1 required and 9 optional.');
+if numvarargs > 10
+    error('too many arguments (> 11), only 1 required and 10 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag] = default{:};
+[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plotflag,combineflag,lasercompareflag,smoothparam] = default{:};
 fig_handle= [];
 
 if plotflag
@@ -25,9 +25,7 @@ if (lasercompareflag-1)
     [statslist, dates] = load_stats(dirlist, combineflag,0, 0, 'traj_struct');
     statshit = get_stats_with_trajid(statslist,1);
     statscatch = get_stats_with_trajid(statslist,lasercompareflag);
-    dates{4} = strcat(dates{1},'-nl fit');
-    dates{3} = strcat(dates{1},'-nl');
-    dates{2} = strcat(dates{1},'-l fit');
+    dates{2} = strcat(dates{1},'-nl');    
     dates{1} = strcat(dates{1},'-l');
     
     statslist(1) = statshit;
@@ -38,8 +36,8 @@ end
 
 for i= 1:length(statslist)
     stats = get_stats_with_trajid(statslist(i),trajid);
-    [~,theta{i},~,~] = anglethreshcross(stats,hold_thresh,out_thresh,0,rw_only,interv,ax,plotflag,colors(i));    
-    console_output{i+1} = sprintf(strcat(dates{i*2-1},' Mean: %d'),round(circmean([theta{i}])));
+    [~,theta{i},~,~] = anglethreshcross(stats,hold_thresh,out_thresh,0,rw_only,interv,ax,plotflag,colors(i),smoothparam);    
+    console_output{i+1} = sprintf(strcat(dates{i},' Mean: %d'),round(circmean([theta{i}])));
 end
 
 console_output{1} = 'Angle at Thresh';

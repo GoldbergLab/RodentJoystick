@@ -1,13 +1,13 @@
 function [theta_hist,theta,theta_realtime,fig_handle] = anglethreshcross(stats,varargin)
 %% argument handling
 
-default = {30*(6.35/100),63*(6.35/100),0,0,10,[],1, 'b'};
+default = {30*(6.35/100),63*(6.35/100),0,0,10,[],1, 'b',1};
 numvarargs = length(varargin);
-if numvarargs > 8
-    error('too many arguments (> 9), only 1 required and 8 optional.');
+if numvarargs > 9
+    error('too many arguments (> 10), only 1 required and 9 optional.');
 end
 [default{1:numvarargs}] = varargin{:};
-[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plot_flag,color] = default{:};
+[hold_thresh,out_thresh,trajid,rw_only,interv,ax,plot_flag,color,smoothparam] = default{:};
 
 stats=get_stats_with_trajid(stats,trajid);
 theta=[];
@@ -31,7 +31,7 @@ edges = -180:interv:180;
 theta_hist = histc(theta,edges);
 theta_hist = theta_hist./(sum(theta_hist));
 
-f = fit(edges.',theta_hist.','gauss1');
+% f = fit(edges.',theta_hist.','gauss1');
 % x_pl = dist_theta.*(cosd(0:10:360));
 % y_pl = dist_theta.*(sind(0:10:360));
  
@@ -44,8 +44,7 @@ if plot_flag
     end
     axes(ax);
     hold on
-    plot(edges,theta_hist,strcat(color,'.'));
-    plot(-180:1:180,f(-180:1:180),color);
+    stairs(edges,smooth(theta_hist,smoothparam),color);
     hold off
     fig_handle = gcf();
 end

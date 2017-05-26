@@ -44,18 +44,21 @@ for i=1:(length(cont_index)-1)
     np_vect_mean = mean(np_vect);
     %np_vect_stddev_norm = std(np_vect,1);%/abs(np_vect_mean);
     np_vect_stddev_norm = prctile(np_vect,75) - prctile(np_vect,25);
-    pdf_vect_temp = histc(np_vect,-1000:50:1000);
+    pdf_vect_temp = histc(np_vect,-1000:20:1000);
     pdf_vect_temp = pdf_vect_temp/(sum(pdf_vect_temp));
     
     zscore_vect(i) = max(zscore(pdf_vect_temp));
     
-    pdf_vect(i,:) = pdf_vect_temp;
+    pdf_vect(i,:) = smooth(pdf_vect_temp,3);
     
     mean_vect(i) = np_vect_mean;
     
     stddev_vect(i) = np_vect_stddev_norm;
-    
-    cdf_vect(i,:) = cumsum(pdf_vect_temp);
+    if (ind2-ind1)>50
+     cdf_vect(i,:) = cumsum(pdf_vect_temp);
+    else
+     cdf_vect(i,:) = NaN;
+    end
     
 end
 

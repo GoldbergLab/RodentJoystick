@@ -93,28 +93,72 @@ for i=1:length(jstruct)
             np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
             [np_js_diff_abs,ind] = sort(abs(np_js_diff));
             
+            %keep adding each 
+            try
+                list = [list;np_js_diff(ind(1))];
+            catch
+                list = [list;nan];
+            end
+            
+        end
+    end
+end
+jstruct_stats.np_js_nc = list(find((list>-10000)&(list<10000)));
+
+% Get Masked only vs Laser inactivation on Nosepoke
+list=[];
+list_laser=[];
+list_masked=[];
+for i=1:length(jstruct)
+    if (numel(jstruct(i).np_pairs)>0)
+        for j=1:size(jstruct(i).np_pairs,1)
+            % was this nosepoked masked for laser?
+            if numel(jstruct(i).masking_light)>0
+                if sum(abs(jstruct(i).masking_light(:,1) - jstruct(i).np_pairs(j,1))<5)
+                    masked_np = 1;
+                else
+                    masked_np = 0;
+                end
+            else
+                masked_np = 0;
+            end
+            % was this nosepoke hit with laser?
             if numel(jstruct(i).laser_on)>0
                 if sum(abs(jstruct(i).laser_on(:,1) - jstruct(i).np_pairs(j,1))<5)
                     laser_np = 1;
                 else
                     laser_np = 0;
                 end
-            else     
+            else
                 laser_np = 0;
             end
-            %keep adding each 
-            try
-            list = [list;np_js_diff(ind(1))];
-            list_laser = [list_laser;laser_np];
-            catch
+            
+            %was there a joystick contact in this trial?
+            if numel(jstruct(i).js_pairs_r>0)
+                %Find closes positive js contact and add it to list
+                np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
+                np_js_diff = np_js_diff(np_js_diff>0);
+                [np_js_diff_abs,ind] = sort(np_js_diff);
+                
+                %keep adding each
+                try
+                    list = [list;np_js_diff(ind(1))];
+                catch
+                    list = [list;NaN];
+                end
+                
+            else
+            %if no joystick contact add NaN entry
+                list = [list;NaN];                
             end
-
+            list_laser = [list_laser;laser_np];
+            list_masked = [list_masked;masked_np];
         end
     end
 end
-jstruct_stats.np_js_nc_l = list(list_laser==1);
-jstruct_stats.np_js_nc = list(find((list>-10000)&(list<10000)));
-
+jstruct_stats.np_js_masked_l = list(list_laser==1);
+jstruct_stats.np_js_nc_masked_nl = list((list_laser==0)&(list_masked==1));
+jstruct_stats.np_js_nc_nl = list((list_laser==0)&(list_masked==0));
 
 % Get Distribution of NP_JSPost
 list=[];

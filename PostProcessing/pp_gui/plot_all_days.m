@@ -127,8 +127,8 @@ elseif strcmp(plotname, 'Activity Heat Map')
     if lasercompareflag>1
         cla(axlist(colnum, 1), 'reset');
         cla(axlist(colnum, 2), 'reset');
-        activity_heat_map(statscombined, 1, [2 99], axlist(colnum, 1),[1 100], 1, rw_only);
-        activity_heat_map(statscombined, 1, [2 99], axlist(colnum, 2),[1 100], lasercompareflag, rw_only);
+        activity_heat_map(statscombined, 1, [2 90], axlist(colnum, 1),[1 100], 1, rw_only);
+        activity_heat_map(statscombined, 1, [2 90], axlist(colnum, 2),[1 100], lasercompareflag, rw_only);
     else
         trajid=str2num(arg2);
         activity_heat_map(statscombined, 1, [2 99], axlist(axnum),[1 100],trajid,rw_only);
@@ -244,7 +244,7 @@ elseif strcmp(plotname,'Angle at Thresh')
 %   arg2label = 'Interv';
 %   arg3label = 'Thresh';
     plotflag=1;
-    [consolestr] = multi_anglethreshcross(dirlist,hold_thresh,thresh,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag);
+    [consolestr] = multi_anglethreshcross(dirlist,hold_thresh,thresh,trajid,rw_only,interv,axlist(axnum),plotflag,combineflag,lasercompareflag,smoothparam);
     handles = update_console(handles, consolestr');
 elseif strcmp(plotname,'Angle at Thresh after Hold')
     trajid = str2num(arg1);

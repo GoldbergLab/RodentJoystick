@@ -36,7 +36,7 @@ if plot_flag==1
 end
 
 if logmapping == 1
-    colorperc = [0 99];
+    colorperc = [1 99.5];
 end
 ext = '';
 if traj_id == 1;

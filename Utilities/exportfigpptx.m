@@ -1,4 +1,15 @@
 function [] = exportfigpptx(pptname,fig_handles,subplotformat)
+%% Created by Teja Pratap Bollu 
+% Last edit: 04/20/2017
+%
+% PPTNAME: Filename to save powerpoint as. Function tries to open an
+% existing ppt, if no ppt with PPTNAME exists, it creates a new ppt
+%
+% FIG_HANDLES: Figure handles of figures required to be written to this
+% slid of the ppt presentation
+%
+% SUBPLOT_FORMAT: Format of subplots for arranging the figures supplied in
+% FIG_HANDLES
 
 ppt = actxserver('PowerPoint.Application');
 

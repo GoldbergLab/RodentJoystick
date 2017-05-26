@@ -19,14 +19,20 @@ kk=0;
             
             for jj = 1:(length(redir_points)-1)
                 
+                traj_x = tstruct.traj_x_seg(redir_points(jj):redir_points(jj+1));
+                traj_y = tstruct.traj_y_seg(redir_points(jj):redir_points(jj+1));
                 peakvel = max(data.speed(redir_points(jj):redir_points(jj+1)));
+                avgvel = mean(data.speed(redir_points(jj):redir_points(jj+1)));
+                avgR = mean(data.r_curv(redir_points(jj):redir_points(jj+1)));
                 dur = (redir_points(jj+1)-redir_points(jj));
-                pathlen = sum((diff(tstruct.traj_x_seg(redir_points(jj):redir_points(jj+1)))).^2 + (diff(tstruct.traj_y_seg(redir_points(jj):redir_points(jj+1))).^2)).^(0.5);
+                pathlen = sum((diff(traj_x)).^2 + (diff(traj_y).^2)).^(0.5);
                 disp_x = tstruct.traj_x_seg(redir_points(jj+1))-tstruct.traj_x_seg(redir_points(jj)); 
                 disp_y = tstruct.traj_y_seg(redir_points(jj+1))-tstruct.traj_y_seg(redir_points(jj)); 
                 displacement = (disp_x^2+disp_y^2)^(0.5);     
+                
                 kk=kk+1;
                 seginfo_vect(kk).peakvel = peakvel;
+                seginfo_vect(kk).avgvel = avgvel;
                 seginfo_vect(kk).dur = dur;
                 seginfo_vect(kk).pathlen = pathlen;
                 seginfo_vect(kk).quality = quality(jj);
@@ -36,6 +42,9 @@ kk=0;
                 seginfo_vect(kk).stop = redir_points(jj+1);
                 seginfo_vect(kk).index = jj;
                 seginfo_vect(kk).last =0;
+                seginfo_vect(kk).traj_x = traj_x;
+                seginfo_vect(kk).traj_y = traj_y;
+                seginfo_vect(kk).avgR = avgR;
             end
             
                 redir_index = find(redir_points<(numel(tstruct.traj_x_seg)-100));
