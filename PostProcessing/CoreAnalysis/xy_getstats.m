@@ -157,7 +157,7 @@ for i=1:length(jstruct)
     end
 end
 jstruct_stats.np_js_masked_l = list(list_laser==1);
-jstruct_stats.np_js_nc_masked_nl = list((list_laser==0)&(list_masked==1));
+jstruct_stats.np_js_masked_nl = list((list_laser==0)&(list_masked==1));
 jstruct_stats.np_js_nc_nl = list((list_laser==0)&(list_masked==0));
 
 % Get Distribution of NP_JSPost
@@ -412,6 +412,6 @@ end
 
 if ~isempty(savedir)
     save([savedir,savestr], '-struct', 'jstruct_stats', 'np_count', ...
-    'js_r_count', 'js_l_count', 'pellet_count', 'np_js','np_js_nc','np_js_nc_l', 'np_js_post', ...
+    'js_r_count', 'js_l_count', 'pellet_count', 'np_js','np_js_nc','np_js_nc_nl','np_js_masked_l','np_js_masked_nl','np_js_post', ...
     'traj_pdf_jstrial', 'numtraj', 'traj_struct', 'trialnum', 'srate', 'day');
 end
