@@ -50,7 +50,7 @@ if def_dir == 2
     end
 else
     %% Calculate new Contingency
-    stats_ts = load_stats(dirlist(1),0,1);
+    stats_ts = load_stats(dirlist(1),0,1,0);
     stats_l = get_stats_with_trajid(stats_ts,1);
     stats_nl = get_stats_with_trajid(stats_ts,2);
     
