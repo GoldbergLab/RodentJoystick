@@ -81,7 +81,7 @@ minanglerec = [handles.newminangle1, handles.newminangle2, handles.newminangle3,
 maxanglerec = [handles.newmaxangle1, handles.newmaxangle2, handles.newmaxangle3,...
                 handles.newmaxangle4];
             
-stats = load_stats(dayscompare, 1, 'pellet_count', 'srate', 'np_count', 'trialnum');
+stats = load_stats(dayscompare, 1, 0, 0, 'pellet_count', 'srate', 'np_count', 'trialnum');
 sz = length(dayscompare)-duplicates;
 try
 set(pelletcounts(boxnum), 'String', num2str(stats.pellet_count/sz));

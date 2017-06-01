@@ -19,7 +19,7 @@ oldcont.centerhold = centerhold; oldcont.sector = sector;
 
 %Is average daily pellet count acceptable? (Also looks at Pellet Count
 %Override, which ignores the threshold)
-stats = load_stats(dirlist, 1, 'pellet_count');
+stats = load_stats(dirlist, 1, 0, 0, 'pellet_count');
 
 %get the relvant box number
 split_path = strsplit(dirlist(1).name,'\');
