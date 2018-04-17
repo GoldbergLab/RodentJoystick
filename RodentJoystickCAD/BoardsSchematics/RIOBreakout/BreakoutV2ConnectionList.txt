@@ -1,0 +1,43 @@
+J1:
+1 - AI GND - GND
+3 - AI8 - X4
+5 - AI9 - Y4
+6 - AI1 - X1
+8 - AI2 - Y1
+12 - AI3 - X2
+14 - AI4 - Y2
+18 - AI5 - X3
+20 - AI6 - Y3
+44 - DIO0 - Laser4
+46 - DIO1 - Lick4
+48 - DIO2 - Disp4
+50 - DIO3 - LEDCue4
+
+J2:
+2 - DIO4 - RTouch4
+4 - DIO5 - LTouch4
+6 - DIO6 - NP4
+8 - DIO7 - Laser3
+10 - DIO8 - Lick3
+12 - DIO9 - Disp3
+14 - DIO10 - LEDCue3
+16 - DIO11 - RTouch3
+18 - DIO12 - LTouch3
+20 - DIO13 - NP3
+22 - DIO14 - Laser2
+24 - DIO15 - Lick2
+26 - DIO16 - Disp2
+28 - DIO17 - LEDCue2
+30 - DIO18 - RTouch2
+32 - DIO19 - LTouch2
+34 - DIO20 - NP2
+36 - DIO21 - Laser1
+38 - DIO22 - Lick1
+40 - DIO23 - Disp1
+42 - DIO24 - LEDCue1
+44 - DIO25 - RTouch1
+46 - DIO26 - LTouch1
+47 - D GND - GND
+48 - DIO27 - NP1
+49 - +5V
+50 - +5V

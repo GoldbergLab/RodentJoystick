@@ -1,0 +1,20 @@
+Nosepoke
+Touch1
+Touch2
+LED_cueon
+Dispenser
+LickOn
+LaserOn
+
+X traj
+Y traj
+
+orcad capture
+pcb editor
+pcb routing ask about layers
+
+4 sales 
+5 technical support
+6 customer service
+0 operator
+

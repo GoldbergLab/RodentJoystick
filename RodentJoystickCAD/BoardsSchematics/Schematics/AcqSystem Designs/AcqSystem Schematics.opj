@@ -1,0 +1,126 @@
+(ExpressProject "AcqSystem Schematics"
+  (ProjectVersion "19981106")
+  (ProjectType "PCB")
+  (Folder "Design Resources"
+    (Folder "Library"
+      (File "E:\Orcad\tools\capture\library\GMW-JS.OLB"
+        (Type "Schematic Library")))
+    (NoModify)
+    (File ".\acqsystem schematics.dsn"
+      (Type "Schematic Design"))
+    (BuildFileAddedOrDeleted "x")
+    (CompileFileAddedOrDeleted "x"))
+  (Folder "Outputs")
+  (Folder "Referenced Projects")
+  (MPSSessionName "GLab-Teja-PC")
+  (PartMRUSelector
+    (TL331IDBV
+      (FullPartName "TL331IDBV.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\GMW-JS.OLB")
+      (DeviceIndex "0"))
+    (TL331I
+      (FullPartName "TL331I.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\OPAMP.OLB")
+      (DeviceIndex "0"))
+    (TL331I/SO
+      (FullPartName "TL331I/SO.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\OPAMP.OLB")
+      (DeviceIndex "0"))
+    (AT42QT1011
+      (FullPartName "AT42QT1011.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\GMW-JS.OLB")
+      (DeviceIndex "0"))
+    (LM358/SO
+      (FullPartName "LM358/SO.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\OPAMP.OLB")
+      (DeviceIndex "1"))
+    (R
+      (FullPartName "R.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    (TL331C/SO
+      (FullPartName "TL331C/SO.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\OPAMP.OLB")
+      (DeviceIndex "0"))
+    (CON3
+      (FullPartName "CON3.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (2N3904/TO
+      (FullPartName "2N3904/TO.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\TRANSISTOR.OLB")
+      (DeviceIndex "0"))
+    ("CAP NP"
+      (FullPartName "CAP NP.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    (C
+      (FullPartName "C.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\DISCRETE.OLB")
+      (DeviceIndex "0"))
+    (L78M05/TO220
+      (FullPartName "L78M05/TO220.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\REGULATOR.OLB")
+      (DeviceIndex "0"))
+    (C78L05/TO92
+      (FullPartName "C78L05/TO92.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\REGULATOR.OLB")
+      (DeviceIndex "0"))
+    (CON4
+      (FullPartName "CON4.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (CON2
+      (FullPartName "CON2.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (CON9
+      (FullPartName "CON9.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (CON15
+      (FullPartName "CON15.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CONNECTOR.OLB")
+      (DeviceIndex "0"))
+    (OFFPAGELEFT-L
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\CAPSYM.OLB")
+      (DeviceIndex "0"))
+    (2SA-10G
+      (FullPartName "2SA-10G.Normal")
+      (LibraryName "E:\ORCAD\TOOLS\CAPTURE\LIBRARY\GMW-JS.OLB")
+      (DeviceIndex "0")))
+  (LastUsedLibraryBrowseDirectory "E:\Orcad\tools\capture\library")
+  (GlobalState
+    (FileView
+      (Path "Design Resources")
+      (Path "Design Resources" ".\acqsystem schematics.dsn")
+      (Path "Design Resources" ".\acqsystem schematics.dsn" "Hall_Sensor")
+      (Path "Design Resources" ".\acqsystem schematics.dsn" "JS Board")
+      (Path "Design Resources" "Library"))
+    (HierarchyView)
+    (Doc
+      (Type "COrCapturePMDoc")
+      (Frame
+        (Placement "44 2 3 -1 -1 -8 -31 0 200 0 488"))
+      (Tab 0))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 60 1690 60 545")
+        (Scroll "-31 215")
+        (Zoom "100"))
+      (Path
+         "Z:\CODEBASE\RODENTJOYSTICK\RODENTJOYSTICKCAD\BOARDSSCHEMATICS\SCHEMATICS\ACQSYSTEM DESIGNS\ACQSYSTEM SCHEMATICS.DSN")
+      (Schematic "JS Board")
+      (Page "PAGE1"))
+    (Doc
+      (Type "COrSchematicDoc")
+      (Frame
+        (Placement "44 0 1 -1 -1 -8 -31 78 1658 78 605")
+        (Scroll "-266 0")
+        (Zoom "103")
+        (Occurrence "/"))
+      (Path
+         "Z:\CODEBASE\RODENTJOYSTICK\RODENTJOYSTICKCAD\BOARDSSCHEMATICS\SCHEMATICS\ACQSYSTEM DESIGNS\ACQSYSTEM SCHEMATICS.DSN")
+      (Schematic "Hall_Sensor")
+      (Page "Hall Sensor Board"))))
