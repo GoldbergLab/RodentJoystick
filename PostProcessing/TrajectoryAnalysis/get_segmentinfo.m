@@ -47,7 +47,7 @@ kk=0;
                 seginfo_vect(kk).avgR = avgR;
             end
             
-                redir_index = find(redir_points<(numel(tstruct.traj_x_seg)-100));
+                redir_index = find(redir_points<(numel(tstruct.traj_x_seg)-200));
                 redir_points = redir_points(redir_index);
                 try
                     seginfo_vect = seginfo_vect(1:(min(numel(seginfo_vect),redir_index(end))));

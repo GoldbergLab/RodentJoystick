@@ -1,6 +1,7 @@
 function [out,h] = np_js_timeevo(dirlist,varargin)
 
 np_js_nc_vect=[];
+np_js_time_vect=[];
 k=0;
 
 for i=1:length(dirlist)
@@ -19,45 +20,43 @@ for i=1:length(dirlist)
         try
             hrin=0;
             stats_temp = load_stats(dirlist(i),0,0,hrin,'np_js_nc');
-            np_js_nc_vect = [np_js_nc_vect;stats_temp.np_js_nc];
-            np_js_time_vect = 0;
-            np_js_nc_vect = np_js_nc_vect(np_js_nc_vect~=0);
-            np_js_nc_vect = np_js_nc_vect(np_js_nc_vect>-1000 & np_js_nc_vect<1000);
-            
-            cont_day_temp = datenum(day_str,'mmddyy');
-            if (k == 0) || (cont_day_temp ~= cont_day(k));
-               k = k + 1;
-               cont_day(k) = cont_day_temp;                
-            end
-            
-            cont_index(k) = numel(np_js_nc_vect);
+            np_js_nc_vect = [np_js_nc_vect;stats_temp.np_js_nc(:,1)];
+            np_js_time_vect = [np_js_time_vect;stats_temp.np_js_nc(:,2)];              
         end        
 end
-
-cont_index = cont_index(cont_index>0);
-cont_index = [1 cont_index];
-
-for i=1:(length(cont_index)-1)
-    ind1 = cont_index(i);
-    ind2 = cont_index(i+1);
-    np_vect = np_js_nc_vect(ind1:ind2);
+    zeros_ind = (np_js_nc_vect~=0);
+    np_js_nc_vect = np_js_nc_vect(zeros_ind);
+    np_js_time_vect = np_js_time_vect(zeros_ind);
+    
+    within_rangeind = np_js_nc_vect>-1000 & np_js_nc_vect<1000;
+    np_js_nc_vect = np_js_nc_vect(within_rangeind);
+    np_js_time_vect = np_js_time_vect(within_rangeind);
+    
+    np_js_time_vect = np_js_time_vect - floor(min(np_js_time_vect));
+    days_max = ceil(max(np_js_time_vect));
+    time_bins = 1;
+    
+for i=1:(days_max*time_bins)
+    
+    np_vect = np_js_nc_vect((np_js_time_vect>(i-1)/time_bins)&(np_js_time_vect<(i)/time_bins));
     np_vect_mean = mean(np_vect);
     %np_vect_stddev_norm = std(np_vect,1);%/abs(np_vect_mean);
     np_vect_stddev_norm = prctile(np_vect,75) - prctile(np_vect,25);
-    pdf_vect_temp = histc(np_vect,-1000:20:1000);
+    pdf_vect_temp = histc(np_vect,-1000:10:1000);
     pdf_vect_temp = pdf_vect_temp/(sum(pdf_vect_temp));
     
     zscore_vect(i) = max(zscore(pdf_vect_temp));
-    
-    pdf_vect(i,:) = smooth(pdf_vect_temp,3);
+    filt_win = gausswin(10);
+    pdf_vect(i,:) = conv(filt_win,pdf_vect_temp);
+    pdf_vect(i,:) = pdf_vect(i,:)/(sum(pdf_vect(i,:)));
     
     mean_vect(i) = np_vect_mean;
     
     stddev_vect(i) = np_vect_stddev_norm;
-    if (ind2-ind1)>50
+    if (numel(np_vect))>50
      cdf_vect(i,:) = cumsum(pdf_vect_temp);
     else
-     cdf_vect(i,:) = NaN;
+     cdf_vect(i,1:(numel(pdf_vect(i,:))-99)) = NaN;
     end
     
 end

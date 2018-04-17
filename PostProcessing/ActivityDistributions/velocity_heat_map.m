@@ -1,4 +1,4 @@
-function [mediandata, labels] = velocity_heat_map(dirlist,varargin)
+function [mediandata, labels] = velocity_heat_map(stats,varargin)
 %velocity_heat_map(dirlist, [ax, data, bin]) plots the median of the velocity
 %profile given by the trajectories in dirlist
 % ARGUMENTS:
@@ -18,15 +18,16 @@ if numvarargs > 3
 end
 [default{1:numvarargs}] = varargin{:};
 [ax, mediandata,bin] = default{:};
+stats = get_stats_with_len(stats,50);
 if isempty(mediandata)
-    [data] = get_vel_accel_distr(dirlist,bin);
-    mediandata = data.vel;
+    [data] = get_velaccel_xy(stats);
+    mediandata = (data.vel_hist)./(data.vel_count);
 end
 if length(ax) < 1
     figure;
     ax(1) = gca(); 
 end
 tstr = 'Velocity Distribution';
-labels = draw_heat_map(mediandata, ax,tstr, 1, [5 80]);
+labels = draw_heat_map(mediandata, ax,tstr, 0, [5 90]);
 
 end

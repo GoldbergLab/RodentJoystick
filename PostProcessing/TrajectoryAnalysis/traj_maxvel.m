@@ -1,4 +1,4 @@
-function [maxvel_hist,maxvel] = traj_maxvel(stats,varargin)
+function [maxvel_hist,maxvel,maxvel_time] = traj_maxvel(stats,varargin)
 
 %TRAJ_AVGVEL Summary of this function goes here
 %   Detailed explanation goes here
@@ -18,7 +18,8 @@ k=0;
 for stlen=1:numel(stats.traj_struct)
     if (tstruct(stlen).rw == rw_only) || ~rw_only
         k = k+1;
-        maxvel(k) = tstruct(stlen).vel_max*1000;
+        maxvel(k) = max(tstruct(stlen).vel_mag(50:end))*1000;
+        maxvel_time(k) = tstruct(stlen).real_time;
     end
 end
 edges = 0:interv:300;
@@ -35,6 +36,6 @@ if plotflag
     end
     axes(ax);
     hold on;
-    stairs(edges,maxvel_hist,color);
+    stairs(edges,smooth(maxvel_hist,3),color);
     hold off;
 end

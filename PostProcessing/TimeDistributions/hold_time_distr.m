@@ -77,7 +77,8 @@ for i = 1:length(statslist)
     if normalize; ht_hist = ht_hist./sum(ht_hist); end;
     data{i} = ht_hist;
     htstats = prctile(holdtimes, [25 50 75]);
-    htstats(4) = mean(holdtimes); htstats(5) = std(holdtimes);
+    htstats(4) = mean(holdtimes); ht
+    stats(5) = std(holdtimes);
     summary{i} = htstats;
 end
 

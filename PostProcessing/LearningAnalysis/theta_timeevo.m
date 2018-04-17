@@ -1,4 +1,4 @@
-function [theta_nl,theta_nl_rt,theta_l,theta_l_rt,fig_handle] = theta_timeevo(dirlist,varargin)
+function [theta_nl,theta_nl_rt,theta_l,theta_l_rt,fig_handle,cont_info] = theta_timeevo(dirlist,varargin)
 
 default = {45,1};
 numvarargs = length(varargin);
@@ -47,6 +47,15 @@ for i = 1:length(dirlist)
     angle_index_nl(i) = numel(theta_nl);
     angle_index_l(i) = numel(theta_l);
 end
+
+cont_info.out_thresh = out_thresh;
+cont_info.hold_time = hold_time;
+cont_info.hold_thresh = hold_thresh;
+cont_info.angle1 = angle1;
+cont_info.angle2 = angle2;
+cont_info.angle_index_nl = angle_index_nl;
+cont_info.angle_index_l = angle_index_l;
+
 offset_l = floor(min(theta_l_rt));
 offset_nl = floor(min(theta_nl_rt));
 theta_l_rt = theta_l_rt - offset_l;

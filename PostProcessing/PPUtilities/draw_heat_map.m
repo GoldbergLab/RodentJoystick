@@ -42,7 +42,7 @@ end
 if isempty(xax) || isempty(yax)
     xscalesize = size(data, 1);
     yscalesize = size(data, 1);
-    xax = -100:(floor(201/xscalesize)):100;
+    xax = -100:(floor(202/xscalesize)):100;
     xax = xax(1:size(data,2));
     yax = xax;
     activitymap = 1;
@@ -78,9 +78,9 @@ if activitymap
     axis square;
     set(ax, 'XTick', [-100 -50 0 50 100]);
     set(ax, 'YTick', [-100 -50 0 50 100]);
-    plot(ax, 100*sind(0:0.5:360), 100*cosd(0:0.5:360), 'LineWidth', 3, 'Color', [0 0 0]);
-    plot(ax, contl(1)*sind(0:0.5:360), contl(1)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
-    plot(ax, contl(2)*sind(0:0.5:360), contl(2)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+%     plot(ax, 100*sind(0:0.5:360), 100*cosd(0:0.5:360), 'LineWidth', 3, 'Color', [0 0 0]);
+%     plot(ax, contl(1)*sind(0:0.5:360), contl(1)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
+%     plot(ax, contl(2)*sind(0:0.5:360), contl(2)*cosd(0:0.5:360), 'LineWidth', 2, 'Color', [0 0 0]);
 
 else
     xind = 1:(floor(length(xax)/4)):length(xax);

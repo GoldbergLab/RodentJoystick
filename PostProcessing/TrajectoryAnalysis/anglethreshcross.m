@@ -1,7 +1,7 @@
 function [theta_hist,theta,theta_realtime,fig_handle] = anglethreshcross(stats,varargin)
 %% argument handling
 
-default = {30*(6.35/100),63*(6.35/100),0,0,10,[],1, 'b',1};
+default = {30*(6.35/100),63*(6.35/100),0,0,10,[],0, 'b',1};
 numvarargs = length(varargin);
 if numvarargs > 9
     error('too many arguments (> 10), only 1 required and 9 optional.');
@@ -13,7 +13,7 @@ stats=get_stats_with_trajid(stats,trajid);
 theta=[];
 
 k=0;   
-  [theta,~,theta_realtime] = tau_theta(stats,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],0);  
+  [theta,~,theta_realtime] = tau_theta(stats,hold_thresh*(6.35/100),out_thresh*(6.35/100),0,0,[],1);  
 %     if (tstruct(i).rw == rw_only) || ~rw_only
 %     index = find(tstruct(i).magtraj>thresh);
 %     thresh_cross = min(index);

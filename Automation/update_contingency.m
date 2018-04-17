@@ -92,7 +92,7 @@ else
     %% Determine which way the animal is being pushed,
     if split == 0
         %Then make sure the animal isn't being pushed in the opposite direction
-        if ~no_prev_cont
+        if ~no_prev_cont && ~isequal(prev_cont(1:6),[0 360 1 0 360 1])
             temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);
             if def_dir == 1
                 angle_nl(1:3) = temp1(1,:);
@@ -103,7 +103,7 @@ else
         angle_out = [angle_nl angle_nl split def_dir];
         
     elseif split == 1
-        if ~no_prev_cont
+        if ~no_prev_cont && ~isequal(prev_cont(1:6),[0 360 1 0 360 1])
             temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);
             temp2 = sortrows([angle_l(1:3);prev_cont(4:6)],1);
             angle_nl = temp1(1,:);
@@ -111,7 +111,7 @@ else
         end
         angle_out = [angle_nl angle_l split def_dir];
     elseif split == 2
-        if ~no_prev_cont
+        if ~no_prev_cont && ~isequal(prev_cont(1:6),[0 360 1 0 360 1])
             temp1 = sortrows([angle_nl(1:3);prev_cont(1:3)],-1);
             temp2 = sortrows([angle_l(1:3);prev_cont(4:6)],1);
             angle_nl(1:3) = temp1(2,:);

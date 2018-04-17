@@ -1,14 +1,14 @@
 function [pos_mag_l,pos_time] = posmag_pdf(stats,maxtime)
 
 tstruct = stats.traj_struct;
-pos_mag_l = zeros(1,maxtime);
+
 pos_mag_l = zeros(numel(tstruct),maxtime);
 
 for stlen=1:numel(tstruct)
-    vel_mag = tstruct(stlen).magtraj;
-    if numel(vel_mag)>0
-        end_t = min(numel(vel_mag),maxtime);
-        pos_mag_l(stlen,1:end_t) = vel_mag(1:end_t);
+    pos_mag = tstruct(stlen).magtraj;
+    if numel(pos_mag)>0
+        end_t = min(numel(pos_mag),maxtime);
+        pos_mag_l(stlen,1:end_t) = pos_mag(1:end_t);
     end
     
 end

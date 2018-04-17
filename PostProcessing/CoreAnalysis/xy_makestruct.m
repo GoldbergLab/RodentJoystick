@@ -48,12 +48,21 @@ filelist = dir(strcat(working_dir_1,'/*.mat'));
 load(strcat(working_dir_1,'/',filelist(1).name));
 
 fileinfo = dir(strcat(working_dir, '\', filelist(1).name(1:end-4),'.dat'));
-[time_stamp] = fileinfo.datenum;
+time_stamp = fileinfo.datenum;
 % start_frame = str2num(filelist(1).name(1:end-4));
 start_frame_first = start_frame;
 
 k = 1;for i=1:length(filelist)         
     load(strcat(working_dir_1,'/',filelist(i).name));
+    
+    
+   if i == 234
+      flag=0;
+   end
+    
+    fileinfo = dir(strcat(working_dir, '\', filelist(i).name(1:end-4),'.dat'));
+    time_stamp = fileinfo.datenum;
+    
     working_buff=working_buff';
     % nose pokes 
     np = sensor_on_off_times(working_buff(5,:));   
@@ -103,7 +112,7 @@ k = 1;for i=1:length(filelist)
     jstruct(i).js_pairs_l = js_l;
     jstruct(i).reward_onset = reward_on;
     jstruct(i).js_reward = js_reward;    
-    jstruct(i).real_time = time_stamp+(start_frame-start_frame_first)*(1/(24*60*60));
+    jstruct(i).real_time = time_stamp;
     try
         jstruct(i).laser_on = laser_on;
         jstruct(i).lick_on = lick;

@@ -139,6 +139,7 @@ for i = 1:PLOT_RANGE
     if pflag == 1
         axes(axeslst(i));
         ubd = upperbnd; lbd = lowerbnd; md = median;
+        %ubd = mean+stdev; lbd = mean-stdev; md = mean;
         lhandle = plot(time, smooth(md, smoothparam), color, 'LineWidth', 1); hold on;
         if multiflag
             plot(time, smooth(ubd, smoothparam), color, 'LineStyle', ':');
@@ -198,7 +199,7 @@ function pos =  extract_data(tcell, derivflag)
     if derivflag == 0
         pos = tcell.magtraj; 
     elseif derivflag == 1
-        pos = tcell.velmag; 
+        pos = tcell.vel_mag(2:end); 
     elseif derivflag == 2
         pos = tcell.magtraj(time); 
     end

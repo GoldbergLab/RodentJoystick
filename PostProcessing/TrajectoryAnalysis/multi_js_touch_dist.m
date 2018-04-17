@@ -67,7 +67,7 @@ if plotflag && isempty(ax);
     ax = gca();
 end
 
-[statslist, dates] = load_stats(dirlist, combineflag,to_stop,'traj_struct');
+[statslist, dates] = load_stats(dirlist, combineflag,to_stop,0,{'traj_struct'});
 colors = 'rbkmcgyrbkmcgyrbkmcgy';
 set_distances = zeros(1, length(statslist));
 

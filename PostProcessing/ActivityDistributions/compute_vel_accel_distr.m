@@ -69,6 +69,7 @@ accelv_ang = zeros(SIZE, SIZE);
 tstruct = stats.traj_struct;
 for i = 1:length(tstruct);
 if length(tstruct(i).traj_x) > 5
+    i
     x = tstruct(i).traj_x;
     y = tstruct(i).traj_y;
     mag = (x.^2 + y.^2);

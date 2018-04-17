@@ -1,12 +1,13 @@
 function [out,h] = np_js_trialevo(dirlist,varargin)
 
 np_js_nc_vect=[];
+np_js_time_vect=[];
 
 for i=1:length(dirlist)
         [pathstr,name,ext] = fileparts(dirlist(i).name);
         [pathstr_rule,name,ext] = fileparts(pathstr);        
         contingency_angle = strsplit(name,'_');
-        
+        i
         out_thresh(i) = str2num(contingency_angle{2});
         hold_time(i) = str2num(contingency_angle{3});
         hold_thresh(i) = str2num(contingency_angle{4});
@@ -16,22 +17,28 @@ for i=1:length(dirlist)
         angle4(i) = str2num(contingency_angle{8});
         
         try
-            stats_temp = load_stats(dirlist(i),0,0,'np_js_nc');
-            np_js_nc_vect = [np_js_nc_vect;stats_temp.np_js_nc];
-            
-            np_js_nc_vect = np_js_nc_vect(np_js_nc_vect~=0);
-            np_js_nc_vect = np_js_nc_vect(np_js_nc_vect>-10000 & np_js_nc_vect<10000);
+            stats_temp = load_stats(dirlist(i),0,0,0,'np_js_nc');
+            np_js_nc_vect = [np_js_nc_vect;stats_temp.np_js_nc(:,1)];
+            np_js_time_vect = [np_js_time_vect;stats_temp.np_js_nc(:,2)];         
             
             cont_index(i) = numel(np_js_nc_vect);
         end        
 end
 
-
+    zeros_ind = (np_js_nc_vect~=0);
+    np_js_nc_vect = np_js_nc_vect(zeros_ind);
+    np_js_time_vect = np_js_time_vect(zeros_ind);
+    
+    within_rangeind = np_js_nc_vect>-1000 & np_js_nc_vect<1000;
+    np_js_nc_vect = np_js_nc_vect(within_rangeind);
+    np_js_time_vect = np_js_time_vect(within_rangeind);
+    
+    np_js_time_vect = np_js_time_vect - floor(min(np_js_time_vect));
 
 win_size = 1000;
 overlap = 50;
 interv = 50;
-time_c = -10000:interv:10000;
+time_c = -1000:interv:1000;
 
 for i = 1:(length(np_js_nc_vect)-win_size)/overlap
        index_curr = ((i-1)*overlap+1):((i-1)*overlap+win_size);
@@ -61,7 +68,8 @@ end
 % hold on;
 % stairs(1:length(z_vect),z_vect);
 
-
+out.np_js_vect = np_js_nc_vect;
+out.np_js_time_vect = np_js_time_vect;
 out.np_js_trial_pdf = np_js_trial_pdf;
 out.cumpdf = cumpdf_vect;
 out.zvect = z_vect;

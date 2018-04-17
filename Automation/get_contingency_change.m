@@ -25,7 +25,7 @@ if ccw
     tau_factor = 1-(targ_rate/tau_factor);
     [ind] = find(theta_dist_cum<tau_factor);
     if (tau_factor>1 || tau_factor <0)
-         if rw_cnt>100
+         if rw_cnt>151
           [ind] = find(theta_dist_cum<0.85);
          else    
             rwrate_fail = 1;
@@ -40,7 +40,7 @@ else
     tau_factor = (targ_rate/tau_factor);
     [ind] = find(theta_dist_cum>tau_factor);
     if (tau_factor>1 || tau_factor <0) %&& (rw_cnt<100)
-         if rw_cnt>100
+         if rw_cnt>151
           [ind] = find(theta_dist_cum>0.15);
          else    
             rwrate_fail = 1;

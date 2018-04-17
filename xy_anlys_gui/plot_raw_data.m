@@ -42,7 +42,7 @@ zerocenter = analogind > 2;
 LINEWIDTH = 1 + ((npon+poston+json+rewon+laseron+(analogind>1))<5);
 
 xrange = handles.xaxis;
-axes(ax); cla; hold on;
+axes(ax); zoom reset; cla; hold on; 
 if npon
     plot_np(handles, ax, zerocenter, LINEWIDTH, xrange(2));
 end
@@ -124,7 +124,7 @@ function plot_rew(handles, ax, scaling, LINEWIDTH, xmax)
         rewdata = rewdata*2 - 6;
     end
     plot(ax,(1/handles.SAMPLE_RATE):(1/handles.SAMPLE_RATE):xmax,...
-        rewdata,'m','LineWidth',LINEWIDTH);
+        rewdata,'m','LineWidth',LINEWIDTH);    
 end
 
 function plot_laser(handles, ax, scaling, LINEWIDTH, xmax)

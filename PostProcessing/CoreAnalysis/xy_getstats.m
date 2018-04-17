@@ -95,71 +95,80 @@ for i=1:length(jstruct)
             
             %keep adding each 
             try
-                list = [list;np_js_diff(ind(1))];
+                list = [list;[np_js_diff(ind(1)) (jstruct(i).real_time + (jstruct(i).np_pairs(j,1) + np_js_diff(ind(1)))/(1000*60*60*24))]];
             catch
-                list = [list;nan];
+                list = [list;[nan nan]];
             end
             
         end
     end
 end
-jstruct_stats.np_js_nc = list(find((list>-10000)&(list<10000)));
-
+if numel(list)>0
+    jstruct_stats.np_js_nc = list(find((list(:,1)>-10000)&(list(:,1)<10000)),:);
+else
+    jstruct_stats.np_js_nc = [];
+end
 % Get Masked only vs Laser inactivation on Nosepoke
-list=[];
-list_laser=[];
-list_masked=[];
-for i=1:length(jstruct)
-    if (numel(jstruct(i).np_pairs)>0)
-        for j=1:size(jstruct(i).np_pairs,1)
-            % was this nosepoked masked for laser?
-            if numel(jstruct(i).masking_light)>0
-                if sum(abs(jstruct(i).masking_light(:,1) - jstruct(i).np_pairs(j,1))<5)
-                    masked_np = 1;
+    jstruct_stats.np_js_masked_l = [];
+    jstruct_stats.np_js_masked_nl = [];
+    jstruct_stats.np_js_nc_nl = [];
+
+%if exist('jstruct(1).masking_light','var')
+    list=[];
+    list_laser=[];
+    list_masked=[];
+    for i=1:length(jstruct)
+        if (numel(jstruct(i).np_pairs)>0)
+            for j=1:size(jstruct(i).np_pairs,1)
+                % was this nosepoked masked for laser? 
+                if numel(jstruct(i).masking_light)>0
+                    if sum(abs(jstruct(i).masking_light(:,1) - jstruct(i).np_pairs(j,1))<2)
+                        masked_np = 1;
+                    else
+                        masked_np = 0;
+                    end
                 else
                     masked_np = 0;
                 end
-            else
-                masked_np = 0;
-            end
-            % was this nosepoke hit with laser?
-            if numel(jstruct(i).laser_on)>0
-                if sum(abs(jstruct(i).laser_on(:,1) - jstruct(i).np_pairs(j,1))<5)
-                    laser_np = 1;
+                % was this nosepoke hit with laser?
+                if numel(jstruct(i).laser_on)>0
+                    if sum(abs(jstruct(i).laser_on(:,1) - jstruct(i).np_pairs(j,1))<2)
+                        laser_np = 1;
+                    else
+                        laser_np = 0;
+                    end
                 else
                     laser_np = 0;
                 end
-            else
-                laser_np = 0;
-            end
-            
-            %was there a joystick contact in this trial?
-            if numel(jstruct(i).js_pairs_r>0)
-                %Find closes positive js contact and add it to list
-                np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
-                np_js_diff = np_js_diff(np_js_diff>0);
-                [np_js_diff_abs,ind] = sort(np_js_diff);
                 
-                %keep adding each
-                try
-                    list = [list;np_js_diff(ind(1))];
-                catch
+                %was there a joystick contact in this trial?
+                if numel(jstruct(i).js_pairs_r>0)
+                    %Find closes positive js contact and add it to list
+                    np_js_diff = (jstruct(i).js_pairs_r(:,1)-jstruct(i).np_pairs(j,1));
+                    np_js_diff = np_js_diff(np_js_diff>0);
+                    [np_js_diff_abs,ind] = sort(np_js_diff);
+                    
+                    %keep adding each
+                    try
+                        list = [list;np_js_diff(ind(1))];
+                    catch
+                        list = [list;NaN];
+                    end
+                    
+                else
+                    %if no joystick contact add NaN entry
                     list = [list;NaN];
                 end
-                
-            else
-            %if no joystick contact add NaN entry
-                list = [list;NaN];                
+                list_laser = [list_laser;laser_np];
+                list_masked = [list_masked;masked_np];
             end
-            list_laser = [list_laser;laser_np];
-            list_masked = [list_masked;masked_np];
         end
     end
-end
-jstruct_stats.np_js_masked_l = list(list_laser==1);
-jstruct_stats.np_js_masked_nl = list((list_laser==0)&(list_masked==1));
-jstruct_stats.np_js_nc_nl = list((list_laser==0)&(list_masked==0));
-
+    jstruct_stats.np_js_masked_l = list(list_laser==1);
+    jstruct_stats.np_js_masked_nl = list((list_laser==0)&(list_masked==1));
+    jstruct_stats.np_js_nc_nl = list((list_laser==0)&(list_masked==0));
+    
+%end
 % Get Distribution of NP_JSPost
 list=[];
 for i=1:length(jstruct)
@@ -300,7 +309,7 @@ for struct_index=1:length(jstruct)
 
                 try
                 [traj_x_t,traj_y_t] = ...
-                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), rw_or_stop + 100]);
+                    filter_noise_traj(traj_x, traj_y, hd, [js_pairs_r(j,1), rw_or_stop + 200]);
                 catch
                     continue;
                 end
@@ -308,8 +317,8 @@ for struct_index=1:length(jstruct)
                 traj_x_seg = traj_x_t;
                 traj_y_seg = traj_y_t;
                 
-                traj_x_t = traj_x_t(1:(end-100));
-                traj_y_t = traj_y_t(1:(end-100));
+                traj_x_t = traj_x_t(1:(end-200));
+                traj_y_t = traj_y_t(1:(end-200));
                 
                 mag_traj = ((traj_x_t.^2+traj_y_t.^2).^(0.5));                
                                
